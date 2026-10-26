@@ -28,6 +28,11 @@ __pycache__
 
 # Tajne
 .env
+wasp/.env.server
+
+# Izgrađeni klijent (za caddy)
+klijent/*
+!klijent/.gitkeep
 
 # npm
 node_modules/

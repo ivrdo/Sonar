@@ -1,0 +1,15 @@
+services:
+  workspace:
+    image: mcr.microsoft.com/devcontainers/javascript-node:24-bookworm
+    command: sleep infinity
+    volumes:
+      - .:/workspace:cached
+    network_mode: service:db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    ports:
+      - "127.0.0.1:3000:3000"
+      - "127.0.0.1:3001:3001"

@@ -1,0 +1,58 @@
+services:
+  # Dockerfile za server će WASP sam generirati
+  server:
+    # Zašto? docker compose up nije dovoljna naredba da se servis s profilom
+    # pokrene. Ne želimo uvijek raditi novi build našeg sustava.
+    profiles: ["prod"]
+    build:
+      context: ./wasp/.wasp/out
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://postgres:${DB_PASSWORD:-dev}@db:5432/sonar
+      JWT_SECRET: ${JWT_SECRET:-} # u produkciji obavezno postaviti u .env
+      PORT: 3001
+      WASP_WEB_CLIENT_URL: ${PUBLIC_CLIENT_URL:-}
+      WASP_SERVER_URL: ${PUBLIC_API_URL:-}
+
+  # Za ove tu Dockerfile nije potreban
+
+  caddy:
+    image: caddy:2
+    profiles: ["prod"]
+    restart: unless-stopped
+    depends_on:
+      - server
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes: # Ovo je definirano ovako za Caddy Image...
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./klijent:/srv/client:ro
+      - caddy_data:/data
+      - caddy_config:/config
+
+  db:
+    image: postgres:18
+    container_name: baza
+    ports:
+      - "127.0.0.1:5432:5432" # Ovo pomaknuti production?
+    environment: # TODO: TREBAMO ROLE STVORITI!
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-dev}
+      POSTGRES_DB: sonar
+    volumes:
+      - postgres_data:/var/lib/postgresql
+    healthcheck:
+      # Preko TCP-a i s -d sonar: dok se baza inicijalizira, Postgres sluša samo
+      # na socketu, pa bi provjera bez -h prošla prije nego što sonar postoji.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U postgres -d sonar"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  postgres_data:
+  caddy_data:
+  caddy_config:

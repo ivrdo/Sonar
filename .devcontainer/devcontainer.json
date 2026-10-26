@@ -1,0 +1,13 @@
+// Dev Container
+// Ovo nam olakšava život, instalira u stvorenom okruženju node i wasp.
+{
+  "name": "sonar (Wasp)",
+  "dockerComposeFile": ["../compose.yaml", "compose.yaml"],
+  "service": "workspace",
+  "runServices": ["db", "workspace"],
+  "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+  "postCreateCommand": "npm i -g @wasp.sh/wasp-cli@0.26",
+  // Portove 3000 i 3001 već objavljuje .devcontainer/compose.yaml
+  "otherPortsAttributes": { "onAutoForward": "ignore" }
+}
