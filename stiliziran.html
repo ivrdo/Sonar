@@ -1,0 +1,1402 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sonar — UI design v2</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ============ Tokens ============ */
+:root{
+  --bg:#0c0c0d; --bg2:#141416; --bg3:#1b1b1e; --line:#26262a; --line2:#37373d;
+  --tx:#ecebe6; --tx2:#a6a5a0; --tx3:#74736e;
+  --acc:#ff6a2b; --acc-ink:#160800; --accsoft:rgba(255,106,43,.14);
+  --ok:#4cc38a; --warn:#e2b14a; --bad:#f0524f; --info:#7fa8ff;
+  --fd:'Barlow Condensed','Arial Narrow',Arial,sans-serif;
+  --fb:'IBM Plex Sans',system-ui,-apple-system,sans-serif;
+  --fm:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+  --ds:.6;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:#19191b;color:#d9d8d3;font:15px/1.55 var(--fb)}
+
+/* ============ Document chrome (outside the app frames) ============ */
+.doc{max-width:1260px;margin:0 auto;padding:48px 32px 120px}
+.doc h1{font:700 64px/0.95 var(--fd);text-transform:uppercase;letter-spacing:.01em;color:#f2f1ec}
+.doc h1 i{color:var(--acc);font-style:normal}
+.doc .kicker{font:500 12px var(--fm);letter-spacing:.14em;text-transform:uppercase;color:#8d8c86;margin-bottom:14px}
+.doc .intro{max-width:780px;margin-top:18px;color:#bdbcb6}
+.doc h2.sect{font:700 46px/1 var(--fd);text-transform:uppercase;color:#f2f1ec;margin:96px 0 6px;padding-top:24px;border-top:2px solid #f2f1ec}
+.doc h2.sect span{color:var(--acc);margin-right:14px}
+.doc .sect-intro{color:#a9a8a2;max-width:820px;margin-bottom:12px}
+.doc h3.sub{font:600 22px var(--fd);text-transform:uppercase;letter-spacing:.06em;margin:40px 0 12px;color:#e6e5e0}
+.toolbar{position:sticky;top:0;z-index:50;background:#19191b;border-bottom:1px solid #2c2c30;margin:28px -32px 0;padding:10px 32px;display:flex;gap:18px;flex-wrap:wrap;align-items:center;font:500 12px var(--fm);text-transform:uppercase;letter-spacing:.08em;color:#9a9993}
+.toolbar a{color:#cfcec8;text-decoration:none}
+.toolbar a:hover{color:var(--acc)}
+.toolbar .grp{display:flex;gap:6px;align-items:center}
+.toolbar button{font:inherit;text-transform:inherit;letter-spacing:inherit;background:transparent;border:1px solid #3a3a3f;color:#cfcec8;padding:4px 8px;cursor:pointer}
+.toolbar button.on{background:#f2f1ec;color:#111;border-color:#f2f1ec}
+.toc{display:flex;flex-wrap:wrap;gap:6px 16px}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.panel{border:1px solid #2e2e33;padding:20px 22px;background:#151517}
+.panel h4{font:600 16px var(--fd);text-transform:uppercase;letter-spacing:.1em;margin-bottom:10px;color:#eeede8}
+.panel ul{padding-left:18px;color:#bdbcb6} .panel li{margin:4px 0}
+.swatches{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-top:12px}
+.sw{border:1px solid #2e2e33}
+.sw div{height:64px}
+.sw span{display:block;padding:6px 8px;font:500 11px/1.35 var(--fm);color:#bdbcb6;background:#121214}
+.typespec{display:grid;grid-template-columns:200px 1fr;gap:10px 18px;align-items:baseline;margin-top:8px}
+.typespec .lbl{font:500 11px var(--fm);text-transform:uppercase;letter-spacing:.08em;color:#8d8c86}
+.scr{margin-top:56px}
+.scr-h{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:16px}
+.scr-h .num{font:700 30px/1 var(--fd);color:var(--acc)}
+.scr-h h3{font:700 30px/1 var(--fd);text-transform:uppercase;letter-spacing:.02em;color:#f2f1ec}
+.badge{font:600 10px/1 var(--fm);text-transform:uppercase;letter-spacing:.1em;border:1px solid #4a4a50;color:#cfcec8;padding:5px 7px}
+.badge.core{border-color:var(--ok);color:var(--ok)}
+.badge.optional{border-color:var(--acc);color:var(--acc)}
+.badge.new{background:#f2f1ec;color:#111;border-color:#f2f1ec}
+.frames{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.fwrap{display:flex;flex-direction:column;gap:8px}
+.flabel{font:500 11px var(--fm);color:#86857f;text-transform:uppercase;letter-spacing:.12em}
+.frame{border:1px solid #38383d;background:var(--bg);box-shadow:0 24px 70px rgba(0,0,0,.4)}
+.frame.mobile{width:392px}
+.frame.mobile>.app{width:390px}
+.frame.desktop{width:calc(1280px * var(--ds) + 2px);overflow:hidden}
+.frame.desktop>.app{width:1280px;transform:scale(var(--ds));transform-origin:0 0}
+.notes{margin-top:18px;max-width:1190px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start}
+.notes ul{padding-left:18px;color:#c3c2bc;font-size:14.5px}
+.notes li{margin:5px 0}
+.notes .covers{font:500 11px var(--fm);color:#86857f;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap;border:1px solid #2e2e33;padding:6px 8px}
+.notes b{color:#f0efe9}
+body.show-opt .app .optional{outline:1px dashed rgba(255,106,43,.85);outline-offset:3px;position:relative}
+body.show-opt .app .optional::after{content:"OPTIONAL";position:absolute;top:-10px;right:0;background:var(--acc);color:var(--acc-ink);font:600 8.5px/1 var(--fm);letter-spacing:.1em;padding:3px 5px;z-index:9}
+@media (max-width:900px){.cols2{grid-template-columns:1fr}.swatches{grid-template-columns:repeat(3,1fr)}.notes{grid-template-columns:1fr}}
+
+/* ============ App (everything inside a frame) ============ */
+.app{container:app/inline-size;background:var(--bg);color:var(--tx);font:14px/1.45 var(--fb);position:relative;overflow:hidden;min-height:800px;display:flex;flex-direction:column;-webkit-font-smoothing:antialiased}
+.app a{color:inherit;text-decoration:none;cursor:default}
+.app img{display:block;max-width:100%}
+.app p{margin:0}
+.app .page{padding:16px 16px 28px;flex:1;width:100%}
+.app .mono{font-family:var(--fm);font-size:12px}
+.app .acc{color:var(--acc)}
+.app .muted{color:var(--tx3)}
+.app .small{font-size:12.5px}
+.app .ic{flex:none;display:inline-block;vertical-align:middle}
+.app .lead{color:var(--tx2);font-size:15px;line-height:1.5;margin-top:12px;max-width:560px}
+.app .body{color:#d4d3ce;font-size:14.5px;line-height:1.62;max-width:68ch}
+.app .body+.body{margin-top:10px}
+.app .src{font:500 10.5px var(--fm);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3);margin-top:32px;border-top:1px solid var(--line);padding-top:12px}
+@container app (max-width:899.98px){.only-d{display:none!important}}
+
+/* type */
+.app .h-xl{font:700 46px/.92 var(--fd);text-transform:uppercase;letter-spacing:.005em}
+.app .h-l{font:700 32px/1 var(--fd);text-transform:uppercase;letter-spacing:.01em}
+.app .h-m{font:700 22px/1.05 var(--fd);text-transform:uppercase;letter-spacing:.02em}
+.app .meta{font:500 10.5px/1.4 var(--fm);text-transform:uppercase;letter-spacing:.09em;color:var(--tx3)}
+.app .sub{color:var(--tx2);font-size:13px}
+
+/* nav: mobile */
+.mtop{display:flex;align-items:center;gap:10px;height:54px;padding:0 14px 0 16px;border-bottom:1px solid var(--line);background:var(--bg);flex:none}
+.mtop .ttl{flex:1;font:700 19px var(--fd);text-transform:uppercase;letter-spacing:.06em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ib{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;position:relative;color:var(--tx);flex:none}
+.ib.bell i{position:absolute;top:4px;right:3px;min-width:16px;height:16px;background:var(--acc);color:var(--acc-ink);font:600 9.5px/16px var(--fm);text-align:center;font-style:normal;padding:0 3px}
+.mnav{display:grid;border-top:1px solid var(--line);background:var(--bg);flex:none}
+.mnav a{display:flex;flex-direction:column;align-items:center;gap:4px;padding:9px 0 12px;font:500 9.5px var(--fm);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)}
+.mnav a.on{color:var(--tx)}
+.mnav a.on .ic{color:var(--acc)}
+.logo{font:700 22px/1 var(--fd);letter-spacing:.16em;white-space:nowrap;display:inline-flex;align-items:center}
+.logo i{display:inline-block;width:9px;height:9px;border-radius:50%;background:var(--acc);box-shadow:0 0 0 3px rgba(255,106,43,.28),0 0 0 7px rgba(255,106,43,.1);margin-right:12px}
+/* nav: desktop */
+.dnav{display:none;align-items:center;gap:28px;height:68px;padding:0 48px;border-bottom:1px solid var(--line);flex:none}
+.dnav nav{display:flex;gap:22px}
+.dnav nav a{font:600 15px var(--fd);text-transform:uppercase;letter-spacing:.1em;color:var(--tx2);padding:23px 0;border-bottom:2px solid transparent}
+.dnav nav a.on{color:var(--tx);border-color:var(--acc)}
+.dsearch{flex:1;max-width:460px;margin-left:auto;height:40px;border:1px solid var(--line2);background:var(--bg2);display:flex;align-items:center;gap:10px;padding:0 12px;color:var(--tx3);font-size:13.5px}
+.dsearch.typed{color:var(--tx)}
+.dnav .av{width:34px;height:34px;font-size:12px}
+
+/* layout helpers */
+.split>*+*{margin-top:28px}
+.row-flex{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
+.stack>*+*{margin-top:12px}
+.hr{height:1px;background:var(--line);margin:18px 0}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:40px;padding:0 16px;border:1px solid var(--line2);background:transparent;color:var(--tx);font:600 13px/1 var(--fb);letter-spacing:.02em;white-space:nowrap}
+.btn.pri{background:var(--acc);border-color:var(--acc);color:var(--acc-ink)}
+.btn.light{background:var(--tx);color:#0c0c0d;border-color:var(--tx)}
+.btn.sm{height:32px;padding:0 11px;font-size:12px}
+.btn.xs{height:26px;padding:0 8px;font-size:11.5px}
+.btn.block{display:flex;width:100%}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn.dangerfill{background:var(--bad);border-color:var(--bad);color:#1a0505}
+.btn.dis{opacity:.4}
+.btn.ghost{border-color:transparent;padding:0 6px}
+.link{color:var(--acc)!important;font-weight:600}
+
+/* chips & tags */
+.chips{display:flex;gap:6px;flex-wrap:wrap}
+.chips.scroll{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
+.chip{height:32px;padding:0 12px;border:1px solid var(--line2);display:inline-flex;align-items:center;gap:6px;font:500 12.5px var(--fb);color:var(--tx2);white-space:nowrap;flex:none}
+.chip.on{background:var(--tx);color:var(--bg);border-color:var(--tx)}
+.chip .n{font:500 10.5px var(--fm);opacity:.7}
+.chip .x{opacity:.6;margin-left:2px}
+.tag{display:inline-flex;align-items:center;gap:6px;font:500 10.5px/1.2 var(--fm);text-transform:uppercase;letter-spacing:.08em;color:var(--tx2);white-space:nowrap}
+.tag::before{content:"";width:7px;height:7px;background:currentColor;flex:none}
+.tag.ok{color:var(--ok)}.tag.warn{color:var(--warn)}.tag.bad{color:var(--bad)}.tag.acc{color:var(--acc)}.tag.mute{color:var(--tx3)}.tag.info{color:var(--info)}
+.ribbon{position:absolute;right:0;bottom:0;background:rgba(12,12,13,.86);font:600 9.5px/1 var(--fm);text-transform:uppercase;letter-spacing:.1em;padding:5px 6px;color:var(--tx)}
+
+/* sections */
+.sec{margin-top:30px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid var(--line2);padding-top:11px;margin-bottom:14px}
+.sec-h h4{font:700 16px var(--fd);letter-spacing:.12em;text-transform:uppercase}
+.sec-h h4 small{font:500 10.5px var(--fm);color:var(--tx3);letter-spacing:.08em;margin-left:8px}
+.sec-h a{font:500 10.5px var(--fm);text-transform:uppercase;letter-spacing:.09em;color:var(--acc);white-space:nowrap}
+
+/* tiles & grids */
+.tile{display:block;min-width:0}
+.tile .im{position:relative;aspect-ratio:1;overflow:hidden;background:var(--bg3)}
+.tile .im.w{aspect-ratio:16/10}
+.tile .im img{width:100%;height:100%;object-fit:cover}
+.tile .t{margin-top:8px;font-weight:600;font-size:13.5px;line-height:1.25;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile .s{font-size:12px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:1px}
+.tile .r{font:500 10px/1.3 var(--fm);color:var(--acc);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+.tile.sel .im{outline:2px solid var(--acc);outline-offset:-2px}
+.selmark{position:absolute;top:6px;right:6px;width:24px;height:24px;background:var(--acc);color:var(--acc-ink);display:flex;align-items:center;justify-content:center}
+.datebadge{position:absolute;left:0;top:0;background:var(--bg);padding:5px 8px 6px;font:600 10px/1.15 var(--fm);text-transform:uppercase;text-align:center;letter-spacing:.06em}
+.datebadge b{display:block;font:700 22px/1 var(--fd);letter-spacing:0}
+.plus{color:var(--acc);font-weight:700;padding:0 1px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 12px}
+.grid.g3m,.grid.m3{grid-template-columns:repeat(3,minmax(0,1fr));gap:14px 8px}
+.hrow{display:grid;grid-auto-flow:column;grid-auto-columns:44%;gap:12px;overflow-x:auto;scrollbar-width:none;margin-right:-16px;padding-right:16px}
+.hrow.wide{grid-auto-columns:72%}
+.hrow.lg{grid-auto-columns:62%}
+
+/* rows */
+.rows>*{border-bottom:1px solid var(--line)}
+.rows>*:first-child{border-top:1px solid var(--line)}
+.rows.nt>*:first-child{border-top:0}
+.row{display:flex;align-items:center;gap:12px;padding:12px 0;min-width:0}
+.row .thumb{width:48px;height:48px;flex:none;background:var(--bg3);overflow:hidden}
+.row .thumb.w{width:76px;height:52px}
+.row .thumb.lg{width:64px;height:64px}
+.row .thumb img{width:100%;height:100%;object-fit:cover}
+.row .main{flex:1;min-width:0}
+.row .t{font-weight:600;font-size:14px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .t.wrap{white-space:normal}
+.row .s{font-size:12.5px;color:var(--tx2);line-height:1.35;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row .s.wrap{white-space:normal}
+.row .end{display:flex;align-items:center;gap:12px;color:var(--tx2);flex:none}
+.row .no{width:20px;font:500 12px var(--fm);color:var(--tx3);flex:none;text-align:right}
+.row.f{box-shadow:inset 3px 0 0 var(--acc);padding-left:12px;background:linear-gradient(90deg,var(--accsoft),transparent 70%)}
+.row.dim .t,.row.dim .s{color:var(--tx3)}
+.nx{font-size:12.5px;margin-top:3px;color:var(--tx)}
+.nx .meta{margin-right:6px;color:var(--acc)}
+.dblk{width:50px;flex:none;text-align:center;border:1px solid var(--line2);padding:5px 0 6px;font:500 9.5px/1.2 var(--fm);text-transform:uppercase;letter-spacing:.06em;color:var(--tx2)}
+.dblk b{display:block;font:700 23px/1 var(--fd);color:var(--tx);letter-spacing:0;margin:1px 0}
+.dblk.past{opacity:.55}
+
+/* avatars & stars */
+.av{display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;font:700 14px var(--fd);letter-spacing:.06em;flex:none}
+.av.sm{width:30px;height:30px;font-size:11px}
+.av.lg{width:84px;height:84px;font-size:30px}
+.av.xs{width:22px;height:22px;font-size:9px}
+.avs{display:inline-flex}.avs .av{margin-right:-6px;box-shadow:0 0 0 2px var(--bg)}
+.stars{display:inline-flex;gap:2px;color:var(--acc);vertical-align:middle}
+.stars .o{color:var(--line2)}
+
+/* forms */
+.fld{margin-bottom:18px}
+.fld>label,.lbl{display:block;font:500 10.5px var(--fm);text-transform:uppercase;letter-spacing:.09em;color:var(--tx3);margin-bottom:7px}
+.inp{min-height:44px;border:1px solid var(--line2);background:var(--bg2);display:flex;align-items:center;padding:0 12px;color:var(--tx);gap:10px;font-size:14px}
+.inp.ta{align-items:flex-start;padding:11px 12px;line-height:1.55;min-height:120px}
+.inp.focus{border-color:var(--tx2)}
+.inp .ph{color:var(--tx3)}
+.inp .caret{width:1px;height:18px;background:var(--acc);display:inline-block;margin-left:-8px}
+.inp .grow{flex:1;min-width:0}
+.help{font-size:12px;color:var(--tx3);margin-top:7px;line-height:1.45}
+.err{color:var(--bad);font-size:12px;margin-top:7px}
+.toggle{width:38px;height:22px;border:1px solid var(--line2);position:relative;flex:none}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--tx3)}
+.toggle.on{background:var(--acc);border-color:var(--acc)}
+.toggle.on::after{left:19px;background:var(--acc-ink)}
+.slider{height:2px;background:var(--line2);position:relative;margin:18px 0 10px}
+.slider i{position:absolute;left:0;top:0;height:2px;background:var(--acc)}
+.slider b{position:absolute;top:-7px;width:16px;height:16px;background:var(--tx);margin-left:-8px}
+.check{width:18px;height:18px;border:1px solid var(--line2);display:inline-flex;align-items:center;justify-content:center;flex:none;color:var(--acc-ink)}
+.check.on{background:var(--acc);border-color:var(--acc)}
+.optrow{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.optrow .main{flex:1}
+.drop{border:1px solid var(--line2);border-top:0;background:var(--bg2)}
+.drop .row{padding:10px 12px}
+.drop .row.f{padding-left:12px}
+
+/* notes / alerts */
+.note{border-left:3px solid var(--line2);padding:10px 12px;background:var(--bg2);font-size:13px;color:var(--tx2);line-height:1.45}
+.note b{color:var(--tx)}
+.note.ok{border-color:var(--ok)}.note.warn{border-color:var(--warn)}.note.bad{border-color:var(--bad)}.note.hot{border-color:var(--acc)}.note.info{border-color:var(--info)}
+.notes-stack>*+*{margin-top:8px}
+
+/* tabs */
+.tabs{display:flex;gap:22px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+.tabs a{padding:11px 0;font:700 14px var(--fd);letter-spacing:.11em;text-transform:uppercase;color:var(--tx3);white-space:nowrap;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs a.on{color:var(--tx);border-color:var(--acc)}
+.tabs a .n{font:500 10.5px var(--fm);margin-left:5px;color:var(--tx3)}
+.seg{display:inline-flex;border:1px solid var(--line2)}
+.seg a{padding:8px 14px;font:600 12.5px var(--fb);color:var(--tx2)}
+.seg a.on{background:var(--tx);color:var(--bg)}
+
+/* stats & tables */
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-top:1px solid var(--line2)}
+.stat{padding:14px 12px 14px 0;border-bottom:1px solid var(--line)}
+.stat b{display:block;font:700 34px/1 var(--fd);letter-spacing:.01em}
+.stat b small{font-size:18px;color:var(--tx2)}
+.stat span{display:block;margin-top:5px}
+.tscroll{overflow-x:auto;margin-right:-16px;padding-right:16px}
+.tbl{width:100%;border-collapse:collapse;font-size:13px}
+.tbl th{font:500 10px var(--fm);text-transform:uppercase;letter-spacing:.09em;color:var(--tx3);text-align:left;padding:8px 14px 8px 0;border-bottom:1px solid var(--line2);white-space:nowrap}
+.tbl td{padding:11px 14px 11px 0;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap}
+.tbl .num{text-align:right;font-family:var(--fm);font-size:12.5px}
+.tbl tr.f td{background:var(--accsoft)}
+.tbl tr.f td:first-child{box-shadow:inset 3px 0 0 var(--acc);padding-left:10px}
+.bar{height:6px;background:var(--line);position:relative;flex:1}
+.bar i{position:absolute;left:0;top:0;bottom:0;background:var(--acc)}
+.bar.ok i{background:var(--ok)}
+.hbars>div{display:grid;grid-template-columns:minmax(90px,120px) 1fr auto;gap:10px;align-items:center;padding:7px 0;font-size:12.5px}
+.hbars .v{font-family:var(--fm);text-align:right;color:var(--tx2);white-space:nowrap;min-width:36px}
+.vbars{display:flex;align-items:flex-end;gap:6px;height:120px;border-bottom:1px solid var(--line2)}
+.vbars i{flex:1;background:var(--line2);display:block}
+.vbars i.a{background:var(--acc)}
+.vlab{display:flex;gap:6px;margin-top:6px}.vlab span{flex:1;text-align:center;font:500 9.5px var(--fm);color:var(--tx3);text-transform:uppercase}
+
+/* map */
+.map{position:relative;border:1px solid var(--line2);overflow:hidden;background:#111316}
+.map>img{width:100%;height:100%;object-fit:cover}
+.pin{position:absolute;transform:translate(-50%,-50%);min-width:20px;height:20px;background:var(--tx);color:#0c0c0d;font:600 10px/20px var(--fm);text-align:center;padding:0 5px}
+.pin.f{background:var(--acc);color:var(--acc-ink);min-width:28px;height:28px;line-height:28px;font-size:12px;box-shadow:0 0 0 6px rgba(255,106,43,.22),0 0 0 14px rgba(255,106,43,.08)}
+.pinlab{position:absolute;transform:translate(22px,-50%);background:var(--bg);border:1px solid var(--line2);padding:4px 8px;font:600 11.5px var(--fb);white-space:nowrap}
+.osm{position:absolute;right:5px;bottom:3px;font:9px var(--fm);color:#5a5c62}
+.mapx{position:absolute;right:6px;top:6px;width:28px;height:28px;background:var(--bg);border:1px solid var(--line2);display:flex;align-items:center;justify-content:center}
+.listhead{margin:14px 0 12px}
+
+/* calendar */
+.cal{border-top:1px solid var(--line2)}
+.cal .cg{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:8px}
+.cal .cg span{height:34px;display:flex;align-items:center;justify-content:center;font:500 11.5px var(--fm);color:var(--tx2);position:relative}
+.cal .cg span.h{color:var(--tx3);font-size:9.5px;aspect-ratio:auto;padding:4px 0;text-transform:uppercase}
+.cal .cg span.e{opacity:0}
+.cal .cg span.m{background:var(--accsoft);color:var(--tx);box-shadow:inset 0 -2px 0 var(--acc)}
+.cal .cg span.p{background:var(--bg3);color:var(--tx);box-shadow:inset 0 -2px 0 var(--warn)}
+.cal .cg span.x{color:var(--tx3);text-decoration:line-through}
+.cal .cg span.t{outline:1px solid var(--tx2);outline-offset:-1px}
+.calhead{display:flex;justify-content:space-between;align-items:center;padding-top:10px}
+
+/* hero / misc page parts */
+.hero{padding:10px 0 4px}
+.hero .mosaic{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.hero .mosaic img{width:100%;aspect-ratio:1;object-fit:cover}
+.cat{margin-top:26px}
+.ahero{position:relative;margin:-16px -16px 0;aspect-ratio:16/12;overflow:hidden;background:var(--bg3)}
+.ahero.c{aspect-ratio:16/11}
+.ahero>img{width:100%;height:100%;object-fit:cover}
+.ahero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,13,0) 30%,rgba(12,12,13,.94) 92%)}
+.ahero .cap{position:absolute;left:16px;right:16px;bottom:14px;z-index:2}
+.ahero .cap .h-xl{font-size:54px}
+.factline{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:13px;color:var(--tx2);margin-top:10px}
+.factline b{color:var(--tx);font-weight:600}
+.near{display:flex;gap:12px;align-items:center;padding:12px;margin-top:16px;border-left:3px solid var(--acc);background:var(--bg2)}
+.near .main{flex:1;min-width:0}
+.rsum{display:grid;grid-template-columns:auto 1fr;gap:16px 20px;align-items:center}
+.rsum .big b{display:block;font:700 54px/.9 var(--fd)}
+.rsum .dist .drow{display:flex;align-items:center;gap:8px;font:500 10.5px var(--fm);color:var(--tx3);height:13px}
+.rsum .yours{grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding-top:12px;border-top:1px solid var(--line)}
+.rev{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--line)}
+.rev .main{flex:1;min-width:0}
+.rev .rh{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rev .rh b{font-size:13.5px}
+.rev p{font-size:13.5px;color:#d4d3ce;margin-top:5px;line-height:1.55}
+.rev .ra{display:flex;gap:16px;margin-top:8px;font:500 10.5px var(--fm);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)}
+.rev .ra a{display:inline-flex;align-items:center;gap:5px}
+.reply{margin-top:10px;padding:8px 0 2px 12px;border-left:2px solid var(--acc)}
+.reply .meta{color:var(--acc)}
+.relhead{display:block}
+.relhead .cover{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.trk .t{font-weight:500}
+.trk .end{gap:14px}
+.steps{display:flex;gap:6px;margin-bottom:22px}
+.steps span{flex:1;border-top:3px solid var(--line2);padding-top:7px;font:500 10px var(--fm);text-transform:uppercase;letter-spacing:.08em;color:var(--tx3)}
+.steps span.on{border-color:var(--acc);color:var(--tx)}
+.steps span.done{border-color:var(--tx2);color:var(--tx2)}
+.gtile{position:relative;display:block;aspect-ratio:1.6;overflow:hidden}
+.gtile img{width:100%;height:100%;object-fit:cover;filter:saturate(.85) brightness(.75)}
+.gtile span{position:absolute;left:10px;bottom:9px;font:700 19px/1 var(--fd);text-transform:uppercase;letter-spacing:.04em;text-shadow:0 1px 8px rgba(0,0,0,.6)}
+.gtile.on{outline:2px solid var(--acc);outline-offset:-2px}
+.gtile.on .selmark{display:flex}
+.gtile .selmark{display:none}
+.stickybar{position:sticky;bottom:0;margin:24px -16px 0;padding:12px 16px;border-top:1px solid var(--line);background:var(--bg);display:flex;align-items:center;justify-content:space-between;gap:12px}
+.profhead{display:flex;gap:14px;align-items:flex-start}
+.profhead .main{flex:1;min-width:0}
+.counts{display:flex;flex-wrap:wrap;gap:4px 16px;margin-top:12px;font-size:13px;color:var(--tx2)}
+.counts b{color:var(--tx);font-weight:600;font-family:var(--fm);font-size:13px}
+.rolebox{border:1px solid var(--line2);padding:14px;margin-top:22px}
+.rolebox .rbh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:6px}
+.linkrows a{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);font-size:14px}
+.linkrows a span{flex:1}
+.linkrows a .ic:last-child{color:var(--tx3)}
+.minihead{display:flex;align-items:center;gap:10px;padding-bottom:12px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.minihead .main{flex:1;min-width:0}
+.mosaic4{display:grid;grid-template-columns:1fr 1fr;width:112px;height:112px;flex:none}
+.mosaic4 img{width:100%;height:100%;object-fit:cover}
+.listhead2{display:flex;gap:14px;align-items:flex-end}
+.dim-layer{position:absolute;inset:0;background:rgba(5,5,6,.66);z-index:5}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:6;background:var(--bg2);border-top:1px solid var(--line2);padding:16px 16px 22px}
+.sheet .grab{width:40px;height:3px;background:var(--line2);margin:0 auto 14px}
+.qrbox{background:#fff;padding:14px;width:240px;margin:20px auto 0}
+.qrbox img{width:100%;image-rendering:pixelated}
+.scan{position:relative;background:#050506;aspect-ratio:3/3.4;overflow:hidden;border:1px solid var(--line2)}
+.scan>img{width:100%;height:100%;object-fit:cover;opacity:.55;filter:blur(1px)}
+.scan .corners{position:absolute;inset:22%;}
+.scan .corners i{position:absolute;width:28px;height:28px;border-color:var(--acc);border-style:solid}
+.scan .corners i:nth-child(1){left:0;top:0;border-width:3px 0 0 3px}
+.scan .corners i:nth-child(2){right:0;top:0;border-width:3px 3px 0 0}
+.scan .corners i:nth-child(3){left:0;bottom:0;border-width:0 0 3px 3px}
+.scan .corners i:nth-child(4){right:0;bottom:0;border-width:0 3px 3px 0}
+.scanres{padding:14px;border:1px solid var(--line2);border-top:0;display:flex;gap:12px;align-items:center;min-height:84px}
+.scanres.ok{background:rgba(76,195,138,.12);border-left:4px solid var(--ok)}
+.scanres .big{font:700 24px/1 var(--fd);text-transform:uppercase;letter-spacing:.04em}
+.scanres.ok .big{color:var(--ok)}
+.tlist{border-left:1px solid var(--line2);margin-left:6px}
+.tlist>div{position:relative;padding:0 0 14px 18px}
+.tlist>div::before{content:"";position:absolute;left:-5px;top:4px;width:9px;height:9px;background:var(--line2)}
+.tlist>div.done::before{background:var(--tx2)}
+.tlist>div.on::before{background:var(--acc);box-shadow:0 0 0 4px var(--accsoft)}
+.tlist>div .t{font-weight:600;font-size:13.5px}
+.tlist>div .s{font-size:12.5px;color:var(--tx2)}
+.reqband{position:relative;margin:-16px -16px 20px;height:110px;overflow:hidden}
+.reqband img{width:100%;height:100%;object-fit:cover}
+.reqband::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(12,12,13,0),rgba(12,12,13,.9))}
+.reqband .meta{position:absolute;left:16px;bottom:10px;z-index:2;color:var(--tx)}
+.codebox{display:flex;align-items:center;justify-content:space-between;gap:12px;border:1px dashed var(--acc);padding:14px;font:600 20px var(--fm);letter-spacing:.08em;margin:10px 0}
+.box{border:1px solid var(--line2);padding:16px}
+.box+.box{margin-top:14px}
+.ticketbox{border:1px solid var(--line2);padding:16px;background:var(--bg2)}
+.ticketbox .price{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px}
+.lineup .row .thumb{width:52px;height:52px}
+.gallery{display:grid;grid-template-columns:2fr 1fr;grid-template-rows:1fr 1fr;gap:4px;margin:-16px -16px 0;aspect-ratio:16/10}
+.gallery img{width:100%;height:100%;object-fit:cover}
+.gallery img:first-child{grid-row:1/3}
+.vh{display:flex;gap:14px;align-items:flex-start;margin-top:16px}
+.vh .main{flex:1;min-width:0}
+.minimap{width:112px;flex:none}
+.minimap .map{aspect-ratio:1}
+.upgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px}
+.upgrid>*{aspect-ratio:1;overflow:hidden;position:relative}
+.upgrid img{width:100%;height:100%;object-fit:cover}
+.upgrid .add{border:1px dashed var(--line2);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;color:var(--tx3);font:500 10px var(--fm);text-transform:uppercase;letter-spacing:.08em}
+.feedrow{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line);align-items:flex-start}
+.feedrow .main{flex:1;min-width:0;font-size:13.5px;line-height:1.45}
+.feedrow .main b{font-weight:600}
+.feedrow .main .meta{display:block;margin-top:4px}
+.feedrow .thumb{width:56px;height:56px;flex:none}
+.feedrow .thumb img{width:100%;height:100%;object-fit:cover}
+.nrow{display:flex;gap:12px;padding:14px 16px;border-bottom:1px solid var(--line);align-items:flex-start;margin:0 -16px;position:relative}
+.nrow .main{flex:1;min-width:0;font-size:13.5px;line-height:1.45}
+.nrow .main .meta{display:block;margin-top:4px}
+.nrow.unread{background:#121214}
+.nrow.unread::after{content:"";position:absolute;right:16px;top:20px;width:8px;height:8px;background:var(--acc)}
+.nrow.hi{box-shadow:inset 4px 0 0 var(--acc)}
+.nrow.mid{box-shadow:inset 4px 0 0 var(--tx3)}
+.nrow .nic{width:40px;height:40px;flex:none;border:1px solid var(--line2);display:flex;align-items:center;justify-content:center;color:var(--tx2)}
+.nrow .nic img{width:100%;height:100%;object-fit:cover}
+.ngroup{font:500 10.5px var(--fm);text-transform:uppercase;letter-spacing:.1em;color:var(--tx3);padding:18px 0 8px}
+.prog{display:flex;align-items:center;gap:10px;margin-top:8px}
+.prog .bar{max-width:200px}
+.cnt{border:1px solid var(--line2);padding:14px;margin-bottom:12px}
+.cnt .ch{display:flex;gap:12px;align-items:flex-start}
+.cnt .ch .main{flex:1;min-width:0}
+.cnt .cf{display:flex;flex-wrap:wrap;gap:6px 18px;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:12.5px;color:var(--tx2)}
+.cnt .cf b{color:var(--tx);font-family:var(--fm);font-weight:500}
+.cnt .ca{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.kv{display:grid;grid-template-columns:130px 1fr;gap:8px 12px;font-size:13px}
+.kv dt{color:var(--tx3);font:500 10.5px var(--fm);text-transform:uppercase;letter-spacing:.08em;padding-top:2px}
+.kv dd{margin:0}
+/* admin */
+.adm{display:flex;flex-direction:column;flex:1}
+.aside{display:none}
+.msecs{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;border-bottom:1px solid var(--line);scrollbar-width:none;flex:none}
+.adm-main{flex:1;display:flex;flex-direction:column;min-width:0}
+.md>*+*{margin-top:22px}
+.detail{border-top:2px solid var(--tx);padding-top:14px}
+.logrow{display:grid;grid-template-columns:52px 1fr;gap:10px;padding:11px 0;border-bottom:1px solid var(--line);font-size:13px}
+.logrow .tm{font:500 11px var(--fm);color:var(--tx3);padding-top:2px}
+.logrow .ev .meta{display:inline-block;margin-right:8px}
+.logrow .ev .who{color:var(--tx3);font-size:12px;margin-top:2px}
+.raw{font:12px/1.5 var(--fm);background:var(--bg2);border:1px solid var(--line);padding:10px;color:var(--tx2);white-space:pre;overflow:hidden}
+.health>div{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.legend{display:flex;gap:14px;flex-wrap:wrap;margin-top:10px}
+.skel{background:linear-gradient(90deg,var(--bg3),#222226,var(--bg3));}
+.skel.t{height:12px;margin-top:9px;width:80%}
+.skel.s{height:10px;margin-top:6px;width:55%}
+
+/* ============ Desktop (frame width ≥ 900px) ============ */
+@container app (min-width:900px){
+  .only-m{display:none!important}
+  .mtop,.mnav{display:none}
+  .dnav{display:flex}
+  .app .page{padding:36px 48px 56px;max-width:1280px;margin:0 auto}
+  .app .h-xl{font-size:76px}
+  .app .h-l{font-size:46px}
+  .app .h-m{font-size:28px}
+  .chips.scroll{flex-wrap:wrap;margin-right:0;padding-right:0}
+  .grid{grid-template-columns:repeat(5,minmax(0,1fr));gap:28px 20px}
+  .grid.g6{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .grid.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid.g3m{grid-template-columns:repeat(6,minmax(0,1fr));gap:20px 16px}
+  .hrow{grid-auto-columns:calc((100% - 5*20px)/6);gap:20px;margin-right:0;padding-right:0}
+  .hrow.wide{grid-auto-columns:calc((100% - 3*20px)/4)}
+  .hrow.lg{grid-auto-columns:calc((100% - 3*20px)/4)}
+  .split{display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:56px;align-items:start}
+  .split>*+*{margin-top:0}
+  .split.side-l{grid-template-columns:340px minmax(0,1fr)}
+  .split.even{grid-template-columns:1fr 1fr}
+  .split.wide-side{grid-template-columns:minmax(0,1fr) 420px}
+  .sticky{position:sticky;top:24px}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stats.s5{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .stat{padding:20px 20px 20px 0}
+  .stat b{font-size:46px}
+  .tscroll{margin-right:0;padding-right:0}
+  .hero{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:56px;align-items:center;padding:20px 0 10px}
+  .ahero,.ahero.c{margin:-36px -48px 0;aspect-ratio:auto;height:440px}
+  .reqband{margin:-36px -48px 32px;height:180px}
+  .reqband .meta{left:48px;bottom:16px}
+  .ahero .cap{left:48px;right:48px;bottom:30px}
+  .ahero .cap .h-xl{font-size:110px}
+  .gallery{margin:-36px -48px 0;aspect-ratio:auto;height:400px;grid-template-columns:2fr 1fr}
+  .relhead{display:grid;grid-template-columns:420px minmax(0,1fr);gap:48px;align-items:start}
+  .mapsplit{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:32px;margin-top:20px;align-items:start}
+  .mapsplit .mapcol .map{aspect-ratio:auto!important;height:620px}
+  .mapsplit .mapcol{position:sticky;top:24px}
+  .listhead{margin-top:0}
+  .stickybar{margin:32px 0 0;padding:16px 0;border-top:1px solid var(--line2)}
+  .narrow{max-width:760px;margin:0 auto}
+  .narrow-s{max-width:560px;margin:0 auto}
+  .nrow{margin:0;padding:16px 20px}
+  .rsum{grid-template-columns:auto 1fr auto;gap:28px}
+  .rsum .yours{grid-column:auto;border-top:0;padding-top:0;flex-direction:column;align-items:flex-start;border-left:1px solid var(--line);padding-left:24px}
+  .sheet{left:50%;right:auto;bottom:auto;top:140px;transform:translateX(-50%);width:540px;border:1px solid var(--line2);padding:22px}
+  .sheet .grab{display:none}
+  .adm{flex-direction:row}
+  .aside{display:flex;flex-direction:column;width:250px;flex:none;border-right:1px solid var(--line);padding:24px 18px;gap:2px;background:#0e0e10}
+  .aside a{display:flex;align-items:center;gap:10px;padding:10px 10px;font:600 15px var(--fd);text-transform:uppercase;letter-spacing:.08em;color:var(--tx2)}
+  .aside a b{margin-left:auto;font:600 10.5px var(--fm);background:var(--acc);color:var(--acc-ink);padding:2px 6px}
+  .aside a.on{background:var(--bg3);color:var(--tx);box-shadow:inset 3px 0 0 var(--acc)}
+  .aside .back{margin-top:auto;color:var(--tx3)}
+  .adm .mtop,.msecs{display:none}
+  .adm-main .page{max-width:none;padding:32px 40px 48px}
+  .md{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:36px;align-items:start}
+  .md>*+*{margin-top:0}
+  .detail{position:sticky;top:20px;border:1px solid var(--line2);border-top:3px solid var(--tx);padding:20px}
+  .gallery-3{grid-template-columns:2fr 1fr 1fr}
+  .qrbox{width:280px}
+  .scan{aspect-ratio:16/10}
+  .hbars>div{grid-template-columns:180px 1fr auto}
+  .vh{margin-top:28px}
+  .minimap{width:180px}
+  .upgrid{grid-template-columns:repeat(4,1fr)}
+  .lineup.grid-d{display:grid;grid-template-columns:1fr 1fr;column-gap:24px}
+}
+</style>
+</head>
+<body class="show-opt">
+<div class="doc">
+  <div class="kicker">Programsko inženjerstvo · G10 · Sonar · UI design · version 2</div>
+  <h1>Sonar<i>.</i> Every screen,<br>mobile and desktop</h1>
+  <p class="intro">Second iteration of the interface, rebuilt from the review of v1. The concept document (<code>docs/deliverables/SONAR_KONCEPT.pdf</code>) defines what each screen must do; the review comments override it where they differ. Every screen is shown twice from the same markup: a 390 px phone and a 1280 px desktop (scaled down). Dashed orange outlines mark optional features, which you can hide from the toolbar. All names, numbers and images are invented placeholders.</p>
+  <div class="toolbar">
+    <div class="grp">Desktop scale <button data-s=".5">50%</button><button data-s=".6" class="on">60%</button><button data-s=".75">75%</button><button data-s="1">100%</button></div>
+    <div class="grp"><button id="optbtn" class="on">Optional markers</button></div>
+    <div class="toc" id="toc"></div>
+  </div>
+  <div id="doc"></div>
+</div>
+
+<script>
+/* =================================================================
+   Helpers: deterministic random, generated placeholder images, icons
+   ================================================================= */
+function h32(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function R(seed){let a=h32(String(seed));return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const PALS=[["#ff6a2b","#151515","#f2e6d4"],["#e6d3b8","#2b3a55","#c85c5c"],["#0f4c5c","#e36414","#fb8b24"],["#22223b","#9a8c98","#f2e9e4"],["#2d6a4f","#b7e4c7","#081c15"],["#ffbe0b","#3a0ca3","#f72585"],["#e9edc9","#283618","#bc6c25"],["#14213d","#fca311","#e5e5e5"],["#4a4e69","#c9ada7","#16162a"],["#0b090a","#e5383b","#f5f3f4"],["#d8f3dc","#40916c","#1b4332"],["#3d348b","#7678ed","#f7b801"],["#264653","#e9c46a","#e76f51"],["#101010","#8ecae6","#219ebc"],["#5f0f40","#9a031e","#fb8b24"],["#f1faee","#457b9d","#1d3557"],["#1a1a1a","#d4d4d4","#ff6a2b"],["#6b2737","#e08e45","#f8f4a6"]];
+const pick=(r,a)=>a[Math.floor(r()*a.length)];
+const SVG=(w,h,body)=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice">${body}</svg>`);
+const grain=(o=.2)=>`<filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.15" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)" opacity="${o}"/>`;
+const CACHE={};
+function memo(k,f){return CACHE[k]||(CACHE[k]=f())}
+
+/* Album cover placeholder: six generative styles, picked by title */
+function cover(seed){return memo('c'+seed,()=>{
+  const r=R('c'+seed),p=pick(r,PALS),flip=r()<.5,a=flip?p[0]:p[1],b=flip?p[1]:p[0],c=p[2];let g='';
+  switch(Math.floor(r()*6)){
+    case 0:{const cx=15+r()*70,cy=15+r()*70;g=`<rect width="100" height="100" fill="${a}"/>`;for(let i=1;i<10;i++)g+=`<circle cx="${cx}" cy="${cy}" r="${i*8.5}" fill="none" stroke="${i%3?b:c}" stroke-width="${(1+r()*3).toFixed(1)}" opacity="${(.45+r()*.55).toFixed(2)}"/>`;break}
+    case 1:{const ang=Math.floor(r()*4)*45;g=`<rect width="100" height="100" fill="${a}"/><g transform="rotate(${ang} 50 50)">`;for(let i=-70;i<170;i+=7+r()*11)g+=`<rect x="${i.toFixed(1)}" y="-70" width="${(2+r()*7).toFixed(1)}" height="240" fill="${r()<.72?b:c}"/>`;g+='</g>';break}
+    case 2:{const hy=52+r()*26;g=`<rect width="100" height="100" fill="${a}"/><circle cx="${(28+r()*44).toFixed(1)}" cy="${hy.toFixed(1)}" r="${(16+r()*16).toFixed(1)}" fill="${c}"/><rect y="${hy.toFixed(1)}" width="100" height="${(100-hy).toFixed(1)}" fill="${b}"/>`;for(let i=0;i<6;i++)g+=`<rect y="${(hy+3+i*i*1.5).toFixed(1)}" width="100" height="${(0.8+i*.55).toFixed(1)}" fill="${a}" opacity=".55"/>`;break}
+    case 3:{g=`<rect width="100" height="100" fill="${a}"/>`;for(let i=0;i<5;i++)g+=`<rect x="${(r()*72).toFixed(1)}" y="${(r()*72).toFixed(1)}" width="${(12+r()*46).toFixed(1)}" height="${(12+r()*46).toFixed(1)}" fill="${[b,c][i%2]}" opacity="${(.65+r()*.35).toFixed(2)}"/>`;break}
+    case 4:{g=`<defs><linearGradient id="l" x1="0" y1="0" x2="${r().toFixed(2)}" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="100" height="100" fill="url(#l)"/><circle cx="${(r()*100).toFixed(1)}" cy="${(r()*100).toFixed(1)}" r="${(9+r()*26).toFixed(1)}" fill="${c}" opacity=".9"/><rect x="0" y="${(r()*90).toFixed(1)}" width="100" height="1.2" fill="${c}"/>`;break}
+    default:{const L=(String(seed).trim()[0]||'S').toUpperCase();g=`<rect width="100" height="100" fill="${a}"/><text x="${r()<.5?4:50}" y="96" ${r()<.5?'':'text-anchor="middle"'} font-family="Arial Narrow, Arial, sans-serif" font-weight="700" font-size="${(92+r()*36).toFixed(0)}" fill="${b}">${L}</text><rect width="100" height="${(5+r()*10).toFixed(1)}" fill="${c}"/>`}
+  }
+  return SVG(100,100,g+grain(.17));})}
+/* Neutral default image for songs that are not on any album */
+function defaultCover(){return memo('dflt',()=>{let g=`<rect width="100" height="100" fill="#1b1b1e"/>`;for(let i=1;i<8;i++)g+=`<circle cx="50" cy="50" r="${i*7}" fill="none" stroke="#3a3a40" stroke-width="1.2"/>`;g+=`<circle cx="50" cy="50" r="3" fill="#ff6a2b"/>`;return SVG(100,100,g+grain(.12))})}
+/* Artist photo placeholder: lit stage, 1-3 silhouettes */
+function artistImg(seed,w=100,h=100){return memo(`a${seed}${w}`,()=>{
+  const r=R('a'+seed),p=pick(r,PALS);let g=`<defs><radialGradient id="r" cx="${(25+r()*50).toFixed(0)}%" cy="${(10+r()*30).toFixed(0)}%" r="85%"><stop offset="0" stop-color="${p[0]}"/><stop offset=".55" stop-color="${p[2]}" stop-opacity=".35"/><stop offset="1" stop-color="#0b0b0c"/></radialGradient></defs><rect width="${w}" height="${h}" fill="#0b0b0c"/><rect width="${w}" height="${h}" fill="url(#r)"/>`;
+  const n=1+Math.floor(r()*3),k=h/100;
+  for(let i=0;i<n;i++){const cx=w/2+(i-(n-1)/2)*(w/(n+1.3)),s=(.85+r()*.3)*k,top=h*(.34+r()*.08);g+=`<g fill="#09090a" opacity=".93"><circle cx="${cx.toFixed(1)}" cy="${top.toFixed(1)}" r="${(11*s).toFixed(1)}"/><path d="M${(cx-26*s).toFixed(1)} ${h} Q${(cx-24*s).toFixed(1)} ${(top+18*s).toFixed(1)} ${cx.toFixed(1)} ${(top+15*s).toFixed(1)} Q${(cx+24*s).toFixed(1)} ${(top+18*s).toFixed(1)} ${(cx+26*s).toFixed(1)} ${h} Z"/></g>`}
+  return SVG(w,h,g+grain(.22));})}
+/* Venue photo placeholder: dark room, beams of light, crowd */
+function venueImg(seed){return memo('v'+seed,()=>{
+  const r=R('v'+seed),p=pick(r,PALS),gx=(30+r()*100).toFixed(0);let g=`<defs><radialGradient id="s" cx="${gx}" cy="64" r="90" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${p[0]}" stop-opacity=".55"/><stop offset="1" stop-color="#0d0d0f" stop-opacity="0"/></radialGradient></defs><rect width="160" height="100" fill="#111013"/><rect width="160" height="100" fill="url(#s)"/>`;
+  for(let i=0;i<6;i++){const x=10+r()*140;g+=`<polygon points="${(x-2).toFixed(1)},0 ${(x+2).toFixed(1)},0 ${(x+34-r()*68).toFixed(1)},100 ${(x-34+r()*68).toFixed(1)},100" fill="${p[i%3]}" opacity="${(.18+r()*.26).toFixed(2)}"/>`}
+  g+=`<rect y="64" width="160" height="3" fill="${p[0]}" opacity=".55"/><rect y="67" width="160" height="33" fill="#09090a"/>`;
+  for(let x=0;x<166;x+=5+r()*4)g+=`<circle cx="${x.toFixed(1)}" cy="${(76+r()*7).toFixed(1)}" r="${(3+r()*2.4).toFixed(1)}" fill="#050506"/>`;
+  return SVG(160,100,g+grain(.2));})}
+/* Map placeholder (dark street map) */
+function mapImg(seed){return memo('m'+seed,()=>{
+  const r=R('m'+seed),W=400,H=300;let g=`<rect width="${W}" height="${H}" fill="#111316"/>`;
+  for(let i=0;i<5;i++)g+=`<rect x="${(r()*W).toFixed(0)}" y="${(r()*H).toFixed(0)}" width="${(30+r()*70).toFixed(0)}" height="${(20+r()*50).toFixed(0)}" fill="#142019"/>`;
+  let d=`M -20 ${(H*(.35+r()*.3)).toFixed(0)}`;for(let x=0;x<=W+60;x+=70)d+=` Q ${x+35} ${(H*(.25+r()*.5)).toFixed(0)} ${x+70} ${(H*(.35+r()*.3)).toFixed(0)}`;
+  g+=`<path d="${d}" stroke="#0f1e29" stroke-width="20" fill="none"/>`;
+  for(let i=0;i<16;i++){const y=r()*H,x=r()*W;g+=`<path d="M0 ${y.toFixed(0)} L${W} ${(y+(r()-.5)*90).toFixed(0)}" stroke="#1c1f24" stroke-width="1.3"/><path d="M${x.toFixed(0)} 0 L${(x+(r()-.5)*90).toFixed(0)} ${H}" stroke="#1c1f24" stroke-width="1.3"/>`}
+  for(let i=0;i<3;i++)g+=`<path d="M0 ${(r()*H).toFixed(0)} C ${W*.3} ${(r()*H).toFixed(0)}, ${W*.6} ${(r()*H).toFixed(0)}, ${W} ${(r()*H).toFixed(0)}" stroke="#2c3038" stroke-width="3.4" fill="none"/>`;
+  return SVG(W,H,g);})}
+/* QR placeholder */
+function qrImg(seed){return memo('q'+seed,()=>{
+  const r=R('q'+seed),N=29;let g=`<rect x="-3" y="-3" width="${N+6}" height="${N+6}" fill="#fff"/>`;
+  const inF=(x,y)=>(x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9);
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(!inF(x,y)&&r()<.47)g+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="#000"/>`;
+  const fin=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="7" fill="#000"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#000"/>`;
+  g+=fin(0,0)+fin(N-7,0)+fin(0,N-7);
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 ${N+6} ${N+6}" shape-rendering="crispEdges">${g}</svg>`);})}
+
+const IC={
+home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+ticket:'<path d="M3 7h18v3a2 2 0 000 4v3H3v-3a2 2 0 000-4z"/><path d="M15 7v10" stroke-dasharray="2 2"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+bell:'<path d="M6 17v-6a6 6 0 0112 0v6l2 2H4z"/><path d="M10 21h4"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z"/>',
+heartf:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z" fill="currentColor"/>',
+chev:'<path d="M9 6l6 6-6 6"/>',back:'<path d="M15 6l-6 6 6 6"/>',down:'<path d="M6 9l6 6 6-6"/>',
+close:'<path d="M6 6l12 12M18 6L6 18"/>',check:'<path d="M5 12l5 5 9-10"/>',
+cal:'<rect x="4" y="5" width="16" height="15"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+pin:'<path d="M12 21s-6-5.5-6-11a6 6 0 0112 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
+share:'<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v7h14v-7"/>',
+flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
+more:'<path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="3"/>',
+camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+filter:'<path d="M4 5h16l-6 7v6l-4 2v-8z"/>',
+grip:'<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" stroke-width="3"/>',
+settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>',
+log:'<path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c.8-3.5 3.6-5 7-5s6.2 1.5 7 5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 15c2 .6 3.4 2.2 4 5"/>',
+chart:'<path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-8"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+download:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 20h14"/>',
+upload:'<path d="M12 21V9M7 14l5-5 5 5"/><path d="M5 4h14"/>',
+image:'<rect x="3" y="5" width="18" height="14"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 8"/>',
+expand:'<path d="M14 4h6v6M10 20H4v-6M20 4l-7 7M4 20l7-7"/>',
+mail:'<rect x="3" y="5" width="18" height="14"/><path d="M3 6l9 7 9-7"/>',
+link:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>',
+copy:'<rect x="8" y="8" width="12" height="12"/><path d="M16 8V4H4v12h4"/>',
+trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+list:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+clock:'<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>',
+edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+google:'<path d="M20 12.2c0-.6-.1-1.2-.2-1.7H12v3.3h4.5a3.9 3.9 0 01-1.7 2.5v2h2.7c1.6-1.5 2.5-3.6 2.5-6.1z" fill="#4285F4" stroke="none"/><path d="M12 20.5c2.3 0 4.2-.8 5.5-2.1l-2.7-2.1c-.8.5-1.7.8-2.8.8-2.2 0-4-1.5-4.7-3.4H4.5v2.1A8.5 8.5 0 0012 20.5z" fill="#34A853" stroke="none"/><path d="M7.3 13.7a5 5 0 010-3.3V8.3H4.5a8.5 8.5 0 000 7.6z" fill="#FBBC05" stroke="none"/><path d="M12 6.9c1.2 0 2.3.4 3.2 1.3l2.4-2.4A8.4 8.4 0 0012 3.5a8.5 8.5 0 00-7.5 4.8l2.8 2.1C8 8.4 9.8 6.9 12 6.9z" fill="#EA4335" stroke="none"/>',
+star:'<path d="M12 3l2.7 5.6 6.1.9-4.4 4.3 1 6.1L12 17l-5.4 2.9 1-6.1L3.2 9.5l6.1-.9z"/>',
+};
+const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="square" stroke-linejoin="miter">${IC[n]||''}</svg>`;
+const STAR='M12 2.5l2.9 6 6.6.8-4.9 4.6 1.3 6.6L12 17.3l-5.9 3.2 1.3-6.6L2.5 9.3l6.6-.8z';
+function stars(n,size=14){let s='';for(let i=1;i<=5;i++)s+=`<svg width="${size}" height="${size}" viewBox="0 0 24 24" class="${i<=n?'':'o'}" fill="currentColor"><path d="${STAR}"/></svg>`;return `<span class="stars">${s}</span>`}
+function av(name,cls=''){const r=R('u'+name),p=pick(r,PALS);const ini=name.replace(/[.]/g,'').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase();return `<span class="av ${cls}" style="background:${p[0]};color:${p[1]}">${ini}</span>`}
+const logo=()=>`<span class="logo"><i></i>SONAR</span>`;
+
+/* =================================================================
+   Placeholder data
+   ================================================================= */
+const ART=[{n:'Orbita',g:'indie rock',c:'Zagreb'},{n:'Plavi Sat',g:'dream pop',c:'Rijeka'},{n:'Kiša u Svibnju',g:'shoegaze',c:'Zagreb'},{n:'Noćni Autobus',g:'electronic',c:'Zagreb'},{n:'Mali Mjesec',g:'acoustic',c:'Osijek'},{n:'Zlatna Groznica',g:'post-punk',c:'Pula'},{n:'Mjesečeva Strana',g:'ambient',c:'Split'},{n:'Sidro',g:'folk',c:'Zadar'},{n:'Betonski Vrt',g:'noise rock',c:'Rijeka'},{n:'Ljetna Smjena',g:'synth-pop',c:'Split'},{n:'Tihi Kvart',g:'jazz',c:'Zagreb'},{n:'Crveni Signal',g:'garage rock',c:'Varaždin'}];
+const A=n=>ART.find(a=>a.n===n);
+const REL=[['Valovi','Orbita','Album',2025],['Staklene noći','Plavi Sat','Album',2025],['Signali','Noćni Autobus','EP',2025],['Magla','Kiša u Svibnju','Album',2023],['Pustinja u gradu','Zlatna Groznica','Album',2024],['Neon','Ljetna Smjena','Single',2025],['Kasno','Tihi Kvart','Album',2024],['Obala','Sidro','Album',2022],['Tvornica','Betonski Vrt','EP',2025],['Pun Mjesec','Mali Mjesec','Album',2024],['Daleki odjek','Mjesečeva Strana','Album',2025],['Crvena zona','Crveni Signal','Single',2025]];
+const DISCO=[['Valovi','Orbita','Album',2025],['Bez mjeseca','Orbita','Single',2025],['Uživo u Tvornici','Orbita','Live',2024],['Plima','Orbita','EP',2023],['Sidrište','Orbita','Single',2023],['Prvi val','Orbita','Album',2021],['Kratki spoj','Orbita','EP',2020],['Demo 2019','Orbita','Single',2019]];
+const TRACKS=[['Plima','4:12',4.4],['Bez mjeseca','3:38',4.8],['Valovi','5:21',4.6],['Sidro','3:05',4.1],['Svjetionik','4:47',4.5],['Daleko od obale','6:02',4.7],['Struja','3:29',4.0],['Tišina na moru','4:15',4.3],['Kraj ljeta','5:44',4.6]];
+const CON=[
+ {id:'c1',a:'Orbita',w:'Kiša u Svibnju',v:'Dom kulture',c:'Zagreb',dow:'Fri',d:'20',m:'Nov',t:'20:00',km:3,left:7},
+ {id:'c3',a:'Noćni Autobus',v:'Tvornica Zvuka',c:'Zagreb',dow:'Sat',d:'21',m:'Nov',t:'22:00',km:5},
+ {id:'c2',a:'Plavi Sat',w:'Orbita',v:'Klub Obala',c:'Rijeka',dow:'Sat',d:'14',m:'Nov',t:'21:00',km:162},
+ {id:'c4',a:'Mali Mjesec',v:'Dom kulture',c:'Zagreb',dow:'Thu',d:'3',m:'Dec',t:'20:30',km:3},
+ {id:'c5',a:'Zlatna Groznica',v:'Klub Tunel',c:'Split',dow:'Fri',d:'27',m:'Nov',t:'21:00',km:410},
+ {id:'c6',a:'Betonski Vrt',v:'Klub Mlin',c:'Zagreb',dow:'Thu',d:'26',m:'Nov',t:'21:00',km:6},
+ {id:'c7',a:'Tihi Kvart',v:'Podrum',c:'Zadar',dow:'Fri',d:'4',m:'Dec',t:'20:00',km:285}];
+const C=id=>CON.find(c=>c.id===id);
+const VEN=[{n:'Dom kulture',c:'Zagreb',cap:350,km:3,up:3,next:'Fri 20 Nov · Orbita <span class="plus">+</span> Kiša u Svibnju'},{n:'Tvornica Zvuka',c:'Zagreb',cap:800,km:5,up:4,next:'Sat 21 Nov · Noćni Autobus'},{n:'Klub Mlin',c:'Zagreb',cap:220,km:6,up:2,next:'Thu 26 Nov · Betonski Vrt'},{n:'Galerija Zvuk',c:'Zagreb',cap:90,km:4,up:1,next:'Wed 2 Dec · Tihi Kvart'},{n:'Sjever',c:'Zagreb',cap:140,km:9,up:1,next:'Sat 12 Dec · Crveni Signal'},{n:'Atrij',c:'Zagreb',cap:300,km:11,up:0,next:'No concerts announced'}];
+const USERS=['Ivan P.','Lea M.','Marko T.','Nina R.','Dario S.','Petar V.'];
+
+/* =================================================================
+   Reusable UI pieces
+   ================================================================= */
+const sec=(h,link,inner,cls='')=>`<section class="sec ${cls}"><div class="sec-h"><h4>${h}</h4>${link?`<a>${link}</a>`:''}</div>${inner}</section>`;
+const lineup=c=>c.w?`${c.a} <span class="plus">+</span> ${c.w}`:c.a;
+const dateBlk=(c,past)=>`<div class="dblk${past?' past':''}">${c.dow}<b>${c.d}</b>${c.m}</div>`;
+const conTile=(c,o={})=>`<a class="tile"><div class="im"><img src="${artistImg(c.a)}" alt=""><div class="datebadge">${c.dow}<b>${c.d}</b>${c.m}</div></div><div class="t">${lineup(c)}</div><div class="s">${c.v} · ${c.c}${o.km&&c.km?` · ${c.km} km`:''}</div>${o.reason?`<div class="r">${o.reason}</div>`:''}</a>`;
+const artTile=(a,o={})=>`<a class="tile${o.sel?' sel':''}"><div class="im"><img src="${artistImg(a.n)}" alt="">${o.sel?`<span class="selmark">${ic('check',14)}</span>`:''}</div><div class="t">${a.n}</div><div class="s">${o.sub??a.g}</div>${o.reason?`<div class="r">${o.reason}</div>`:''}</a>`;
+const relTile=(r,o={})=>`<a class="tile"><div class="im"><img src="${cover(r[0])}" alt="">${o.type?`<span class="ribbon">${r[2]}</span>`:''}</div><div class="t">${r[0]}</div><div class="s">${o.sub??r[1]}</div>${o.reason?`<div class="r">${o.reason}</div>`:''}</a>`;
+const venTile=v=>`<a class="tile"><div class="im w"><img src="${venueImg(v.n)}" alt=""></div><div class="t">${v.n}</div><div class="s">${v.c} · ${v.up?v.up+' upcoming':'nothing announced'}</div></a>`;
+const conRow=(c,o={})=>`<div class="row${o.f?' f':''}${o.dim?' dim':''}">${dateBlk(c,o.dim)}<div class="main"><div class="t">${lineup(c)}</div><div class="s">${o.sub??`${c.v}, ${c.c} · ${c.t}${o.km&&c.km?` · ${c.km} km`:''}`}</div>${o.extra||''}</div><div class="end">${o.end??ic('chev')}</div></div>`;
+const venRow=(v,f)=>`<div class="row${f?' f optional':''}"><div class="thumb w"><img src="${venueImg(v.n)}" alt=""></div><div class="main"><div class="t">${v.n}</div><div class="s">${v.c} · ${v.km} km · capacity ${v.cap}</div><div class="nx"><span class="meta">${v.up?'Next':''}</span>${v.next}</div></div><div class="end">${v.up?`<span class="mono">${v.up}</span>`:''}${ic('chev')}</div></div>`;
+const trackRow=(i,t,o={})=>`<div class="row trk">${o.num!==false?`<span class="no">${i}</span>`:''}${o.thumb?`<div class="thumb"><img src="${o.thumb}" alt=""></div>`:''}<div class="main"><div class="t">${t[0]}</div>${o.sub?`<div class="s">${o.sub}</div>`:''}</div><div class="end">${o.rate!==false?`<span class="mono">★ ${t[2].toFixed(1)}</span>`:''}<span class="mono only-d">${t[1]}</span>${ic(o.liked?'heartf':'heart',17)}<span class="${o.plusOpt?'optional':''}">${ic('plus',17)}</span></div></div>`;
+const review=(u,n,txt,o={})=>`<div class="rev">${av(u,'sm')}<div class="main"><div class="rh"><b>${u}</b>${stars(n,12)}<span class="meta">${o.when||'3 days ago'}</span></div><p>${txt}</p>${o.reply?`<div class="reply"><div class="meta">Official reply · ${o.reply[0]}</div><p>${o.reply[1]}</p></div>`:''}${o.replyField?`<div class="reply"><div class="meta">Reply as ${o.replyField}</div><div class="inp" style="margin-top:6px;min-height:40px"><span class="ph">Write a public reply…</span></div><div class="btns" style="margin-top:8px"><a class="btn sm pri">Post reply</a></div></div>`:''}<div class="ra">${o.more||''}<a>${ic('flag',12)}Report</a></div></div></div>`;
+const ratingSum=(avg,cnt,dist,your,btn='Write a review')=>`<div class="rsum"><div class="big"><b>${avg}</b>${stars(Math.round(avg),13)}<div class="meta" style="margin-top:6px">${cnt} ratings</div></div><div class="dist">${[5,4,3,2,1].map((k,i)=>`<div class="drow"><span>${k}</span><div class="bar"><i style="width:${dist[i]}%"></i></div></div>`).join('')}</div><div class="yours"><span class="meta">Your rating</span>${stars(your,22)}<a class="btn sm">${btn}</a></div></div>`;
+function mapBox({seed='zg',ratio='4/3',pins=[],expand=false,h=null}={}){return `<div class="map" style="${h?`height:${h}px`:`aspect-ratio:${ratio}`}"><img src="${mapImg(seed)}" alt="">${pins.map((p,i)=>`<span class="pin${p.f?' f':''}" style="left:${p.x}%;top:${p.y}%">${p.n??i+1}</span>${p.label?`<span class="pinlab" style="left:${p.x}%;top:${p.y}%">${p.label}</span>`:''}`).join('')}<span class="osm">© OpenStreetMap</span>${expand?`<span class="mapx">${ic('expand',14)}</span>`:''}</div>`}
+function miniCal({title='November 2026',start=6,days=30,marks={},today=null}={}){let c=['Mo','Tu','We','Th','Fr','Sa','Su'].map(d=>`<span class="h">${d}</span>`).join('');for(let i=0;i<start;i++)c+='<span class="e">.</span>';for(let d=1;d<=days;d++)c+=`<span class="${marks[d]||''}${today===d?' t':''}">${d}</span>`;return `<div class="cal"><div class="calhead"><b class="h-m" style="font-size:18px">${title}</b><span class="row-flex" style="gap:4px">${ic('back',16)}${ic('chev',16)}</span></div><div class="cg">${c}</div></div>`}
+const stepsBar=n=>`<div class="steps">${['Genres','Artists','Location'].map((s,i)=>`<span class="${i+1===n?'on':i+1<n?'done':''}">${i+1} · ${s}</span>`).join('')}</div>`;
+
+/* App shell: same markup renders the phone top bar + tab bar or the desktop top navigation */
+function shell(o){
+  const tabs=o.pub?[['home','Home'],['map','Map'],['user','Sign in']]:[['home','Home'],['search','Search'],['map','Map'],['ticket','Tickets'],['user','Profile']];
+  const right=o.right??(o.pub?`<a class="btn sm light">Sign in</a>`:`<a class="ib">${ic('search',20)}</a><a class="ib bell">${ic('bell',20)}<i>2</i></a>`);
+  const mtop=o.nomtop?'':`<div class="mtop">${o.back?`<a class="ib" style="margin-left:-8px">${ic('back',20)}</a>`:''}<div class="ttl">${o.title??logo()}</div>${right}</div>`;
+  const links=o.pub?['Home','Map']:['Home','Map','Tickets'];
+  const role=o.role==='artist'?['Artist']:o.role==='venue'?['Venue']:[];
+  const dnav=o.nonav?`<div class="dnav">${logo()}<span class="meta" style="margin-left:auto">${o.title||''}</span>${o.right||''}</div>`:`<div class="dnav">${logo()}<nav>${links.concat(role).map(x=>`<a class="${o.d===x?'on':''}">${x==='Artist'?'Artist tools':x==='Venue'?'My venue':x}</a>`).join('')}</nav><div class="dsearch${o.q?' typed':''}">${ic('search',16)}<span>${o.q??'Search artists, releases, songs, venues'}</span></div>${o.pub?`<a class="btn sm light">Sign in with Google</a>`:`<a class="ib bell">${ic('bell',20)}<i>2</i></a>${av('Ana K.','sm')}`}</div>`;
+  const mnav=o.nonav?'':`<div class="mnav" style="grid-template-columns:repeat(${tabs.length},1fr)">${tabs.map(([i,l])=>`<a class="${o.tab===i?'on':''}">${ic(i,20)}<span>${l}</span></a>`).join('')}</div>`;
+  return mtop+dnav+`<div class="page">${o.body}</div>`+(o.after||'')+mnav;
+}
+function admin(o){
+  const items=[['Reports','flag','5'],['Role requests','shield','2'],['Activity log','log','']].concat(o.role==='admin'?[['Users & roles','users',''],['Settings & stats','chart','']]:[]);
+  const side=`<aside class="aside">${logo()}<div class="meta" style="margin:22px 10px 10px">${o.role==='admin'?'Administrator':'Moderator'}</div>${items.map(([l,i,n])=>`<a class="${o.sec===l?'on':''}">${ic(i,16)}<span>${l}</span>${n?`<b>${n}</b>`:''}</a>`).join('')}<a class="back">${ic('back',16)}<span>Back to app</span></a></aside>`;
+  const mtop=`<div class="mtop"><a class="ib" style="margin-left:-8px">${ic('back',20)}</a><div class="ttl">${o.sec}</div><span class="meta">${o.role}</span></div><div class="msecs">${items.map(([l,,n])=>`<a class="chip ${o.sec===l?'on':''}">${l}${n?` <span class="n">${n}</span>`:''}</a>`).join('')}</div>`;
+  return `<div class="adm">${side}<div class="adm-main">${mtop}<div class="page">${o.body}</div></div></div>`;
+}
+
+/* =================================================================
+   Screens
+   ================================================================= */
+const SCR=[];const S=(id,title,meta,fn)=>SCR.push({id,title,meta,fn});
+const SECT={
+ '1':['Public & sign-in','Without an account you can browse announced concerts, popular artists, venues and the map; everything else asks you to sign in.'],
+ '2':['Onboarding & profile','First sign-in walks through genres, artists and location. The profile carries real content and keeps role tools separate.'],
+ '3':['Search & artists','Catalog search, requesting a missing artist, and the artist page as the hub for releases, concerts and reviews.'],
+ '4':['Releases, reviews & lists','Release pages modelled on how record shops present an album; reviews are compact, lists live in the profile.'],
+ '5':['Feed, notifications & following','The signed-in home is the core of the product: lots of releases and concerts, ordered by what you will most likely act on.'],
+ '6':['Concerts & tickets','A real concert page, free registration instead of buying, and one chronological ticket list.'],
+ '7':['Roles, reports & privacy','Artist and venue verification are two separate flows; reports and data controls stay simple.'],
+ '8':['Artist tools','Proposing a concert starts at the venue; published concerts and pending requests are separate views.'],
+ '9':['Venue tools','Venue profile with photos, incoming proposals with everything visible, a booking calendar, ticket scanning and statistics.'],
+ '10':['Moderation & administration','Desktop-first, with full mobile equivalents: reports, role requests, a readable activity log, users and system settings.'],
+};
+
+/* ---------- 1. Public ---------- */
+S('1.1','Landing (public)',{tags:['Core'],covers:'F-001 · F-010',notes:[
+ 'Dark, sharp-edged and image-first: artist and venue imagery instead of white cards.',
+ '<b>Option A</b> from the review: one swipeable row per category (concerts, artists, venues). On desktop the same rows show six tiles at once.',
+ '<b>Option B</b> sits on top as category chips: tapping one turns that category into a full grid. Mixed card types are gone.',
+ 'The squished map is removed from the landing page; “Open map” goes to the full map (1.2).',
+ 'Only what the concept allows without an account: announced concerts, popular artists, venues and the map.']},
+()=>shell({pub:true,tab:'home',d:'Home',body:`
+<div class="hero"><div><div class="h-xl">Live music near you.<br><span class="acc">And the records behind it.</span></div><p class="lead">Upcoming concerts, artists and venues in one place. Sign in for recommendations, ratings and free concert registrations.</p><div class="btns"><a class="btn pri">${ic('google',16)}Sign in with Google</a><a class="btn">${ic('map',16)}Open map</a></div></div>
+<div class="mosaic only-d">${['Valovi','Staklene noći','Signali','Magla','Pustinja u gradu','Neon','Kasno','Obala','Tvornica'].map(t=>`<img src="${cover(t)}" alt="">`).join('')}</div></div>
+<div class="chips scroll cat"><a class="chip on">Everything</a><a class="chip">Concerts <span class="n">24</span></a><a class="chip">Artists</a><a class="chip">Venues <span class="n">18</span></a></div>
+${sec('Upcoming concerts','See all',`<div class="hrow">${CON.map(c=>conTile(c)).join('')}</div>`)}
+${sec('Popular on Sonar','See all',`<div class="hrow">${ART.slice(0,10).map(a=>artTile(a)).join('')}</div>`)}
+${sec('Venues','Open map',`<div class="hrow wide">${VEN.slice(0,5).map(venTile).join('')}</div>`)}
+<p class="src">Catalog: MusicBrainz · Tags and popularity: Last.fm · Covers: Cover Art Archive</p>`}));
+
+S('1.2','Map',{tags:['Core','T1'],covers:'F-001',notes:[
+ 'Bordered map at the top, not full screen, with the venue list underneath, like Google Maps. On desktop the map stays fixed on the left while the list scrolls.',
+ 'Each venue row shows its next concert straight away and opens the venue page (1.4) with the full upcoming list and a calendar.',
+ '<b>Optional (T1):</b> the map follows the list. The venue in view is highlighted on the map; tapping a pin scrolls the list to that venue.',
+ 'Map tiles: OpenStreetMap through Leaflet or MapLibre is free and needs no key; Google Maps needs a billing account (see T1). If the map fails to load, the list still works.']},
+()=>shell({tab:'map',d:'Map',title:'Map',body:`
+<div class="chips scroll"><a class="chip on">${ic('pin',14)}Zagreb</a><a class="chip">This week</a><a class="chip">Any genre ${ic('down',14)}</a><a class="chip">Open registrations</a></div>
+<div class="mapsplit"><div class="mapcol" style="margin-top:14px">${mapBox({seed:'zagreb',ratio:'4/3.2',pins:[{x:47,y:44,f:1,label:'Dom kulture'},{x:63,y:58},{x:30,y:31},{x:72,y:25},{x:22,y:67},{x:56,y:80}],expand:true})}</div>
+<div class="listcol"><div class="meta listhead">6 venues · 11 upcoming concerts</div><div class="rows nt">${VEN.map((v,i)=>venRow(v,i===0)).join('')}</div></div></div>`}));
+
+S('1.3','Sign in',{tags:['Core','T14'],covers:'F-002',notes:[
+ '“Continue with Google” is the primary path, as the concept requires (OpenID Connect).',
+ 'An email and password login is added as you asked, and marked optional: it <b>deviates from the concept</b>, which specifies Google only, so the team should decide (T14).',
+ 'Error states stay short and human, with no technical wording. Desktop pairs the form with a cover mosaic so the page is not empty.']},
+()=>shell({pub:true,tab:'user',title:'Sign in',right:'',body:`
+<div class="split even" style="align-items:center">
+<div class="mosaic only-d" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px">${['Daleki odjek','Kasno','Signali','Magla','Valovi','Crvena zona','Obala','Neon','Pun Mjesec'].map(t=>`<img src="${cover(t)}" style="width:100%;aspect-ratio:1;object-fit:cover" alt="">`).join('')}</div>
+<div class="narrow-s" style="width:100%">
+<div class="h-l" style="margin-top:8px">Sign in to Sonar</div><p class="lead">Recommendations, ratings, reviews and free concert registrations.</p>
+<div style="margin-top:24px"><a class="btn light block">${ic('google',18)}Continue with Google</a></div>
+<p class="help">We only take your email address from Google. Your account is created on the first sign-in.</p>
+<div class="optional" style="margin-top:22px;padding-top:18px;border-top:1px solid var(--line)">
+<div class="fld"><label>Email</label><div class="inp"><span class="ph">you@example.com</span></div></div>
+<div class="fld"><label>Password</label><div class="inp"><span class="ph">••••••••</span></div></div>
+<a class="btn block">Sign in</a><p class="help" style="text-align:center">No account yet? <a class="link">Create one</a></p></div>
+<div class="notes-stack" style="margin-top:26px"><div class="meta">Messages you may see</div>
+<div class="note warn">Your account is suspended until <b>28 Oct 2026</b>.</div>
+<div class="note bad">This account has been deactivated.</div>
+<div class="note">Google sign-in isn't responding. Try again in a few minutes.</div></div>
+</div></div>`}));
+
+S('1.4','Venue page',{tags:['Core','New'],covers:'F-001 · F-006 · F-021',notes:[
+ 'New screen: the map (1.2) and the concert pages lead here. Photos and a description come from the venue manager (9.1); name, address and coordinates come from the catalog.',
+ 'The small map in the corner expands when tapped. Upcoming concerts come first, with a month calendar next to them.',
+ 'Verified artists see “Propose a concert here”: proposing starts at the venue (8.1).',
+ 'The calendar file (.ics) lets anyone subscribe to the venue programme (T10).']},
+()=>shell({tab:'map',d:'Map',back:true,title:'Dom kulture',body:`
+<div class="gallery">${['Dom kulture','Dom kulture b','Dom kulture c'].map(s=>`<img src="${venueImg(s)}" alt="">`).join('')}</div>
+<div class="split" style="margin-top:0">
+<div>
+<div class="vh"><div class="main"><div class="meta">Venue · Zagreb</div><div class="h-l">Dom kulture</div><div class="factline"><span>Ilica 211, Zagreb</span><span>Capacity <b>350</b></span><span class="tag ok">verified venue</span></div></div><div class="minimap">${mapBox({seed:'dk',ratio:'1/1',pins:[{x:50,y:50,f:1,n:'•'}],expand:true})}</div></div>
+<p class="body" style="margin-top:16px">Former cinema turned into a mid-size concert hall in the west of the city. Standing room on the ground floor, a balcony with seats, and a small bar at the back. Doors usually open an hour before the first act.</p>
+<p class="body">Accessible entrance from the courtyard. Tram lines 2, 6 and 11 stop at the door.</p>
+${sec('Upcoming at Dom kulture','.ics calendar',`<div class="rows nt">${conRow(C('c1'),{end:'<a class="btn sm pri">Apply</a>'})}${conRow(C('c4'),{end:'<a class="btn sm pri">Apply</a>'})}${conRow({a:'Tihi Kvart',v:'Dom kulture',c:'Zagreb',dow:'Sat',d:'19',m:'Dec',t:'20:00'},{end:'<a class="btn sm">Opens soon</a>'})}</div>`)}
+${sec('Past concerts','',`<div class="rows nt">${conRow({a:'Orbita',v:'Dom kulture',c:'Zagreb',dow:'Fri',d:'2',m:'Oct',t:'20:00'},{dim:1,sub:'Held · 312 attended'})}${conRow({a:'Sidro',v:'Dom kulture',c:'Zagreb',dow:'Sat',d:'19',m:'Sep',t:'21:00'},{dim:1,sub:'Held · 188 attended'})}</div>`)}
+</div>
+<div class="sticky">
+<div style="margin-top:28px">${miniCal({marks:{20:'m',3:'m'},today:null,title:'November 2026'})}<div class="legend"><span class="tag acc">concert</span></div></div>
+<div class="box" style="margin-top:22px"><div class="meta" style="margin-bottom:8px">For verified artists</div><a class="btn pri block">${ic('plus',16)}Propose a concert here</a><p class="help">Visible only to verified artists. Capacity 350 is the upper limit for places.</p></div>
+</div></div>`}));
+
+/* ---------- 2. Onboarding & profile ---------- */
+S('2.1a','Onboarding · genres',{tags:['Core','T2'],covers:'F-004 · F-019',notes:[
+ 'Three short steps instead of one crowded screen: genres, artists, location.',
+ 'A search field finds any genre (catalog tags from Last.fm), so people aren\'t limited to the tiles shown. Typing “post” suggests matching genres (T2).',
+ 'Genres are image tiles, which are faster to scan than plain chips.']},
+()=>shell({nonav:true,title:'Welcome',right:'<a class="btn sm ghost">Skip</a>',body:`<div class="narrow">
+${stepsBar(1)}<div class="h-l">What do you listen to?</div><p class="lead">Pick a few genres. They are only a starting point for your recommendations.</p>
+<div style="margin-top:20px"><div class="inp focus">${ic('search',16)}<span>post</span><span class="caret"></span></div><div class="drop rows nt">${['post-punk','post-rock','post-hardcore'].map((g,i)=>`<div class="row${i===0?' f':''}"><div class="main"><div class="t">${g}</div><div class="s">${[312,198,74][i]} artists in the catalog</div></div><span class="check${i===0?' on':''}">${i===0?ic('check',13):''}</span></div>`).join('')}</div></div>
+<div style="margin-top:18px"><div class="lbl">Selected · 3</div><div class="chips">${['indie rock','shoegaze','post-punk'].map(g=>`<a class="chip on">${g}<span class="x">×</span></a>`).join('')}</div></div>
+${sec('Popular genres','',`<div class="grid g4">${['indie rock','electronic','jazz','hip hop','shoegaze','folk','metal','ambient'].map((g,i)=>`<a class="gtile${[0,4].includes(i)?' on':''}"><img src="${cover('genre '+g)}" alt=""><span>${g}</span><b class="selmark">${ic('check',14)}</b></a>`).join('')}</div>`)}
+<div class="stickybar"><span class="meta">3 genres selected</span><a class="btn pri">Continue</a></div></div>`}));
+
+S('2.1b','Onboarding · artists',{tags:['Core','T2'],covers:'F-004 · F-019',notes:[
+ 'Suggestions are grouped by the genres picked in step 1. Search finds any artist in the catalog.',
+ 'Selected tiles get an orange frame and a check mark. The counter shows progress (“pick at least 3”), and you can skip the step.',
+ 'If an artist isn\'t in the catalog, search offers to request them later (3.2), instead of a dead end.']},
+()=>shell({nonav:true,title:'Welcome',right:'<a class="btn sm ghost">Skip</a>',body:`<div class="narrow" style="max-width:980px">
+${stepsBar(2)}<div class="h-l">Pick a few artists</div><p class="lead">Search for anyone, or start with these, based on your genres.</p>
+<div style="margin-top:20px"><div class="inp">${ic('search',16)}<span class="ph">Search artists</span></div></div>
+${sec('Because you chose indie rock','',`<div class="grid g3m">${['Orbita','Crveni Signal','Plavi Sat','Ljetna Smjena','Sidro','Tihi Kvart'].map((n,i)=>artTile(A(n),{sel:[0,2].includes(i)})).join('')}</div>`)}
+${sec('Because you chose shoegaze','',`<div class="grid g3m">${['Kiša u Svibnju','Mjesečeva Strana','Betonski Vrt','Zlatna Groznica','Noćni Autobus','Mali Mjesec'].map((n,i)=>artTile(A(n),{sel:[0,3].includes(i)})).join('')}</div>`)}
+<div class="stickybar"><span class="meta">4 selected · at least 3</span><div class="row-flex"><a class="btn">Back</a><a class="btn pri">Continue</a></div></div></div>`}));
+
+S('2.1c','Onboarding · location & notifications',{tags:['Core','T3'],covers:'F-003 · F-035 · F-038',notes:[
+ 'This is the missing “step two”: the city and radius that drive “concerts near you”. Without them, concert recommendations and notifications can\'t work.',
+ 'A privacy line explains that artists and venues only ever see totals, never your location (concept requirement).',
+ 'Notification channels are set here and can be changed later in 2.3.']},
+()=>shell({nonav:true,title:'Welcome',right:'',body:`<div class="narrow-s">
+${stepsBar(3)}<div class="h-l">Where do you go to concerts?</div><p class="lead">We use your city to find concerts near you.</p>
+<div style="margin-top:24px" class="fld"><label>City</label><div class="inp">${ic('pin',16)}<span class="grow">Zagreb, Croatia</span>${ic('check',16)}</div><p class="help">Artists and venues only ever see totals, never your location.</p></div>
+<div class="fld"><label>Notify me about concerts within</label><div class="row-flex" style="justify-content:space-between"><span class="h-m">50 km</span><span class="meta">10 — 300 km</span></div><div class="slider"><i style="width:16%"></i><b style="left:16%"></b></div></div>
+<div class="fld"><label>How should we reach you?</label><div class="optrow"><div class="main"><div class="t" style="font-weight:600">In the app</div><div class="sub">Bell icon with a counter</div></div><span class="toggle on"></span></div><div class="optrow"><div class="main"><div class="t" style="font-weight:600">Email</div><div class="sub">ana.k@example.com</div></div><span class="toggle on"></span></div></div>
+<div class="stickybar"><a class="btn">Back</a><a class="btn pri">Start exploring</a></div></div>`}));
+
+S('2.2','My profile',{tags:['Core'],covers:'F-003 · F-005 · F-011',notes:[
+ 'The counts sit right in the header, without a card. The wording makes the direction clear: “Following <b>24</b> artists · <b>8</b> people”, “<b>37</b> followers”.',
+ 'The <b>artist status</b> and <b>venue status</b> requests are now visible as two separate links in the account list (they were missing in v1). Ana is already a verified artist here, so only the venue link remains; a user without a role sees both.',
+ 'Verified roles get their own block with tools and a few key numbers, kept apart from personal settings.',
+ 'Tabs keep the page compact: activity, reviews, lists and liked songs. On desktop, identity and roles sit in a left column.']},
+()=>shell({tab:'user',d:'',role:'artist',title:'Profile',right:`<a class="ib">${ic('settings',20)}</a><a class="ib bell">${ic('bell',20)}<i>2</i></a>`,body:`
+<div class="split side-l">
+<div>
+<div class="profhead">${av('Ana K.','lg')}<div class="main"><div class="h-l" style="font-size:36px">Ana K.</div><div class="meta" style="margin-top:4px">Zagreb · since Oct 2026</div></div></div>
+<p class="body" style="margin-top:12px">Indie, shoegaze, anything with too much reverb. Usually at the back near the sound desk.</p>
+<div class="counts"><span>Following <b>24</b> artists · <b>8</b> people</span><span><b>37</b> followers</span><span><b>112</b> ratings</span></div>
+<div class="btns"><a class="btn sm">${ic('edit',14)}Edit profile</a><a class="btn sm">${ic('share',14)}Share</a></div>
+<div class="rolebox"><div class="rbh"><span class="meta acc">Artist · verified</span><span class="meta">Plavi Sat</span></div>
+<div class="row-flex" style="gap:18px;font-size:13px;color:var(--tx2);margin:4px 0 8px"><span><b style="color:var(--tx);font-family:var(--fm)">1,204</b> followers</span><span><b style="color:var(--tx);font-family:var(--fm)">4.4</b> avg rating</span><span>next concert <b style="color:var(--tx)">14 Nov</b></span></div>
+<div class="linkrows"><a>${ic('user',16)}<span>Artist page & biography</span>${ic('chev',16)}</a><a>${ic('cal',16)}<span>My concerts</span><span class="mono acc" style="flex:none">3 requests</span>${ic('chev',16)}</a><a>${ic('chart',16)}<span>Statistics</span>${ic('chev',16)}</a></div></div>
+<div class="linkrows" style="margin-top:18px"><a>${ic('ticket',16)}<span>My tickets</span>${ic('chev',16)}</a><a>${ic('pin',16)}<span>Request venue status</span>${ic('chev',16)}</a><a>${ic('settings',16)}<span>Settings & notifications</span>${ic('chev',16)}</a><a>${ic('download',16)}<span>Your data & account</span>${ic('chev',16)}</a></div>
+</div>
+<div>
+<div class="tabs"><a class="on">Activity</a><a>Reviews <span class="n">9</span></a><a>Lists <span class="n">3</span></a><a>Liked songs <span class="n">86</span></a></div>
+<div>
+<div class="feedrow"><div class="main">Rated <b>Valovi</b> by Orbita ${stars(5,12)}<span class="meta">2 days ago</span></div><div class="thumb"><img src="${cover('Valovi')}" alt=""></div></div>
+<div class="feedrow"><div class="main">Going to <b>Orbita <span class="plus">+</span> Kiša u Svibnju</b> at Dom kulture<span class="meta">Fri 20 Nov · 3 days ago</span></div><div class="thumb"><img src="${artistImg('Orbita')}" alt=""></div></div>
+<div class="feedrow"><div class="main">Added <b>Plima</b> and 2 more songs to <b>Night drive</b><span class="meta">4 days ago</span></div><div class="thumb"><img src="${cover('Plima')}" alt=""></div></div>
+<div class="feedrow"><div class="main">Reviewed <b>Magla</b> by Kiša u Svibnju ${stars(4,12)}<span class="meta">1 week ago</span></div><div class="thumb"><img src="${cover('Magla')}" alt=""></div></div>
+<div class="feedrow"><div class="main">Started following <b>Noćni Autobus</b><span class="meta">1 week ago</span></div><div class="thumb"><img src="${artistImg('Noćni Autobus')}" alt=""></div></div>
+</div>
+${sec('Lists','All lists',`<div class="grid g4">${['Night drive','Favourites','Rainy Sundays','Gym'].map((l,i)=>`<a class="tile"><div class="im"><div style="display:grid;grid-template-columns:1fr 1fr;height:100%">${[0,1,2,3].map(k=>`<img src="${cover(REL[(i*3+k)%REL.length][0])}" style="width:100%;height:100%;object-fit:cover" alt="">`).join('')}</div></div><div class="t">${l}</div><div class="s">${[12,31,8,20][i]} songs</div></a>`).join('')}</div>`)}
+</div></div>`}));
+
+S('2.3','Edit profile & notifications',{tags:['Core'],covers:'F-003 · F-035 · F-038',notes:[
+ 'Content as in v1, restyled. Sections are separated by headings and hairlines instead of cards.',
+ 'On desktop a left section index keeps the long form navigable.']},
+()=>shell({tab:'user',d:'',back:true,title:'Edit profile',right:'<a class="btn sm pri">Save</a>',body:`
+<div class="split side-l">
+<div class="only-d"><div class="linkrows">${['Profile','Notifications','Account'].map((s,i)=>`<a style="${i===0?'color:var(--tx);box-shadow:inset 3px 0 0 var(--acc);padding-left:12px':''}"><span>${s}</span>${ic('chev',16)}</a>`).join('')}</div></div>
+<div class="narrow-s" style="margin:0;max-width:620px">
+<div class="sec-h" style="border:0;padding:0"><h4>Profile</h4></div>
+<div class="row-flex" style="margin-bottom:18px">${av('Ana K.','lg')}<a class="btn sm">${ic('upload',14)}Change picture</a></div>
+<div class="fld"><label>Name or nickname *</label><div class="inp">Ana K.</div></div>
+<div class="fld"><label>City *</label><div class="inp">${ic('pin',16)}Zagreb, Croatia</div><p class="help">Used for distances to concerts. Artists and venues see totals only.</p></div>
+<div class="fld"><label>About you</label><div class="inp ta">Indie, shoegaze, anything with too much reverb. Usually at the back near the sound desk.</div><p class="help" style="text-align:right">94 / 300</p></div>
+<div class="sec-h"><h4>Notifications</h4></div>
+<div class="optrow"><div class="main"><b>In the app</b><div class="sub">Bell icon with a counter</div></div><span class="toggle on"></span></div>
+<div class="optrow"><div class="main"><b>Email</b><div class="sub">ana.k@example.com</div></div><span class="toggle on"></span></div>
+<div class="fld" style="margin-top:18px"><label>Concerts within</label><div class="row-flex" style="justify-content:space-between"><span class="h-m">50 km</span><span class="meta">of Zagreb</span></div><div class="slider"><i style="width:16%"></i><b style="left:16%"></b></div></div>
+<p class="err">Name or nickname can't be empty.</p>
+<div class="stickybar"><a class="btn">Cancel</a><a class="btn pri">Save changes</a></div>
+</div></div>`}));
+
+/* ---------- 3. Search & artists ---------- */
+S('3.1','Search',{tags:['Core','T2','T12'],covers:'F-008',notes:[
+ 'On phones the <b>search bar is docked at the bottom</b>, above the tab bar, where your thumb already is. While typing, the keyboard pushes it up and results fill the screen above (T12). On desktop it lives in the top bar.',
+ 'Type tabs (All, Artists, Releases, Songs, Venues, Concerts) plus an optional genre filter in the style of Bandcamp.',
+ 'Releases show as cover grids with their type (Album, EP, Single, Live). Songs without an album get the default image.',
+ 'Filters stay simple: a row of chips on mobile, a short left column on desktop.']},
+()=>shell({tab:'search',d:'',q:'mjesec',title:'Search',right:`<a class="ib bell">${ic('bell',20)}<i>2</i></a>`,after:`<div class="only-m" style="padding:10px 12px;border-top:1px solid var(--line);background:var(--bg2)"><div class="inp focus">${ic('search',16)}<span class="grow">mjesec</span><span class="caret"></span>${ic('close',16)}</div></div>`,body:`
+<div class="split side-l">
+<div>
+<div class="only-m"><div class="tabs"><a class="on">All</a><a>Artists</a><a>Releases</a><a>Songs</a><a>Venues</a><a>Concerts</a></div><div class="chips scroll optional" style="margin-top:12px"><a class="chip">${ic('filter',14)}Genre</a><a class="chip on">acoustic</a><a class="chip">ambient</a><a class="chip">folk</a></div></div>
+<div class="only-d"><div class="lbl">Type</div><div class="linkrows">${['All results','Artists · 2','Releases · 4','Songs · 6','Venues · 1','Concerts · 1'].map((t,i)=>`<a style="${i===0?'color:var(--tx);box-shadow:inset 3px 0 0 var(--acc);padding-left:12px':''}"><span>${t}</span></a>`).join('')}</div>
+<div class="optional" style="margin-top:22px"><div class="lbl">Genre</div>${['acoustic','ambient','folk','electronic','indie rock'].map((g,i)=>`<div class="optrow" style="padding:8px 0"><span class="check${i===0?' on':''}">${i===0?ic('check',13):''}</span><span class="main">${g}</span><span class="meta">${[14,9,7,22,31][i]}</span></div>`).join('')}</div></div>
+</div>
+<div>
+<div class="meta only-d" style="margin-bottom:6px">Results for “mjesec”</div>
+${sec('Artists','',`<div class="rows nt"><div class="row"><div class="thumb lg"><img src="${artistImg('Mali Mjesec')}" alt=""></div><div class="main"><div class="t">Mali Mjesec</div><div class="s">acoustic · melancholic · Osijek</div></div><div class="end"><a class="btn sm">Follow</a></div></div><div class="row"><div class="thumb lg"><img src="${artistImg('Mjesečeva Strana')}" alt=""></div><div class="main"><div class="t">Mjesečeva Strana</div><div class="s">ambient · Split</div></div><div class="end"><a class="btn sm">Follow</a></div></div></div>`)}
+${sec('Releases','See all 4',`<div class="grid g4">${[['Pun Mjesec','Mali Mjesec','Album',2024],['Daleki odjek','Mjesečeva Strana','Album',2025],['Mjesečina','Mali Mjesec','EP',2022],['Nova luna','Mjesečeva Strana','Single',2025]].map(r=>relTile(r,{type:1,sub:`${r[1]} · ${r[3]}`})).join('')}</div>`)}
+${sec('Songs','See all 6',`<div class="rows nt">${trackRow(1,['Mjesec nad morem','3:41',4.5],{num:false,thumb:cover('Pun Mjesec'),sub:'Mali Mjesec · Pun Mjesec'})}${trackRow(2,['Bez mjeseca','3:38',4.8],{num:false,thumb:cover('Bez mjeseca'),sub:'Orbita · Single'})}${trackRow(3,['Mjesečar','2:58',4.0],{num:false,thumb:defaultCover(),sub:'Sidro · not on an album'})}</div>`)}
+${sec('Venues','',`<div class="rows nt"><div class="row"><div class="thumb w"><img src="${venueImg('Klub Mjesečina')}" alt=""></div><div class="main"><div class="t">Klub Mjesečina</div><div class="s">Osijek · capacity 150 · 2 upcoming</div></div><div class="end">${ic('chev')}</div></div></div>`)}
+</div></div>`}));
+
+S('3.2','No results · request an artist',{tags:['Core','T2'],covers:'F-009',notes:[
+ 'No backend jargon (“fetching”, “already in our database”). The page offers a clear action: <b>request this artist</b>.',
+ 'Close matches and “you might like” suggestions fill the space instead of status messages.',
+ 'After a request: one quiet line, “We\'re adding Zvjezdani Prah. We\'ll notify you when the page is ready”. A duplicate request simply opens the existing artist.',
+ 'Loading uses skeleton tiles, with no status text. A message about MusicBrainz or Last.fm being down appears only if the request itself can\'t be accepted.']},
+()=>shell({tab:'search',d:'',q:'zvjezdani prah',title:'Search',right:`<a class="ib bell">${ic('bell',20)}<i>2</i></a>`,after:`<div class="only-m" style="padding:10px 12px;border-top:1px solid var(--line);background:var(--bg2)"><div class="inp">${ic('search',16)}<span class="grow">zvjezdani prah</span>${ic('close',16)}</div></div>`,body:`<div class="narrow" style="max-width:980px">
+<div class="h-m" style="margin-top:6px">No results for “Zvjezdani Prah”</div>
+<p class="lead">Not in our catalog yet. Ask us to add this artist and we'll let you know when the page is ready.</p>
+<div class="btns"><a class="btn pri">${ic('plus',16)}Request this artist</a></div>
+<div class="note ok" style="margin-top:18px">We're adding <b>Zvjezdani Prah</b>. We'll notify you when the page is ready.</div>
+${sec('Did you mean','',`<div class="rows nt"><div class="row"><div class="thumb"><img src="${artistImg('Zvjezdana Prašina')}" alt=""></div><div class="main"><div class="t">Zvjezdana Prašina</div><div class="s">psychedelic rock · Pula</div></div><div class="end">${ic('chev')}</div></div><div class="row"><div class="thumb"><img src="${cover('Prah i pepeo')}" alt=""></div><div class="main"><div class="t">Prah i pepeo</div><div class="s">Album · Betonski Vrt · 2021</div></div><div class="end">${ic('chev')}</div></div></div>`)}
+${sec('You might like','',`<div class="hrow">${['Mjesečeva Strana','Kiša u Svibnju','Noćni Autobus','Plavi Sat','Tihi Kvart','Sidro'].map(n=>artTile(A(n))).join('')}</div>`,'optional')}
+${sec('Loading state','',`<div class="grid g4">${[1,2,3,4].map(()=>`<div><div class="skel" style="aspect-ratio:1"></div><div class="skel t"></div><div class="skel s"></div></div>`).join('')}</div>`)}
+</div>`}));
+
+S('3.3','Artist page',{tags:['Core','T3','T4','T5','T6'],covers:'F-008 · F-011 · F-012 · F-013 · F-014 · F-018',notes:[
+ 'A large artist image and name, then the most important thing for this user: <b>the next concert near you</b>, with an Apply button (T3).',
+ '“Albums and songs” is replaced by <b>Discography</b>: covers shown directly, filterable by release type (Album, EP, Single, Live; T5). Popular songs follow, with like and “add to list”.',
+ 'Reviews are one compact unit: rating summary, your stars, “write a review” and the two most relevant reviews with the artist\'s reply.',
+ 'On desktop the side column carries upcoming concerts, the biography with links, and “fans also like” (an optional recommendations component, T6).',
+ 'Images: verified artists upload their own. Otherwise fanart.tv or Wikimedia is used by MusicBrainz ID, and a default image as the last fallback (T4).']},
+()=>shell({tab:'search',d:'',back:true,title:'',right:`<a class="ib">${ic('share',20)}</a><a class="ib">${ic('more',20)}</a>`,body:`
+<div class="ahero"><img src="${artistImg('Orbita',160,100)}" alt=""><div class="cap"><div class="meta">indie rock · melancholic · Zagreb</div><div class="h-xl">Orbita</div></div></div>
+<div class="row-flex" style="justify-content:space-between;margin-top:16px"><div class="factline" style="margin:0"><span><b>4.6</b> ★ · 128 ratings</span><span><b>2,341</b> followers</span></div><div class="row-flex"><a class="btn sm pri">Follow</a><a class="btn sm">${ic('heart',14)}Like</a></div></div>
+<div class="split" style="margin-top:6px">
+<div>
+<div class="near only-m">${dateBlk(C('c1'))}<div class="main"><div class="meta acc">Next near you · 3 km</div><div class="t" style="font-weight:600">Dom kulture, Zagreb</div><div class="sub">with Kiša u Svibnju · 20:00</div></div><a class="btn sm pri">Apply</a></div>
+${sec('Discography','See all 14',`<div class="chips scroll" style="margin-bottom:14px"><a class="chip on">All <span class="n">14</span></a><a class="chip">Albums <span class="n">3</span></a><a class="chip">EPs <span class="n">3</span></a><a class="chip">Singles <span class="n">7</span></a><a class="chip">Live <span class="n">1</span></a></div><div class="grid g4 m3">${DISCO.map(r=>relTile(r,{type:1,sub:`${r[2]} · ${r[3]}`})).join('')}</div>`)}
+${sec('Popular songs','',`<div class="rows nt">${TRACKS.slice(0,5).map((t,i)=>trackRow(i+1,t,{thumb:cover(i===1?'Bez mjeseca':i===0?'Plima':'Valovi'),sub:i===1?'Bez mjeseca · Single':i===0?'Plima · EP':'Valovi · Album',liked:i===1})).join('')}</div>`)}
+${sec('Ratings & reviews','All 23 reviews',`${ratingSum(4.6,128,[72,18,6,3,1],4)}<div style="margin-top:8px">${review('Ivan P.',5,'Best live band in town right now. Valovi grows on you: the last three songs are the reason to own it.',{reply:['Orbita','Thank you! See you at Dom kulture.']})}${review('Lea M.',4,'Great songwriting, a bit too polished compared to the first EP.',{when:'1 week ago'})}</div>`)}
+</div>
+<div>
+<div class="near only-d" style="margin-top:30px">${dateBlk(C('c1'))}<div class="main"><div class="meta acc">Next near you · 3 km</div><div class="t" style="font-weight:600">Dom kulture, Zagreb</div><div class="sub">with Kiša u Svibnju · 20:00</div></div><a class="btn sm pri">Apply</a></div>
+${sec('Upcoming concerts','',`<div class="rows nt">${conRow(C('c1'),{km:1,f:0})}${conRow(C('c2'),{km:1})}${conRow({a:'Orbita',v:'Klub Tunel',c:'Split',dow:'Sat',d:'9',m:'Jan',t:'21:00',km:410},{km:1})}</div>`)}
+${sec('About','',`<p class="body">Four-piece from Zagreb. Started in a basement in Trešnjevka in 2018, two albums since. Long songs, loud endings.</p><div class="linkrows" style="margin-top:8px"><a>${ic('link',16)}<span>orbita.example</span>${ic('chev',16)}</a><a>${ic('link',16)}<span>Bandcamp</span>${ic('chev',16)}</a></div><p class="src" style="margin-top:12px">Data: MusicBrainz · Last.fm · Image: fanart.tv</p>`)}
+${sec('Fans also like','',`<div class="grid g3m" style="grid-template-columns:repeat(3,minmax(0,1fr))">${['Kiša u Svibnju','Plavi Sat','Crveni Signal'].map(n=>artTile(A(n),{reason:'shared tags'})).join('')}</div>`,'optional')}
+</div></div>`}));
+
+/* ---------- 4. Releases, reviews, lists ---------- */
+S('4.1','Release page (album, EP, single, song)',{tags:['Core','T4','T11'],covers:'F-008 · F-012 · F-013 · F-015',notes:[
+ 'Bandcamp\'s principles without copying it: the cover is the page; title, artist and release facts next to it; the track list right below.',
+ 'Kept from the concept: a 1–5 rating with the average and distribution, “like”, and an add-to-list button on every track (4.4).',
+ 'The same layout serves EPs, singles and single songs. A song that isn\'t on an album shows the default image (see 3.1).',
+ 'Playback is optional and not planned for the first version. If added later, 30-second previews (Deezer or iTunes) would sit on the track rows (T11).']},
+()=>shell({tab:'search',d:'',back:true,title:'Album',right:`<a class="ib">${ic('share',20)}</a><a class="ib">${ic('more',20)}</a>`,body:`
+<div class="relhead"><img class="cover" src="${cover('Valovi')}" alt="">
+<div><div class="meta" style="margin-top:16px">Album · 2025 · 9 tracks · 41 min</div><div class="h-l" style="margin-top:4px">Valovi</div><div style="margin-top:6px;font-size:16px">by <a class="link">Orbita</a></div>
+<div class="factline"><span><b>4.7</b> ★ · 64 ratings</span><span>Released 12 Mar 2025</span><span>Self-released</span></div>
+<div class="row-flex" style="margin-top:14px;gap:14px"><span class="meta">Your rating</span>${stars(5,22)}</div>
+<div class="btns"><a class="btn sm">${ic('heartf',14)}Liked</a><a class="btn sm">${ic('plus',14)}Add to list</a><a class="btn sm">${ic('edit',14)}Write a review</a></div>
+${sec('Tracks','',`<div class="rows nt">${TRACKS.map((t,i)=>trackRow(i+1,t,{liked:i===1})).join('')}</div>`)}
+</div></div>
+<div class="split" style="margin-top:8px">
+<div>${sec('Ratings & reviews','All 11 reviews',`${ratingSum(4.7,64,[78,15,5,2,0],5,'Write a review')}<div style="margin-top:8px">${review('Ivan P.',5,'Every track holds up. Daleko od obale is six minutes and still ends too soon.',{reply:['Orbita','That one was recorded in a single take!']})}${review('Nina R.',4,'Production is huge, the lyrics could be braver.',{when:'2 weeks ago'})}</div>`)}</div>
+<div>${sec('More from Orbita','',`<div class="grid g3m" style="grid-template-columns:repeat(3,minmax(0,1fr))">${DISCO.slice(1,4).map(r=>relTile(r,{sub:`${r[2]} · ${r[3]}`})).join('')}</div>`)}
+${sec('Fans also like','',`<div class="grid g3m" style="grid-template-columns:repeat(3,minmax(0,1fr))">${[REL[3],REL[1],REL[4]].map(r=>relTile(r)).join('')}</div>`,'optional')}
+<p class="src">Release data: MusicBrainz · Cover: Cover Art Archive</p></div></div>`}));
+
+S('4.2a','Write a review',{tags:['Core'],covers:'F-012 · F-013',notes:[
+ 'Writing is its own focused view, separate from reading replies.',
+ 'A plain text field is enough; no rich text editor.',
+ 'Rating again replaces your previous rating, as in the concept.']},
+()=>shell({nonav:true,back:true,title:'Review',right:'<a class="btn sm pri">Publish</a>',body:`<div class="narrow-s">
+<div class="minihead"><img src="${cover('Valovi')}" style="width:56px;height:56px;object-fit:cover" alt=""><div class="main"><div class="t" style="font-weight:600">Valovi</div><div class="sub">Orbita · Album · 2025</div></div></div>
+<div class="fld"><label>Your rating *</label>${stars(4,34)}<p class="help">Tap to change. Rating again replaces your previous rating.</p></div>
+<div class="fld"><label>Your review</label><div class="inp ta" style="min-height:220px">Huge-sounding record. The first half is the strongest set of songs they've written, though the middle drags a little before <span class="caret"></span></div><p class="help" style="display:flex;justify-content:space-between"><span>Shown with your name to everyone.</span><span>142 / 3000</span></p></div>
+<p class="err">A review can't be empty. You can also just leave a rating.</p>
+<div class="stickybar"><a class="btn">Cancel</a><a class="btn pri">Publish review</a></div></div>`}));
+
+S('4.2b','Reviews & official replies',{tags:['Core'],covers:'F-012 · F-013 · F-014',notes:[
+ 'Reading reviews needs no extra screen on phones: replies <b>unfold under the review</b>. “All reviews” opens this list with sorting.',
+ 'A verified artist sees a reply field under reviews of their own releases. There\'s one official reply per review, as the concept says.',
+ 'Reporting is a quiet link on each review (7.2).']},
+()=>shell({tab:'search',d:'',back:true,title:'Reviews · Valovi',right:'',body:`<div class="narrow">
+<div class="minihead"><img src="${cover('Valovi')}" style="width:48px;height:48px;object-fit:cover" alt=""><div class="main"><div class="t" style="font-weight:600">Valovi · Orbita</div><div class="sub">4.7 ★ · 64 ratings · 11 reviews</div></div><a class="btn sm pri">Write a review</a></div>
+<div class="chips"><a class="chip on">Newest</a><a class="chip">Highest</a><a class="chip">Lowest</a><a class="chip">With reply</a></div>
+<div style="margin-top:6px">
+${review('Ivan P.',5,'Every track holds up. Daleko od obale is six minutes and still ends too soon.',{reply:['Orbita','That one was recorded in a single take!']})}
+${review('Nina R.',4,'Production is huge, the lyrics could be braver.',{when:'2 weeks ago',replyField:'Orbita'})}
+${review('Marko T.',3,'Good, not great. Liked Prvi val more.',{when:'3 weeks ago',more:`<a>${ic('down',12)}1 reply</a>`})}
+${review('Lea M.',5,'Saw them play this live in October and it was even better.',{when:'1 month ago'})}
+</div><div class="meta" style="text-align:center;margin-top:16px">Artist view shown on the second review: reply field visible only to Orbita</div></div>`}));
+
+S('4.3','A list',{tags:['Core','T2'],covers:'F-015',notes:[
+ 'Lists live inside the profile. A compact profile header stays on top of every profile sub-page.',
+ 'The list gets a cover mosaic and real track rows with reorder and remove.',
+ 'Songs are mainly added <b>from where they already are</b>: the + on any track row (4.4). “Add songs” here opens a catalog search, which is optional (T2).']},
+()=>shell({tab:'user',d:'',back:true,title:'Night drive',right:`<a class="ib">${ic('more',20)}</a>`,body:`<div class="narrow" style="max-width:980px">
+<div class="minihead">${av('Ana K.','sm')}<div class="main"><span class="small">Ana K.</span> <span class="meta">› Lists</span></div><span class="meta">Following 24 · 37 followers</span></div>
+<div class="listhead2"><div class="mosaic4">${['Valovi','Magla','Signali','Neon'].map(t=>`<img src="${cover(t)}" alt="">`).join('')}</div><div><div class="meta">List · public</div><div class="h-l">Night drive</div><div class="sub" style="margin-top:4px">12 songs · 51 min · updated 2 days ago</div></div></div>
+<div class="btns"><a class="btn sm optional">${ic('search',14)}Add songs</a><a class="btn sm">${ic('share',14)}Share</a><a class="btn sm">${ic('edit',14)}Rename</a></div>
+<div class="rows" style="margin-top:18px">${[['Plima','Orbita','Valovi'],['Staklo','Plavi Sat','Staklene noći'],['Signal 3','Noćni Autobus','Signali'],['Siva zora','Kiša u Svibnju','Magla'],['Neon','Ljetna Smjena','Neon'],['Mjesečar','Sidro',null]].map((t,i)=>`<div class="row"><span class="muted">${ic('grip',16)}</span><div class="thumb"><img src="${t[2]?cover(t[2]):defaultCover()}" alt=""></div><div class="main"><div class="t">${t[0]}</div><div class="s">${t[1]}${t[2]?' · '+t[2]:' · not on an album'}</div></div><div class="end"><span class="mono only-d">${['4:12','3:57','5:10','4:33','3:21','2:58'][i]}</span>${ic('close',16)}</div></div>`).join('')}</div>
+<p class="err">Plima is already on this list.</p>
+${sec('Ana\'s other lists','',`<div class="grid g4">${['Favourites','Rainy Sundays','Gym'].map((l,i)=>`<a class="tile"><div class="im"><img src="${cover(l+' list')}" alt=""></div><div class="t">${l}</div><div class="s">${[31,8,20][i]} songs</div></a>`).join('')}<a class="tile"><div class="im" style="border:1px dashed var(--line2);background:transparent;display:flex;align-items:center;justify-content:center;color:var(--tx3)">${ic('plus',28)}</div><div class="t">New list</div></a></div>`)}
+</div>`}));
+
+S('4.4','Add a song to a list',{tags:['Core','New'],covers:'F-015',notes:[
+ 'Opens from the + on any track row (artist page, release page, search). A bottom sheet on phones, a small dialog on desktop.',
+ 'Tick one or more lists, or create a new one inline. Liked songs are a separate one-tap heart.']},
+()=>shell({tab:'search',d:'',back:true,title:'Album',right:'',after:`<div class="dim-layer"></div><div class="sheet"><div class="grab"></div><div class="minihead"><img src="${cover('Valovi')}" style="width:44px;height:44px;object-fit:cover" alt=""><div class="main"><div class="t" style="font-weight:600">Svjetionik</div><div class="sub">Orbita · Valovi</div></div>${ic('close',18)}</div><div class="lbl">Add to</div>${[['Night drive',1],['Favourites',0],['Rainy Sundays',0],['Gym',0]].map(([l,on])=>`<div class="optrow"><span class="check${on?' on':''}">${on?ic('check',13):''}</span><div class="main">${l}</div><span class="meta">${on?'added':''}</span></div>`).join('')}<div class="optrow"><span class="muted">${ic('plus',18)}</span><div class="main"><div class="inp" style="min-height:38px"><span class="ph">New list name</span></div></div></div><a class="btn pri block" style="margin-top:14px">Done</a></div>`,body:`
+<div class="relhead"><img class="cover" src="${cover('Valovi')}" alt=""><div><div class="h-l" style="margin-top:14px">Valovi</div><div class="rows nt" style="margin-top:12px">${TRACKS.slice(0,6).map((t,i)=>trackRow(i+1,t,{})).join('')}</div></div></div>`}));
+
+/* ---------- 5. Feed, notifications, following ---------- */
+S('5.1','Home (signed in)',{tags:['Core','T3','T6','T13'],covers:'F-016 · F-017 · F-018 · F-019 · F-020',notes:[
+ 'The core of the product, in the spirit of Bandcamp\'s front page: <b>lots of releases with big covers</b>, a world to browse instead of a few lonely cards. Releases first, no genre picker first.',
+ 'Ordered by what you will most likely act on: recommended releases (with the reason), concerts near you, then what people you follow are doing.',
+ 'Concerts sit in the same feed, with distance and the reason (“because you like Orbita”).',
+ 'The feed updates live without a reload (concept requirement, T13). Recommended artists use the shared recommendations component (T6).']},
+()=>shell({tab:'home',d:'Home',body:`
+${sec('For you','More',`<div class="grid g6 m3">${REL.slice(0,12).map((r,i)=>relTile(r,{reason:i%3===0?`because you like ${['Orbita','shoegaze','Plavi Sat','post-punk'][i/3]}`:''})).join('')}</div>`)}
+${sec('Concerts near you','All concerts',`<div class="hrow lg">${[C('c1'),C('c3'),C('c6'),C('c4')].map((c,i)=>conTile(c,{km:1,reason:['because you like Orbita','because you follow Noćni Autobus','because you like noise rock','popular in Zagreb'][i]})).join('')}</div>`)}
+<div class="split" style="margin-top:0">
+<div>${sec('From people you follow','',`
+<div class="feedrow">${av('Ivan P.','sm')}<div class="main"><b>Ivan P.</b> rated <b>Valovi</b> by Orbita ${stars(5,12)}<span class="meta">3 hours ago</span></div><div class="thumb"><img src="${cover('Valovi')}" alt=""></div></div>
+<div class="feedrow">${av('Lea M.','sm')}<div class="main"><b>Lea M.</b> is going to <b>Noćni Autobus</b> at Tvornica Zvuka<span class="meta">Sat 21 Nov · 5 hours ago</span></div><div class="thumb"><img src="${artistImg('Noćni Autobus')}" alt=""></div></div>
+<div class="feedrow"><div class="av sm" style="background:var(--bg3);color:var(--acc)">${ic('cal',14)}</div><div class="main"><b>Orbita</b> announced a concert at <b>Dom kulture</b>, Zagreb<span class="meta">Fri 20 Nov · yesterday</span></div><a class="btn sm pri">Apply</a></div>
+<div class="feedrow">${av('Marko T.','sm')}<div class="main"><b>Marko T.</b> added 3 songs to <b>Ljeto 2026</b><span class="meta">yesterday</span></div><div class="thumb"><img src="${cover('Neon')}" alt=""></div></div>
+<div class="feedrow">${av('Nina R.','sm')}<div class="main"><b>Nina R.</b> reviewed <b>Magla</b>: “The best shoegaze record from around here in years.” ${stars(5,12)}<span class="meta">2 days ago</span></div><div class="thumb"><img src="${cover('Magla')}" alt=""></div></div>`)}</div>
+<div>${sec('New from artists you follow','',`<div class="grid g3m" style="grid-template-columns:repeat(2,minmax(0,1fr))">${[DISCO[1],REL[2],REL[5],REL[11]].map(r=>relTile(r,{type:1})).join('')}</div>`)}
+${sec('Artists to discover','',`<div class="rows nt">${['Zlatna Groznica','Mjesečeva Strana','Tihi Kvart'].map(n=>`<div class="row"><div class="thumb"><img src="${artistImg(n)}" alt=""></div><div class="main"><div class="t">${n}</div><div class="r tile" style="font:500 10px var(--fm);color:var(--acc);text-transform:uppercase">because you like ${n==='Tihi Kvart'?'Kiša u Svibnju':'Orbita'}</div></div><div class="end"><a class="btn sm">Follow</a></div></div>`).join('')}</div>`,'optional')}</div>
+</div>`}));
+
+S('5.2','Notifications',{tags:['Core','T13'],covers:'F-035 · F-036 · F-037 · F-038 · NF-08',notes:[
+ 'A simple top-down list, newest first, in full-width rows with no side margins.',
+ 'Read and unread are clearly different (darker row with an orange dot).',
+ '<b>Three importance levels</b>, shown as the left edge: orange for “don\'t miss this” (tickets, reminders, cancellations), grey for normal, none for low (social, account outcomes).',
+ 'Grouped into Today, This week and Earlier. Arrives live (T13); email is sent too if enabled.']},
+()=>shell({tab:'home',d:'',back:true,title:'Notifications',right:'<a class="btn sm ghost">Mark all read</a>',body:`<div class="narrow">
+<div class="chips"><a class="chip on">All</a><a class="chip">Concerts</a><a class="chip">Social</a><a class="chip">Account</a></div>
+<div class="ngroup">Today</div>
+<div class="nrow unread hi"><div class="nic"><img src="${artistImg('Orbita')}" alt=""></div><div class="main"><b>Tomorrow at 20:00:</b> Orbita <span class="plus">+</span> Kiša u Svibnju at Dom kulture. Your ticket is ready.<span class="meta">2 hours ago · reminder</span></div></div>
+<div class="nrow unread hi"><div class="nic" style="color:var(--bad)">${ic('warn',18)}</div><div class="main"><b>Cancelled:</b> Mali Mjesec at Klub Mjesečina (28 Nov). Your registration no longer applies.<span class="meta">5 hours ago</span></div></div>
+<div class="nrow mid"><div class="nic"><img src="${artistImg('Noćni Autobus')}" alt=""></div><div class="main">New concert near you: <b>Noćni Autobus</b> at Tvornica Zvuka, Sat 21 Nov · 5 km<span class="meta">9 hours ago</span></div></div>
+<div class="ngroup">This week</div>
+<div class="nrow mid"><div class="nic" style="color:var(--ok)">${ic('check',18)}</div><div class="main">Your request for <b>artist status</b> (Plavi Sat) was approved.<span class="meta">Tue</span></div></div>
+<div class="nrow">${av('Ivan P.','sm')}<div class="main"><b>Ivan P.</b> started following you.<span class="meta">Mon</span></div></div>
+<div class="ngroup">Earlier</div>
+<div class="nrow"><div class="nic">${ic('flag',18)}</div><div class="main">Your report was reviewed: no action taken. Reason: the review doesn't break the rules.<span class="meta">14 Oct</span></div></div>
+<div class="nrow"><div class="nic">${ic('info',18)}</div><div class="main">Your review of <b>Pustinja u gradu</b> was removed. Reason: insulting another user.<span class="meta">9 Oct</span></div></div>
+</div>`}));
+
+S('5.3','Following',{tags:['Core','T6'],covers:'F-011',notes:[
+ 'The compact profile header stays on top. Tabs: Artists, People, Followers.',
+ 'Rows with an image, name and genre or city; the button shows the current state (“Following”) and unfollows on tap.',
+ 'Suggestions at the bottom come from the shared recommendations component (optional, T6).']},
+()=>shell({tab:'user',d:'',back:true,title:'Following',right:'',body:`<div class="narrow">
+<div class="minihead">${av('Ana K.','sm')}<div class="main"><span class="small">Ana K.</span> <span class="meta">› Following</span></div></div>
+<div class="tabs"><a class="on">Artists <span class="n">24</span></a><a>People <span class="n">8</span></a><a>Followers <span class="n">37</span></a></div>
+<div class="rows nt">${['Orbita','Kiša u Svibnju','Noćni Autobus','Mali Mjesec','Mjesečeva Strana','Plavi Sat'].map(n=>`<div class="row"><div class="thumb"><img src="${artistImg(n)}" alt=""></div><div class="main"><div class="t">${n}</div><div class="s">${A(n).g} · ${A(n).c}</div></div><div class="end"><a class="btn sm">${ic('check',14)}Following</a></div></div>`).join('')}</div>
+${sec('Suggested for you','',`<div class="hrow">${['Zlatna Groznica','Betonski Vrt','Tihi Kvart','Sidro','Crveni Signal','Ljetna Smjena'].map(n=>artTile(A(n),{reason:'because you like Orbita'})).join('')}</div>`,'optional')}
+</div>`}));
+
+/* ---------- 6. Concerts & tickets ---------- */
+S('6.1','Concert page',{tags:['Core','T8','T13'],covers:'F-024 · F-018 · NF-08',notes:[
+ 'Rebuilt as a real concert page: a headliner image with the date, a lineup you can follow, and a <b>long description</b> from the artist.',
+ 'The small map sits in the corner of the venue line and expands when tapped. On desktop the ticket box, map and venue stay in a fixed side column.',
+ 'Places left is a short hint, not a card: “Under 10 places left”, shown only below a threshold (decision: the exact count stays private). It updates live.',
+ 'Button states: <b>Apply</b> → <b>Show ticket</b> once registered. There\'s no greyed-out sold-out button; a plain “Sold out” line takes its place.',
+ '“People you follow who are going” is optional social proof.']},
+()=>shell({tab:'ticket',d:'',back:true,title:'Concert',right:`<a class="ib">${ic('share',20)}</a>`,body:`
+<div class="ahero c"><img src="${artistImg('Orbita',160,100)}" alt=""><div class="cap"><div class="meta">Fri 20 Nov 2026 · 20:00</div><div class="h-xl" style="font-size:44px">Orbita <span class="plus">+</span> Kiša u Svibnju</div></div></div>
+<div class="split">
+<div>
+<div class="vh"><div class="main"><div class="t" style="font-weight:600;font-size:15px">Dom kulture, Zagreb</div><div class="sub">Ilica 211 · 3 km from you · doors 19:00</div><div class="row-flex" style="margin-top:10px"><span class="tag ok">registrations open</span><span class="meta acc">under 10 places left</span></div></div><div class="minimap only-m">${mapBox({seed:'dk',ratio:'1/1',pins:[{x:50,y:50,f:1,n:'•'}],expand:true})}</div></div>
+<div class="only-m" style="margin-top:16px"><a class="btn pri block">Apply · free</a><p class="help" style="text-align:center">You can cancel until 19:00 on the day.</p></div>
+${sec('Lineup','',`<div class="rows nt lineup">${['Orbita','Kiša u Svibnju'].map((n,i)=>`<div class="row"><div class="thumb"><img src="${artistImg(n)}" alt=""></div><div class="main"><div class="t">${n}</div><div class="s">${A(n).g} · ${i===0?'headliner · 21:15':'support · 20:15'}</div></div><div class="end"><a class="btn sm">${i===0?ic('check',14)+'Following':'Follow'}</a></div></div>`).join('')}</div>`)}
+${sec('About this concert','',`<p class="body">Orbita close their autumn tour at home, playing Valovi front to back for the first time, followed by older songs picked by the audience. Kiša u Svibnju open with their first Zagreb show since Magla came out.</p><p class="body">Standing on the ground floor, seats on the balcony first come first served. No re-entry after 22:00.</p>`)}
+<div class="optional" style="margin-top:22px;display:flex;align-items:center;gap:12px"><span class="avs">${av('Lea M.','xs')}${av('Ivan P.','xs')}${av('Nina R.','xs')}</span><span class="small">Lea M. and 2 other people you follow are going</span></div>
+${sec('Other button states','',`<div class="notes-stack"><div class="row-flex"><a class="btn sm">${ic('ticket',14)}Show ticket</a><span class="small muted">You're going · cancel until 19:00</span></div><div class="row-flex"><span class="h-m" style="font-size:18px">Sold out</span><span class="small muted">All places are taken.</span></div></div>`)}
+</div>
+<div class="sticky only-d" style="margin-top:28px">
+<div class="ticketbox"><div class="price"><span class="h-m">Free</span><span class="meta acc">under 10 left</span></div><a class="btn pri block">Apply</a><p class="help">You can cancel until 19:00 on the day. Your QR ticket appears in Tickets.</p></div>
+<div style="margin-top:18px">${mapBox({seed:'dk',ratio:'16/10',pins:[{x:50,y:50,f:1,label:'Dom kulture'}],expand:true})}</div>
+<div class="kv" style="margin-top:14px"><dt>Venue</dt><dd><a class="link">Dom kulture</a></dd><dt>Address</dt><dd>Ilica 211, Zagreb</dd><dt>Capacity</dt><dd>350</dd></div>
+</div></div>`}));
+
+S('6.2','My tickets',{tags:['Core'],covers:'F-024 · F-025',notes:[
+ 'One list sorted by date: upcoming first, past below a divider. <b>No tabs.</b>',
+ 'Each row has a date block, the lineup and venue, the registration state, and actions (ticket, cancel).',
+ 'A cancelled concert says so in plain words; past concerts show attended or no-show.']},
+()=>shell({tab:'ticket',d:'Tickets',title:'My tickets',right:'',body:`<div class="narrow">
+<div class="rows nt">
+${conRow(C('c1'),{extra:`<div class="row-flex" style="margin-top:8px"><span class="tag ok">registered</span></div>`,end:`<div class="row-flex"><a class="btn sm pri">${ic('qr',14)}Ticket</a><a class="btn sm only-d">Cancel</a></div>`})}
+${conRow(C('c3'),{extra:`<div class="row-flex" style="margin-top:8px"><span class="tag ok">registered</span></div>`,end:`<div class="row-flex"><a class="btn sm pri">${ic('qr',14)}Ticket</a><a class="btn sm only-d">Cancel</a></div>`})}
+${conRow({a:'Mali Mjesec',v:'Klub Mjesečina',c:'Osijek',dow:'Sat',d:'28',m:'Nov',t:'21:30'},{extra:`<div class="row-flex" style="margin-top:8px"><span class="tag bad">concert cancelled</span><span class="small muted">Your registration no longer applies.</span></div>`,end:''})}
+</div>
+<div class="ngroup" style="margin-top:14px">Past</div>
+<div class="rows nt">
+${conRow({a:'Orbita',v:'Dom kulture',c:'Zagreb',dow:'Fri',d:'2',m:'Oct',t:'20:00'},{dim:1,extra:`<div style="margin-top:6px"><span class="tag ok">attended</span></div>`,end:`<a class="btn sm">Rate</a>`})}
+${conRow({a:'Sidro',v:'Dom kulture',c:'Zagreb',dow:'Sat',d:'19',m:'Sep',t:'21:00'},{dim:1,extra:`<div style="margin-top:6px"><span class="tag mute">no-show</span></div>`,end:''})}
+</div>
+<p class="err" style="margin-top:14px">You can cancel up to one hour before the concert starts.</p>
+</div>`}));
+
+S('6.3','Ticket',{tags:['Core','T10'],covers:'F-024 · F-025 · F-027',notes:[
+ 'The QR code is large, on white for reliable scanning, with the key facts around it.',
+ 'Add to calendar (.ics) or Google Calendar; cancel is available until one hour before the start.',
+ 'On desktop it stays a narrow, ticket-sized column in the middle of the page.']},
+()=>shell({tab:'ticket',d:'Tickets',back:true,title:'Ticket',right:'',body:`<div class="narrow-s">
+<div class="meta" style="text-align:center">Fri 20 Nov 2026 · doors 19:00 · start 20:00</div>
+<div class="h-l" style="text-align:center;margin-top:6px;font-size:34px">Orbita <span class="plus">+</span> Kiša u Svibnju</div>
+<div class="sub" style="text-align:center;margin-top:4px">Dom kulture, Ilica 211, Zagreb</div>
+<div class="qrbox"><img src="${qrImg('ticket-0417')}" alt=""></div>
+<div class="row-flex" style="justify-content:center;margin-top:12px;gap:16px"><span class="tag ok">registered</span><span class="mono muted">#0417 · Ana K.</span></div>
+<div class="hr"></div>
+<div class="stack"><a class="btn block">${ic('cal',16)}Add to calendar (.ics)</a><a class="btn block">${ic('google',16)}Add to Google Calendar</a><a class="btn danger block">Cancel registration</a></div>
+<p class="help" style="text-align:center">You can cancel until 19:00 on 20 Nov. Show this code at the entrance.</p>
+</div>`}));
+
+/* ---------- 7. Roles, reports, privacy ---------- */
+S('7.1a','Request artist status',{tags:['Core'],covers:'F-033 · F-034 · F-037',notes:[
+ 'Its own screen, separate from the venue request. Three numbered steps: pick the artist, give an official link, publish the code.',
+ 'Artists missing from the catalog can be requested right from step 1.',
+ 'A status timeline (request → review → more info needed → approved or rejected) replaces the loose state examples. Every outcome also arrives as a notification.']},
+()=>shell({tab:'user',d:'',back:true,title:'Artist status',right:'',body:`
+<div class="reqband"><img src="${artistImg('Plavi Sat',160,100)}" alt=""><span class="meta">For artists</span></div>
+<div class="split">
+<div>
+<div class="h-l">Request artist status</div><p class="lead">Verified artists propose concerts, reply officially to reviews and see their statistics.</p>
+<div class="sec"><div class="sec-h"><h4>1 · Which artist are you?</h4></div><div class="inp">${ic('search',16)}<span class="grow">Plavi Sat</span>${ic('check',16)}</div><div class="drop rows nt"><div class="row f"><div class="thumb"><img src="${artistImg('Plavi Sat')}" alt=""></div><div class="main"><div class="t">Plavi Sat</div><div class="s">dream pop · Rijeka · MusicBrainz</div></div></div></div><p class="help">Not in the catalog? <a class="link">Request the artist first</a>.</p></div>
+<div class="sec"><div class="sec-h"><h4>2 · Official page or profile</h4></div><div class="inp">${ic('link',16)}<span class="grow">https://plavisat.example</span></div><p class="help">Your website, Bandcamp or an official social profile.</p></div>
+<div class="sec"><div class="sec-h"><h4>3 · Prove it's yours</h4></div><p class="body">Publish this code on that page or in the profile bio. A moderator checks it.</p><div class="codebox">SONAR-7F3K-92QX<a class="btn sm">${ic('copy',14)}Copy</a></div></div>
+<div class="stickybar"><span class="meta">Status: under review</span><a class="btn pri">Send request</a></div>
+</div>
+<div class="sticky" style="margin-top:28px">${sec('Status','',`<div class="tlist"><div class="done"><div class="t">Request sent</div><div class="s">20 Oct</div></div><div class="on"><div class="t">Under review</div><div class="s">A moderator is checking the code</div></div><div><div class="t">More info needed</div><div class="s">Only if the code isn't visible</div></div><div><div class="t">Approved or rejected</div><div class="s">With a reason if rejected</div></div></div>`)}<div class="note info" style="margin-top:8px">You'll get a notification and an email about the outcome.</div></div>
+</div>`}));
+
+S('7.1b','Request venue status',{tags:['Core'],covers:'F-033 · F-034 · F-037',notes:[
+ 'A separate screen with venue-specific information: choose the venue from the catalog or on the map, your role there, and an official link.',
+ 'It reuses the same components as 7.1a (steps, code box, status timeline), but looks like its own flow.',
+ 'After approval the next step is clear: set the capacity, without which no concert can be proposed.']},
+()=>shell({tab:'user',d:'',back:true,title:'Venue status',right:'',body:`
+<div class="reqband"><img src="${venueImg('Klub Mlin')}" alt=""><span class="meta">For venues</span></div>
+<div class="split">
+<div>
+<div class="h-l">Request venue status</div><p class="lead">Venue managers accept concert proposals, scan tickets and see attendance.</p>
+<div class="sec"><div class="sec-h"><h4>1 · Which venue?</h4></div><div class="row-flex" style="gap:8px"><div class="inp" style="flex:1">${ic('search',16)}<span class="grow">Klub Mlin</span></div><a class="btn">${ic('map',16)}Map</a></div><div class="drop rows nt"><div class="row f"><div class="thumb w"><img src="${venueImg('Klub Mlin')}" alt=""></div><div class="main"><div class="t">Klub Mlin</div><div class="s">Zagreb · Jarunska 5 · MusicBrainz</div></div></div></div><p class="help">Not listed? <a class="link">Request the venue</a>.</p></div>
+<div class="sec"><div class="sec-h"><h4>2 · Your role there</h4></div><div class="chips"><a class="chip">Owner</a><a class="chip on">Manager</a><a class="chip">Booker</a></div></div>
+<div class="sec"><div class="sec-h"><h4>3 · Official page</h4></div><div class="inp">${ic('link',16)}<span class="grow">https://instagram.com/klubmlin</span></div></div>
+<div class="sec"><div class="sec-h"><h4>4 · Prove it's yours</h4></div><div class="codebox">SONAR-Q2LM-80TA<a class="btn sm">${ic('copy',14)}Copy</a></div><p class="help">Publish the code on that page or in its bio.</p></div>
+<div class="stickybar"><span class="meta">Status: more info needed</span><a class="btn pri">Send update</a></div>
+</div>
+<div class="sticky" style="margin-top:28px">${sec('Status','',`<div class="tlist"><div class="done"><div class="t">Request sent</div><div class="s">18 Oct</div></div><div class="done"><div class="t">Under review</div></div><div class="on"><div class="t">More info needed</div><div class="s">“The code isn't visible on the Instagram bio yet.”</div></div><div><div class="t">Approved or rejected</div></div></div>`)}<div class="note hot" style="margin-top:8px"><b>After approval:</b> enter your capacity in Venue settings. Until then nobody can propose a concert at your venue.</div></div>
+</div>`}));
+
+S('7.2','Report content',{tags:['Core'],covers:'F-029',notes:[
+ 'A bottom sheet on phones, a dialog on desktop. The reported item is quoted so it\'s clear what is being reported.',
+ 'A reason is required and the extra description is optional. The outcome arrives as a notification.']},
+()=>shell({tab:'search',d:'',back:true,title:'Reviews',right:'',after:`<div class="dim-layer"></div><div class="sheet"><div class="grab"></div><div class="row-flex" style="justify-content:space-between"><div class="h-m">Report review</div>${ic('close',18)}</div><div class="note" style="margin-top:12px"><b>Dario S.</b> ${stars(1,11)} “Whoever likes this has no ears…”</div><div class="lbl" style="margin-top:16px">Reason *</div>${['Offensive or insulting','Inappropriate profile','Spam','Something else'].map((r,i)=>`<div class="optrow"><span class="check${i===0?' on':''}">${i===0?ic('check',13):''}</span><div class="main">${r}</div></div>`).join('')}<div class="fld" style="margin-top:14px"><label>Details (optional)</label><div class="inp ta" style="min-height:70px"><span class="ph">Anything the moderators should know</span></div></div><a class="btn pri block">Send report</a><p class="help" style="text-align:center">A moderator reviews it and you'll be notified of the decision.</p></div>`,body:`<div class="narrow">${review('Dario S.',1,'Whoever likes this has no ears…',{when:'1 day ago'})}${review('Ivan P.',5,'Every track holds up.',{})}${review('Nina R.',4,'Production is huge, the lyrics could be braver.',{})}</div>`}));
+
+S('7.3','Your data & deleting the account',{tags:['Core'],covers:'F-046 · F-047',notes:[
+ 'Content as in v1: export everything as JSON, or delete the account with anonymisation.',
+ 'The consequences are listed plainly, and deleting needs an explicit confirmation.']},
+()=>shell({tab:'user',d:'',back:true,title:'Your data',right:'',body:`<div class="narrow-s">
+<div class="sec-h" style="border:0;padding:0"><h4>Download your data</h4></div><p class="body">Profile, ratings, reviews, lists, follows and concert registrations, as a JSON file.</p><div class="btns"><a class="btn">${ic('download',16)}Download data</a></div>
+<div class="sec-h" style="margin-top:34px"><h4>Delete account</h4></div>
+<p class="body">After deleting you can't sign in again. Here's what happens to your data:</p>
+<div class="rows nt" style="margin-top:8px">${[['Reviews and concert attendance','stay, anonymised, with no name, email or location'],['Follows, lists, notifications, recommendations','are deleted'],['Moderation log','stays unchanged']].map(([a,b])=>`<div class="row"><div class="main"><div class="t wrap">${a}</div><div class="s wrap">${b}</div></div></div>`).join('')}</div>
+<div class="optrow" style="margin-top:16px"><span class="check on">${ic('check',13)}</span><div class="main small">I understand this can't be undone</div></div>
+<div class="btns"><a class="btn dangerfill">${ic('trash',16)}Delete my account</a></div>
+<p class="help">We recommend downloading your data first.</p></div>`}));
+
+/* ---------- 8. Artist tools ---------- */
+S('8.1','Propose a concert',{tags:['Core','T8','T10'],covers:'F-021',notes:[
+ 'Starts on the venue page (“Propose a concert here”), so the venue and its capacity are already filled in.',
+ 'The date picker shows the venue\'s calendar: taken days are struck through, so you don\'t propose a clashing date (T10).',
+ '<b>Multi-artist concerts:</b> invite other verified artists. Each one confirms from a notification, and the venue sees the proposal once all have confirmed. This is optional and extends the concept (T8).',
+ 'A real description with a starter template, an optional setlist or notes, and no image upload. Places are checked against capacity.']},
+()=>shell({tab:'user',d:'Artist',role:'artist',back:true,title:'Propose a concert',right:'',body:`
+<div class="split">
+<div>
+<div class="minihead"><img src="${venueImg('Dom kulture')}" style="width:76px;height:52px;object-fit:cover" alt=""><div class="main"><div class="t" style="font-weight:600">Dom kulture, Zagreb</div><div class="sub">Capacity 350 · verified venue · answers within 7 days</div></div><a class="btn sm ghost">Change</a></div>
+<div class="fld"><label>Date and time *</label><div class="row-flex" style="gap:8px"><div class="inp" style="flex:1">${ic('cal',16)}Fri 11 Dec 2026</div><div class="inp" style="width:110px">${ic('clock',16)}20:00</div></div><p class="help">Struck-through days in the calendar are already taken.</p><div class="only-m" style="margin-top:10px">${miniCal({title:'December 2026',start:1,days:31,marks:{3:'x',5:'x',12:'x',19:'x',11:'m'}})}</div></div>
+<div class="fld optional"><label>Lineup *</label><div class="rows nt">
+<div class="row"><div class="thumb"><img src="${artistImg('Plavi Sat')}" alt=""></div><div class="main"><div class="t">Plavi Sat <span class="muted small">(you)</span></div><div class="s">headliner</div></div><span class="tag ok">confirmed</span></div>
+<div class="row"><div class="thumb"><img src="${artistImg('Sidro')}" alt=""></div><div class="main"><div class="t">Sidro</div><div class="s">support · invitation sent 2 days ago</div></div><span class="tag warn">waiting</span></div>
+</div><a class="btn sm" style="margin-top:10px">${ic('plus',14)}Invite an artist</a><p class="help">Invited artists confirm in their notifications. The venue sees the proposal once everyone has confirmed.</p></div>
+<div class="fld"><label>Title</label><div class="inp">Plavi Sat <span class="plus">+</span> Sidro</div><p class="help">Defaults to the lineup.</p></div>
+<div class="fld"><label>Places for registration *</label><div class="inp" style="width:160px">300</div><p class="help">At most 350, the venue's capacity.</p></div>
+<div class="fld"><label>Description *</label><div class="inp ta" style="min-height:150px">Plavi Sat play Staklene noći in full for the first time in Zagreb…</div><p class="help"><a class="link">Start from a template</a> · shown on the concert page</p></div>
+<div class="fld"><label>Setlist or notes (optional)</label><div class="inp ta" style="min-height:70px"><span class="ph">Running order, guests, age limit…</span></div></div>
+<div class="stickybar"><span class="meta">Venue decides within 7 days</span><a class="btn pri">Send proposal</a></div>
+</div>
+<div class="sticky only-d" style="margin-top:4px">${miniCal({title:'December 2026',start:1,days:31,marks:{3:'x',5:'x',12:'x',19:'x',11:'m'}})}<div class="legend"><span class="tag acc">your date</span><span class="tag mute">taken</span></div>
+<div class="note" style="margin-top:18px">If the venue doesn't answer within 7 days, the proposal expires and you can send it again.</div></div>
+</div>`}));
+
+S('8.2a','My concerts · published',{tags:['Core'],covers:'F-022 · F-023',notes:[
+ 'Published concerts and pending requests are <b>two separate views</b> (two windows, not tabs), switched from the header.',
+ 'Each entry carries more: lineup, places, a registration bar, state and actions.']},
+()=>shell({tab:'user',d:'Artist',role:'artist',back:true,title:'My concerts',right:'',body:`<div class="narrow" style="max-width:980px">
+<div class="row-flex" style="justify-content:space-between;margin-bottom:16px"><div class="seg"><a class="on">Published</a><a>Requests · 3</a></div><a class="btn sm pri only-d">${ic('plus',14)}Propose from a venue</a></div>
+${[['c2','registrations open',42,120,'ok'],['c1x','confirmed',0,300,'info'],['past','held',98,120,'mute']].map(([k,st,reg,pl,tone],i)=>{const c=k==='c2'?C('c2'):k==='c1x'?{a:'Plavi Sat',w:'Sidro',v:'Tvornica Zvuka',c:'Zagreb',dow:'Fri',d:'8',m:'Jan',t:'21:00'}:{a:'Plavi Sat',v:'Klub Obala',c:'Rijeka',dow:'Fri',d:'2',m:'Oct',t:'21:00'};return `<div class="cnt"><div class="ch">${dateBlk(c,i===2)}<div class="main"><div class="t" style="font-weight:600;font-size:15px">${lineup(c)}</div><div class="sub">${c.v}, ${c.c} · ${c.t}</div><div style="margin-top:8px"><span class="tag ${tone}">${st}</span></div></div></div><div class="cf"><span>Registered <b>${reg}</b> / ${pl}</span>${i===2?'<span>Attended <b>71</b></span><span>No-shows <b>20</b></span>':`<span>${i===1?'Registrations open on <b>1 Dec</b>':'<b>78</b> places left'}</span>`}</div>${i<2?`<div class="prog"><div class="bar"><i style="width:${reg/pl*100}%"></i></div><span class="mono muted">${Math.round(reg/pl*100)}%</span></div><div class="ca"><a class="btn sm">View page</a><a class="btn sm danger">Cancel concert</a></div>`:`<div class="ca"><a class="btn sm">Statistics</a></div>`}</div>`}).join('')}
+</div>`}));
+
+S('8.2b','My concerts · requests',{tags:['Core','T8'],covers:'F-022 · F-023',notes:[
+ 'Proposals that haven\'t reached the public yet: waiting for the venue (with the deadline), waiting for invited artists, rejected (with the venue\'s reason) and expired.',
+ 'Actions fit the state: withdraw or edit while pending, propose again after a rejection or expiry.']},
+()=>shell({tab:'user',d:'Artist',role:'artist',back:true,title:'My concerts',right:'',body:`<div class="narrow" style="max-width:980px">
+<div class="row-flex" style="justify-content:space-between;margin-bottom:16px"><div class="seg"><a>Published</a><a class="on">Requests · 3</a></div></div>
+${[[{a:'Plavi Sat',w:'Sidro',v:'Dom kulture',c:'Zagreb',dow:'Fri',d:'11',m:'Dec',t:'20:00'},'waiting for artists','warn','Sidro hasn\'t confirmed yet · 1 of 2 confirmed','<a class="btn sm">Edit</a><a class="btn sm">Withdraw</a>'],[{a:'Plavi Sat',v:'Klub Mlin',c:'Zagreb',dow:'Sat',d:'12',m:'Dec',t:'21:00'},'waiting for venue','warn','The venue decides by <b>30 Oct</b> · 6 days left','<a class="btn sm">Edit</a><a class="btn sm">Withdraw</a>'],[{a:'Plavi Sat',v:'Klub Tunel',c:'Split',dow:'Sat',d:'5',m:'Dec',t:'21:00'},'rejected','bad','Venue: “That weekend is already booked.”','<a class="btn sm">Propose another date</a>'],[{a:'Plavi Sat',v:'Sjever',c:'Zagreb',dow:'Sat',d:'14',m:'Nov',t:'21:00'},'expired','mute','The venue didn\'t answer within 7 days.','<a class="btn sm">Send again</a>']].map(([c,st,tone,info,acts])=>`<div class="cnt"><div class="ch">${dateBlk(c)}<div class="main"><div class="t" style="font-weight:600;font-size:15px">${lineup(c)}</div><div class="sub">${c.v}, ${c.c} · ${c.t}</div><div style="margin-top:8px"><span class="tag ${tone}">${st}</span></div></div></div><div class="cf"><span>${info}</span></div><div class="ca">${acts}</div></div>`).join('')}
+</div>`}));
+
+S('8.3','Artist statistics',{tags:['Core'],covers:'F-039 · F-040',notes:[
+ 'Past concerts land here automatically with their numbers.',
+ 'Top line: followers, average rating, concerts held, turnout. Then a per-concert table, ratings per release, and followers near each venue (totals only; values below 10 are hidden, as the concept requires).',
+ 'Export to CSV.']},
+()=>shell({tab:'user',d:'Artist',role:'artist',back:true,title:'Statistics',right:'<a class="btn sm">CSV</a>',body:`
+<div class="row-flex" style="justify-content:space-between"><div class="h-m">Plavi Sat · statistics</div><a class="btn sm only-d">${ic('download',14)}Export CSV</a></div>
+<div class="stats" style="margin-top:14px"><div class="stat"><b>1,204</b><span class="meta">followers</span></div><div class="stat"><b>4.4<small> ★</small></b><span class="meta">avg rating</span></div><div class="stat"><b>12</b><span class="meta">concerts held</span></div><div class="stat"><b>81<small>%</small></b><span class="meta">turnout</span></div></div>
+${sec('Concerts','',`<div class="tscroll"><table class="tbl"><tr><th>Date</th><th>Venue</th><th class="num">Registered</th><th class="num">Attended</th><th class="num">No-show</th><th class="num">Turnout</th></tr>${[['2 Oct','Klub Obala, Rijeka',98,71,20,'72%'],['19 Sep','Dom kulture, Zagreb',240,214,18,'89%'],['30 Aug','Klub Tunel, Split',150,118,27,'79%'],['12 Jul','Atrij, Zagreb',300,262,31,'87%']].map(r=>`<tr><td class="mono">${r[0]}</td><td>${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3]}</td><td class="num">${r[4]}</td><td class="num">${r[5]}</td></tr>`).join('')}</table></div>`)}
+<div class="split even" style="margin-top:0">
+${sec('Ratings by release','',`<div class="hbars">${[['Staklene noći',4.6,38],['Plima (EP)',4.3,21],['Staklo (single)',4.5,17],['Prvi koraci',3.9,12]].map(([n,v,c])=>`<div><span>${n}</span><div class="bar"><i style="width:${v/5*100}%"></i></div><span class="v">${v} · ${c}</span></div>`).join('')}</div>`)}
+${sec('Followers near venues','',`<div class="hbars">${[['Dom kulture',387],['Klub Obala',214],['Tvornica Zvuka',190],['Klub Tunel',null]].map(([n,v])=>`<div><span>${n}</span><div class="bar"><i style="width:${v?v/400*100:0}%"></i></div><span class="v">${v??'< 10'}</span></div>`).join('')}</div><p class="help">Totals only. Values under 10 are hidden, and nobody's location is ever shown.</p>`)}
+</div>`}));
+
+/* ---------- 9. Venue tools ---------- */
+S('9.1','My venue · profile',{tags:['Core','T4'],covers:'F-006 · F-021',notes:[
+ 'Verification status sits at the top. Name, address and location come from the catalog and are read-only here.',
+ '<b>Capacity</b> is required: without it nobody can propose a concert.',
+ 'New: a description and a <b>photo gallery</b>, several images like a Google Maps place. Uploads need file storage, so this is optional (T4).',
+ 'Booking rules, such as minimum notice and the answer deadline, are optional.']},
+()=>shell({tab:'user',d:'Venue',role:'venue',back:true,title:'My venue',right:'<a class="btn sm pri">Save</a>',body:`
+<div class="split">
+<div>
+<div class="row-flex" style="justify-content:space-between"><div><div class="meta">Venue · verified since 3 Oct</div><div class="h-l">Dom kulture</div></div><span class="tag ok only-d">verified</span></div>
+<div class="kv" style="margin-top:16px"><dt>Address</dt><dd>Ilica 211, 10000 Zagreb</dd><dt>Source</dt><dd>MusicBrainz place · read-only</dd></div>
+<div class="fld" style="margin-top:20px"><label>Capacity *</label><div class="inp" style="width:160px">350</div><p class="help">Concerts can't have more places than this. Without a capacity, nobody can propose a concert.</p></div>
+<div class="fld"><label>Description</label><div class="inp ta">Former cinema turned into a mid-size concert hall in the west of the city. Standing room on the ground floor, a balcony with seats…</div></div>
+<div class="fld optional"><label>Photos · 3 of 12</label><div class="upgrid">${['Dom kulture','Dom kulture b','Dom kulture c'].map(s=>`<div><img src="${venueImg(s)}" alt=""></div>`).join('')}<div class="add">${ic('upload',20)}Upload</div></div><p class="help">JPG or PNG, up to 5 MB each. The first photo is the cover.</p></div>
+<div class="fld optional"><label>Booking rules</label><div class="optrow"><div class="main">Minimum notice<div class="sub">Proposals for dates sooner than this are blocked</div></div><div class="inp" style="width:110px;min-height:36px">21 days</div></div><div class="optrow"><div class="main">Answer deadline<div class="sub">After this a proposal expires</div></div><div class="inp" style="width:110px;min-height:36px">7 days</div></div></div>
+<p class="err">Capacity must be greater than zero.</p>
+</div>
+<div class="sticky" style="margin-top:28px">${mapBox({seed:'dk',ratio:'1/1',pins:[{x:50,y:50,f:1,label:'Dom kulture'}]})}<p class="help">Location from the catalog. Report a wrong pin to the moderators.</p></div>
+</div>`}));
+
+S('9.2','Incoming proposals',{tags:['Core','T8','T10'],covers:'F-022 · F-023',notes:[
+ 'List and detail side by side on desktop, stacked on phones. The detail shows <b>everything the artist submitted</b>: lineup with confirmations, date, places, description and setlist.',
+ 'A built-in clash check against the venue\'s calendar.',
+ 'Accepting says exactly what happens next: <b>“Confirm & open registrations”</b> moves the concert to the next phase. Rejecting needs a reason. The deadline countdown is visible.',
+ 'Aggregated context about the artist (followers near your venue, past turnout) helps the decision without exposing anyone.']},
+()=>shell({tab:'user',d:'Venue',role:'venue',back:true,title:'Proposals',right:'',body:`
+<div class="row-flex" style="justify-content:space-between;margin-bottom:14px"><div class="seg"><a class="on">Proposals · 2</a><a>Calendar</a></div><span class="meta only-d">Answer within 7 days or they expire</span></div>
+<div class="md">
+<div><div class="rows nt">
+<div class="row f">${dateBlk({dow:'Fri',d:'11',m:'Dec'})}<div class="main"><div class="t">Plavi Sat <span class="plus">+</span> Sidro</div><div class="s">300 places · proposed by Plavi Sat</div><div class="nx"><span class="meta">Decide by</span>30 Oct · 6 days left</div></div><span class="tag warn">new</span></div>
+<div class="row">${dateBlk({dow:'Sat',d:'19',m:'Dec'})}<div class="main"><div class="t">Tihi Kvart</div><div class="s">90 places · proposed by Tihi Kvart</div><div class="nx"><span class="meta">Decide by</span>2 Nov</div></div><span class="tag warn">new</span></div>
+<div class="row dim">${dateBlk({dow:'Sat',d:'14',m:'Nov'},1)}<div class="main"><div class="t">Plavi Sat</div><div class="s">expired · not answered in time</div></div><span class="tag mute">expired</span></div>
+</div></div>
+<div class="detail">
+<div class="meta">Proposal · sent 24 Oct</div><div class="h-m" style="margin-top:4px">Plavi Sat <span class="plus">+</span> Sidro</div>
+<div class="kv" style="margin-top:14px"><dt>Date</dt><dd>Fri 11 Dec 2026 · 20:00</dd><dt>Places</dt><dd>300 of 350</dd><dt>Lineup</dt><dd><span class="tag ok">Plavi Sat · confirmed</span><br><span class="tag ok">Sidro · confirmed</span></dd><dt>Artist</dt><dd>1,204 followers · <b>214</b> near your venue · past turnout 81%</dd></div>
+<div class="note ok" style="margin-top:14px">No other concerts at Dom kulture that day. Nearest: Thu 3 Dec.</div>
+<div class="lbl" style="margin-top:16px">Description</div><p class="body">Plavi Sat play Staklene noći in full for the first time in Zagreb, with Sidro opening. Expect a long set and a quiet acoustic encore.</p>
+<div class="lbl" style="margin-top:12px">Setlist / notes</div><p class="small muted">Two-hour slot. Sidro 20:15, Plavi Sat 21:15. No special equipment.</p>
+<div class="btns"><a class="btn pri">${ic('check',16)}Confirm & open registrations</a><a class="btn danger">Reject</a></div>
+<div class="fld" style="margin-top:14px"><label>Reason (required to reject)</label><div class="inp ta" style="min-height:60px"><span class="ph">e.g. the date is already booked</span></div></div>
+</div></div>`}));
+
+S('9.2b','Venue calendar',{tags:['Optional','T10'],covers:'F-022',notes:[
+ 'The month at a glance: confirmed concerts, pending proposals and blocked days.',
+ 'Subscribing with an <b>.ics link</b> puts the programme into any calendar app (T10).']},
+()=>shell({tab:'user',d:'Venue',role:'venue',back:true,title:'Calendar',right:`<a class="btn sm">.ics</a>`,body:`
+<div class="row-flex" style="justify-content:space-between;margin-bottom:14px"><div class="seg"><a>Proposals · 2</a><a class="on">Calendar</a></div><a class="btn sm only-d">${ic('link',14)}Subscribe (.ics)</a></div>
+<div class="split">
+<div>${miniCal({title:'December 2026',start:1,days:31,marks:{3:'m',11:'p',19:'p',24:'x',25:'x',31:'x'},today:null})}<div class="legend"><span class="tag acc">confirmed</span><span class="tag warn">proposal</span><span class="tag mute">blocked</span></div></div>
+<div>${sec('December','',`<div class="rows nt">${conRow(C('c4'),{sub:'Confirmed · 212 / 350 registered',end:'<span class="tag acc">open</span>'})}${conRow({a:'Plavi Sat',w:'Sidro',dow:'Fri',d:'11',m:'Dec'},{sub:'Proposal · decide by 30 Oct',end:'<span class="tag warn">pending</span>'})}${conRow({a:'Tihi Kvart',dow:'Sat',d:'19',m:'Dec'},{sub:'Proposal · decide by 2 Nov',end:'<span class="tag warn">pending</span>'})}${conRow({a:'Closed for the holidays',dow:'Thu',d:'24',m:'Dec'},{sub:'24–25 and 31 Dec',end:'<span class="tag mute">blocked</span>'})}</div>`)}</div>
+</div>`}));
+
+S('9.3','Scan tickets',{tags:['Core','T9'],covers:'F-026 · F-028',notes:[
+ 'No concert picker first: the scanner <b>works out which concert is on right now</b> at this venue (from the current time) and checks each code against it (T9).',
+ 'The camera gets a large area, not the whole screen, so the result line below it is always visible and nothing jumps around.',
+ 'Every outcome has a clear colour and wording: valid, already used, another concert, invalid code, no camera access. A counter and the last scans are shown below.',
+ 'The old “top concert” element is gone; the guest list is one tap away.']},
+()=>shell({tab:'user',d:'Venue',role:'venue',back:true,title:'Scan tickets',right:`<a class="ib">${ic('list',20)}</a>`,body:`
+<div class="split">
+<div>
+<div class="row-flex" style="justify-content:space-between"><div><div class="meta acc">Now · doors 19:00 – 23:30</div><div class="t" style="font-weight:600;font-size:15px">Orbita <span class="plus">+</span> Kiša u Svibnju</div></div><span class="mono"><b style="font-size:20px">212</b> / 340</span></div>
+<div class="scan" style="margin-top:12px"><img src="${venueImg('crowd scan')}" alt=""><div class="corners"><i></i><i></i><i></i><i></i></div></div>
+<div class="scanres ok"><span style="color:var(--ok)">${ic('check',30)}</span><div><div class="big">Valid</div><div class="small">Ticket #0417 · checked in at 20:07</div></div></div>
+</div>
+<div>
+${sec('Other results','',`<div class="notes-stack"><div class="note warn"><b>Already used</b> · checked in at 19:42</div><div class="note bad"><b>Different concert</b> · this ticket is for Sat 21 Nov, Tvornica Zvuka</div><div class="note bad"><b>Not a Sonar ticket</b> · the code can't be read as a ticket</div><div class="note"><b>No camera access</b> · allow the camera in your browser settings</div></div>`)}
+${sec('Last scans','Guest list',`<div class="rows nt">${[['#0417','20:07','valid','ok'],['#0388','20:06','valid','ok'],['#0211','20:05','already used','warn'],['#0402','20:04','valid','ok']].map(r=>`<div class="row"><span class="mono" style="width:56px">${r[0]}</span><div class="main"><span class="tag ${r[3]}">${r[2]}</span></div><span class="mono muted">${r[1]}</span></div>`).join('')}</div>`)}
+</div></div>`}));
+
+S('9.4','Venue statistics',{tags:['Core'],covers:'F-041',notes:[
+ 'The same per-concert numbers as the artist statistics (8.3), for every concert at the venue.',
+ 'Plus <b>general venue data</b>: concerts held, total attendance, average turnout, the busiest weekdays and the genre mix of past concerts. All totals, no individuals.']},
+()=>shell({tab:'user',d:'Venue',role:'venue',back:true,title:'Statistics',right:'',body:`
+<div class="h-m">Dom kulture · statistics</div>
+<div class="stats s5" style="margin-top:14px"><div class="stat"><b>38</b><span class="meta">concerts held</span></div><div class="stat"><b>9,640</b><span class="meta">total attendance</span></div><div class="stat"><b>78<small>%</small></b><span class="meta">avg turnout</span></div><div class="stat"><b>254</b><span class="meta">avg per concert</span></div><div class="stat only-d"><b>4</b><span class="meta">upcoming</span></div></div>
+${sec('Concerts','All 38',`<div class="tscroll"><table class="tbl"><tr><th>Date</th><th>Concert</th><th class="num">Registered</th><th class="num">Attended</th><th class="num">No-show</th><th class="num">Turnout</th></tr>${[['2 Oct','Orbita',340,312,22,'92%'],['19 Sep','Sidro',230,188,35,'82%'],['5 Sep','Zlatna Groznica',300,207,80,'69%'],['28 Nov','Mali Mjesec','—','—','—','cancelled']].map(r=>`<tr><td class="mono">${r[0]}</td><td>${r[1]}</td><td class="num">${r[2]}</td><td class="num">${r[3]}</td><td class="num">${r[4]}</td><td class="num">${r[5]}</td></tr>`).join('')}</table></div>`)}
+<div class="split even" style="margin-top:0">
+${sec('Busiest days','',`<div class="vbars">${[18,10,22,46,88,100,30].map((v,i)=>`<i class="${i===5?'a':''}" style="height:${v}%"></i>`).join('')}</div><div class="vlab">${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<span>${d}</span>`).join('')}</div>`)}
+${sec('Genre mix','',`<div class="hbars">${[['indie rock',34],['electronic',22],['folk',14],['jazz',12],['other',18]].map(([g,v])=>`<div><span>${g}</span><div class="bar"><i style="width:${v*2.5}%"></i></div><span class="v">${v}%</span></div>`).join('')}</div>`)}
+</div>`}));
+
+/* ---------- 10. Moderation & admin ---------- */
+S('10.1','Reports',{tags:['Core'],covers:'F-029 · F-030 · F-031 · F-032 · F-037',notes:[
+ 'Kept from v1 (an inbox plus an open report), restyled. Reports stay the first thing a moderator sees.',
+ 'The author\'s history is shown, along with the consequence of removing (“this triggers a suspension”). A reason is required.',
+ 'On phones the inbox and the open report stack; on desktop they sit side by side.']},
+()=>admin({role:'moderator',sec:'Reports',body:`
+<div class="row-flex" style="justify-content:space-between;margin-bottom:14px"><div class="chips"><a class="chip on">Reported <span class="n">3</span></a><a class="chip">In review <span class="n">2</span></a><a class="chip">All</a></div><span class="meta only-d">Oldest first</span></div>
+<div class="md">
+<div><div class="rows nt">${[['Review · Valovi','Offensive','Ana K.','2 h','f'],['Profile · dario_s','Inappropriate profile','Marko T.','5 h',''],['Review · Plima','Spam','Ivan P.','1 d',''],['Review · Orbita','Other','Lea M.','2 d','']].map(r=>`<div class="row ${r[4]}"><div class="main"><div class="t">${r[0]}</div><div class="s">${r[1]} · reported by ${r[2]}</div></div><span class="mono muted">${r[3]}</span></div>`).join('')}</div></div>
+<div class="detail"><div class="row-flex" style="justify-content:space-between"><div class="meta">Report #218</div><span class="tag warn">reported</span></div>
+<div class="h-m" style="margin-top:6px">Review of “Valovi”</div>
+<div class="note" style="margin-top:12px"><b>Dario S.</b> ${stars(1,11)}<br>“Whoever likes this has no ears. The singer should quit.”</div>
+<div class="kv" style="margin-top:14px"><dt>Reason</dt><dd>Offensive or insulting</dd><dt>Author</dt><dd>Dario S. · 2 removals so far</dd></div>
+<div class="note warn" style="margin-top:12px">Removing this is the author's 3rd removal: the account will be suspended for 7 days.</div>
+<div class="lbl" style="margin-top:16px">Decision</div><div class="chips"><a class="chip on">Remove content</a><a class="chip">Dismiss report</a></div>
+<div class="fld" style="margin-top:12px"><label>Reason *</label><div class="inp ta" style="min-height:64px">Insulting another user.</div></div>
+<a class="btn pri">Save decision</a><p class="help">Logged in the activity log. The reporter and the author are notified.</p></div>
+</div>`}));
+
+S('10.2','Role requests',{tags:['Core'],covers:'F-034 · F-032 · F-037',notes:[
+ 'The same inbox pattern. The open request shows the user, the role, the artist or venue, the link and the issued code, with a two-point checklist.',
+ 'Approve, ask for more info (it returns to review) or reject with a reason. Every decision is logged.']},
+()=>admin({role:'moderator',sec:'Role requests',body:`
+<div class="chips" style="margin-bottom:14px"><a class="chip on">New <span class="n">1</span></a><a class="chip">Under review <span class="n">1</span></a><a class="chip">More info <span class="n">1</span></a><a class="chip">All</a></div>
+<div class="md">
+<div><div class="rows nt">${[['Ana K.','artist','Plavi Sat','under review','info','f'],['Petar V.','venue','Klub Mlin','more info','warn',''],['Lea M.','artist','Mali Mjesec','new','acc','']].map(r=>`<div class="row ${r[5]}">${av(r[0],'sm')}<div class="main"><div class="t">${r[0]} → ${r[2]}</div><div class="s">${r[1]} status</div></div><span class="tag ${r[4]}">${r[3]}</span></div>`).join('')}</div></div>
+<div class="detail"><div class="meta">Request #57 · artist status</div><div class="h-m" style="margin-top:6px">Ana K. → Plavi Sat</div>
+<div class="kv" style="margin-top:14px"><dt>Link</dt><dd><a class="link">https://plavisat.example</a></dd><dt>Code</dt><dd class="mono">SONAR-7F3K-92QX</dd><dt>Catalog</dt><dd>Plavi Sat · MusicBrainz · official links: plavisat.example</dd></div>
+<div class="optrow" style="margin-top:12px"><span class="check on">${ic('check',13)}</span><div class="main small">The code is visible on the linked page</div></div>
+<div class="optrow"><span class="check on">${ic('check',13)}</span><div class="main small">The page belongs to the artist (matches the catalog links)</div></div>
+<div class="fld" style="margin-top:12px"><label>Note or reason</label><div class="inp ta" style="min-height:56px"><span class="ph">Required when rejecting or asking for more info</span></div></div>
+<div class="btns"><a class="btn pri">Approve & grant role</a><a class="btn">Ask for more info</a><a class="btn danger">Reject</a></div></div>
+</div>`}));
+
+S('10.3','Activity log',{tags:['Core','Optional','T7'],covers:'F-032',notes:[
+ 'Moderators and admins get a real log page. The concept requires logging every moderator action; this extends it to <b>everything that happens</b>: concert proposals and decisions, registrations, scans, role changes and catalog imports (T7).',
+ 'Entries are <b>parsed</b> into readable sentences with a type label, actor and time, and filterable by type, person and date. The raw record is one tap away (optional).',
+ 'Privacy decision: moderators see ticket events without listener names; admins see the details.']},
+()=>admin({role:'admin',sec:'Activity log',body:`
+<div class="row-flex" style="justify-content:space-between;gap:10px"><div class="chips scroll"><a class="chip on">All</a><a class="chip">Moderation</a><a class="chip">Concerts</a><a class="chip">Tickets</a><a class="chip">Roles</a><a class="chip">Accounts</a><a class="chip">Catalog</a></div><div class="inp only-d" style="width:280px;min-height:36px">${ic('search',15)}<span class="ph">Person, artist, venue…</span></div></div>
+<div class="ngroup">Today · 24 Oct</div>
+${[['20:07','Tickets','Ticket #0417 checked in at Dom kulture (Orbita + Kiša u Svibnju)','scanner · Petar V.'],['19:58','Moderation','Marko T. removed a review of “Valovi” by Dario S. · reason: insulting another user','moderator'],['19:58','Accounts','Dario S. suspended for 7 days (3rd removal)','system'],['18:31','Concerts','Dom kulture confirmed “Plavi Sat + Sidro” on 11 Dec · registrations open','venue manager · Petar V.'],['17:12','Roles','Ana K. was granted artist status for Plavi Sat','moderator · Marko T.'],['16:40','Catalog','Artist “Zvjezdani Prah” imported from MusicBrainz (12 releases)','background job'],['15:03','Concerts','Plavi Sat proposed a concert at Klub Mlin on 12 Dec','artist']].map(r=>`<div class="logrow"><span class="tm">${r[0]}</span><div class="ev"><span class="meta ${r[1]==='Moderation'?'acc':''}">${r[1]}</span>${r[2]}<div class="who">${r[3]}</div></div></div>`).join('')}
+<div class="optional" style="margin-top:16px"><div class="lbl">Raw record</div><div class="raw">{ "type": "registration.scanned", "at": "2026-10-24T20:07:11Z",
+  "registration": 417, "concert": "c1", "venue": "dom-kulture",
+  "actor": { "id": 88, "role": "venue_manager" }, "result": "valid" }</div></div>`}));
+
+S('10.4','Users & roles',{tags:['Core'],covers:'F-043 · F-045',notes:[
+ 'Search and filter by role and status. Opening a user shows their role controls, account actions and recent activity from the log.',
+ 'Revoking a role and deactivating an account always need a confirmation.']},
+()=>admin({role:'admin',sec:'Users & roles',body:`
+<div class="row-flex" style="gap:10px;margin-bottom:14px"><div class="inp" style="flex:1;min-height:38px">${ic('search',15)}<span class="ph">Search users</span></div><div class="chips"><a class="chip on">All roles</a><a class="chip">Suspended</a></div></div>
+<div class="md">
+<div class="tscroll"><table class="tbl"><tr><th>User</th><th>Role</th><th>Account</th><th class="only-d">Joined</th></tr>${[['Ivan P.','listener','active','ok','Mar 2026','f'],['Ana K.','artist','active','ok','Oct 2026',''],['Dario S.','listener','suspended · 31 Oct','warn','Feb 2026',''],['Petar V.','venue manager','active','ok','Sep 2026',''],['Marko T.','moderator','active','ok','Jan 2026',''],['Lea M.','listener','deactivated','bad','Apr 2026','']].map(r=>`<tr class="${r[5]}"><td><div class="row-flex" style="gap:8px;flex-wrap:nowrap">${av(r[0],'xs')}${r[0]}</div></td><td>${r[1]}</td><td><span class="tag ${r[3]}">${r[2]}</span></td><td class="only-d mono">${r[4]}</td></tr>`).join('')}</table></div>
+<div class="detail"><div class="row-flex" style="gap:12px">${av('Ivan P.')}<div><div class="h-m" style="font-size:22px">Ivan P.</div><div class="sub">ivan.p@example.com · active · joined Mar 2026</div></div></div>
+<div class="fld" style="margin-top:16px"><label>Role</label><div class="inp">Listener ${ic('down',16)}</div></div>
+<div class="btns" style="margin-top:0"><a class="btn sm">Save role</a><a class="btn sm danger">Revoke artist / venue role</a></div>
+<div class="lbl" style="margin-top:18px">Recent activity</div><div class="rows nt">${[['Rated “Valovi” 5 ★','3 h'],['Reported a review of “Plima”','1 d'],['Registered for Noćni Autobus','2 d']].map(([a,b])=>`<div class="row"><div class="main small">${a}</div><span class="mono muted">${b}</span></div>`).join('')}</div>
+<div class="hr"></div><a class="btn danger">Deactivate account</a><p class="help">A deactivated user can't sign in. You'll be asked to confirm.</p></div>
+</div>`}));
+
+S('10.5','Settings & system statistics',{tags:['Core'],covers:'F-042 · F-044',notes:[
+ 'The suspension rule (removals until suspension, duration) applies immediately, with no restart.',
+ 'Statistics from the concept (users by role, concerts by state, turnout) plus <b>what is going on right now</b>: activity over the last 30 days and the health of the catalog import (MusicBrainz and Last.fm).']},
+()=>admin({role:'admin',sec:'Settings & stats',body:`
+<div class="stats"><div class="stat"><b>350</b><span class="meta">users</span></div><div class="stat"><b>67</b><span class="meta">concerts</span></div><div class="stat"><b>74<small>%</small></b><span class="meta">turnout</span></div><div class="stat"><b>1,982</b><span class="meta">registrations</span></div></div>
+<div class="split even" style="margin-top:0">
+<div>${sec('Users by role','',`<div class="hbars">${[['Listeners',312],['Artists',24],['Venue managers',9],['Moderators',3],['Admins',2]].map(([r,v])=>`<div><span>${r}</span><div class="bar"><i style="width:${v/312*100}%"></i></div><span class="v">${v}</span></div>`).join('')}</div>`)}
+${sec('Concerts by state','',`<div class="hbars">${[['proposed',6],['confirmed',5],['registrations open',9],['held',38],['rejected',4],['expired',3],['cancelled',2]].map(([r,v])=>`<div><span>${r}</span><div class="bar"><i style="width:${v/38*100}%"></i></div><span class="v">${v}</span></div>`).join('')}</div>`)}</div>
+<div>${sec('Activity · last 30 days','',`<div class="vbars" style="height:110px">${[30,42,38,55,47,60,72,40,44,51,63,58,49,80,66,52,57,61,70,90,75,62,58,66,73,85,79,88,94,100].map((v,i)=>`<i class="${i>26?'a':''}" style="height:${v}%"></i>`).join('')}</div><p class="help">Ratings, reviews, registrations and follows per day.</p>`)}
+${sec('Catalog import','',`<div class="health"><div><span>MusicBrainz</span><span class="tag ok">ok · ~1 request/s</span></div><div><span>Last.fm</span><span class="tag warn">slow responses</span></div><div><span>Queue</span><span class="mono">3 in progress · 1 failed</span></div></div>`)}
+${sec('Suspension rule','',`<div class="row-flex" style="gap:14px;align-items:flex-end"><div class="fld" style="margin:0"><label>Removals until suspension</label><div class="inp" style="width:120px">3</div></div><div class="fld" style="margin:0"><label>Duration (days)</label><div class="inp" style="width:120px">7</div></div><a class="btn pri">Save rule</a></div><p class="help">Applies to the next suspensions immediately.</p>`)}</div>
+</div>`}));
+
+/* =================================================================
+   Document: intro panels, sections, frames
+   ================================================================= */
+function introHTML(){
+  const sw=[['#0c0c0d','Background'],['#141416','Surface'],['#37373d','Lines'],['#ecebe6','Text'],['#ff6a2b','Accent (one only)'],['#4cc38a / #e2b14a / #f0524f','States']];
+  return `
+<h2 class="sect"><span>0</span>What changed & the system</h2>
+<div class="cols2">
+<div class="panel"><h4>What changed from v1</h4><ul>
+<li><b>Dark theme</b>, with one warm accent used sparingly, as most music sites do.</li>
+<li><b>Sharp corners everywhere</b>: covers, photos and posters are rectangles, so the interface is too.</li>
+<li><b>Fewer cards</b>: sections with headings and hairline dividers, and big imagery doing the work.</li>
+<li><b>Content first</b>: rows and grids of covers in the spirit of Bandcamp, without copying it.</li>
+<li><b>Every screen on desktop too</b>, one to one, from the same markup.</li>
+<li>Several screens are new (venue page, onboarding steps, add-to-list sheet, separate artist and venue requests, published concerts vs requests, venue calendar, activity log).</li>
+<li>English UI. Croatian names stay as placeholder data.</li></ul></div>
+<div class="panel"><h4>Decisions & open points</h4><ul>
+<li><b>Email and password login</b> is shown as optional because the concept says Google only (T14). Team decision.</li>
+<li><b>Places left</b> is shown only as a hint below a threshold, never the exact count.</li>
+<li><b>Multi-artist concerts</b> with confirmations extend the concept (T8). Optional.</li>
+<li><b>Images:</b> covers from the Cover Art Archive; artist images from fanart.tv or Wikimedia; venue photos uploaded by managers (T4).</li>
+<li><b>Playback</b> is left out of the first version (T11).</li>
+<li><b>Moderators</b> see ticket events without listener names; admins see everything.</li>
+<li>Feasibility notes T1–T14 are in <code>technical-analysis.md</code> next to this file.</li></ul></div>
+</div>
+<h3 class="sub">Colour</h3><div class="swatches">${sw.map(([c,n])=>`<div class="sw"><div style="background:${c.includes('/')?`linear-gradient(90deg,#4cc38a 33%,#e2b14a 33% 66%,#f0524f 66%)`:c}"></div><span>${n}<br>${c}</span></div>`).join('')}</div>
+<h3 class="sub">Type</h3><div class="panel typespec">
+<span class="lbl">Display · Barlow Condensed</span><span style="font:700 44px/1 var(--fd);text-transform:uppercase;color:#f2f1ec">Orbita <span style="color:var(--acc)">+</span> Kiša u Svibnju</span>
+<span class="lbl">Text · IBM Plex Sans</span><span style="font:400 16px var(--fb)">Orbita close their autumn tour at home, playing Valovi front to back for the first time.</span>
+<span class="lbl">Meta · IBM Plex Mono</span><span style="font:500 12px var(--fm);text-transform:uppercase;letter-spacing:.1em;color:#a6a5a0">Fri 20 Nov · Dom kulture · 3 km · registrations open</span></div>
+<h3 class="sub">Navigation</h3><div class="cols2"><div class="panel"><h4>Phone</h4><ul><li>Bottom tab bar: Home, Search, Map, Tickets, Profile.</li><li>Notifications: the bell in the top bar, with a counter.</li><li>Search opens with the input docked at the bottom (T12).</li><li>Artist and venue tools live in the profile.</li></ul></div><div class="panel"><h4>Desktop</h4><ul><li>Top bar: Home, Map, Tickets, plus Artist tools or My venue for verified roles.</li><li>Search is a wide field in the top bar.</li><li>Moderation and administration use a left sidebar.</li><li>The same screens, laid out in columns.</li></ul></div></div>`;
+}
+function render(){
+  const only=(new URLSearchParams(location.search).get('only')||'').split(',').filter(Boolean);
+  const doc=document.getElementById('doc');let html=only.length?'':introHTML(),last='';
+  const toc=['<a href="#s0">0</a>'];
+  for(const s of SCR.filter(s=>!only.length||only.includes(s.id))){const sec=s.id.split('.')[0];if(sec!==last){last=sec;const [t,intro]=SECT[sec];html+=`<h2 class="sect" id="sec${sec}"><span>${sec}</span>${t}</h2><p class="sect-intro">${intro}</p>`;toc.push(`<a href="#sec${sec}">${sec} ${t.split(' ')[0].replace(',','')}</a>`)}
+    let body;try{body=s.fn()}catch(e){body=`<div class="page"><p class="err">Render error: ${e.message}</p></div>`;console.error(s.id,e)}
+    html+=`<section class="scr" id="s${s.id.replace(/\./g,'-')}"><div class="scr-h"><span class="num">${s.id}</span><h3>${s.title}</h3>${(s.meta.tags||[]).map(t=>`<span class="badge ${t.toLowerCase()}">${t}</span>`).join('')}</div>
+    <div class="frames"><div class="fwrap"><div class="flabel">Phone · 390 px</div><div class="frame mobile"><div class="app">${body}</div></div></div><div class="fwrap"><div class="flabel">Desktop · 1280 px</div><div class="frame desktop"><div class="app">${body}</div></div></div></div>
+    <div class="notes"><ul>${s.meta.notes.map(n=>`<li>${n}</li>`).join('')}</ul>${s.meta.covers?`<div class="covers">Covers ${s.meta.covers}</div>`:''}</div></section>`}
+  doc.innerHTML=`<div id="s0"></div>`+html;document.getElementById('toc').innerHTML=toc.join('');fit();
+}
+function fit(){const s=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--ds'))||.6;document.querySelectorAll('.frame.desktop').forEach(f=>{f.style.height=(f.firstElementChild.offsetHeight*s+2)+'px'})}
+document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{document.documentElement.style.setProperty('--ds',b.dataset.s);document.querySelectorAll('[data-s]').forEach(x=>x.classList.toggle('on',x===b));fit()}));
+document.getElementById('optbtn').addEventListener('click',e=>{document.body.classList.toggle('show-opt');e.target.classList.toggle('on')});
+render();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+window.addEventListener('load',fit);window.addEventListener('resize',fit);
+</script>
+</body>
+</html>
