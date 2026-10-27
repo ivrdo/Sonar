@@ -1,0 +1,1239 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sonar — UI design, simple variant</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* ============ Document chrome (outside the app frames) ============ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:#E9EDF1;color:#14232E;font:15px/1.5 'Inter',system-ui,-apple-system,'Segoe UI',sans-serif;--ds:.6}
+.doc{max-width:1340px;margin:0 auto;padding:40px 32px 120px}
+.kicker{font-size:13px;font-weight:600;color:#475866}
+.doc h1{font-size:34px;line-height:1.15;margin:6px 0 0}
+.doc .intro{max-width:840px;color:#33424F;margin:12px 0 0}
+.toolbar{position:sticky;top:0;z-index:50;background:#E9EDF1;border-bottom:1px solid #D5DCE3;margin:24px -32px 0;padding:10px 32px;display:flex;gap:10px 18px;flex-wrap:wrap;align-items:center;font-size:13px;color:#475866}
+.toolbar .grp{display:flex;gap:6px;align-items:center}
+.toolbar button{font:inherit;font-weight:600;background:#fff;border:1px solid #B9C4CE;color:#14232E;border-radius:6px;padding:3px 8px;cursor:pointer}
+.toolbar button.on{background:#0B6E70;border-color:#0B6E70;color:#fff}
+.toolbar a{color:#0B6E70;text-decoration:none;font-weight:600}
+.toc{display:flex;flex-wrap:wrap;gap:4px 14px}
+h2.sect{font-size:28px;margin:72px 0 4px;padding-top:20px;border-top:2px solid #14232E}
+h2.sect span{color:#0B6E70;margin-right:10px}
+.sect-intro{color:#475866;max-width:840px;margin:0}
+h3.sub{font-size:19px;margin:36px 0 12px}
+.dcols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px;margin-top:20px}
+.dpanel{background:#fff;border:1px solid #D5DCE3;border-radius:12px;padding:18px 20px}
+.dpanel h3{margin:0 0 8px;font-size:17px}
+.dpanel ul{margin:0;padding-left:18px;color:#33424F}
+.dpanel li{margin:5px 0}
+.swatches{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:10px}
+.swatch{background:#fff;border:1px solid #D5DCE3;border-radius:10px;overflow:hidden;font-size:12.5px}
+.swatch i{display:block;height:56px;border-bottom:1px solid #D5DCE3}
+.swatch span{display:block;padding:6px 8px;color:#33424F}
+.scr{margin-top:56px}
+.scr-h{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.scr-h .num{font-size:22px;font-weight:700;color:#0B6E70}
+.scr-h h3{font-size:22px;margin:0}
+.scr-h .cmp{margin-left:auto;font-size:13px;font-weight:600;color:#0B6E70;text-decoration:none}
+.badge{font-size:11px;font-weight:600;border-radius:999px;padding:2px 8px;background:#E4E9EE;color:#33424F}
+.badge.core{background:#DDF1E4;color:#14532D}
+.badge.optional{background:#FCEBCB;color:#7A3E00}
+.badge.new{background:#DEEAFA;color:#17407A}
+.frames{display:flex;gap:28px;align-items:flex-start;flex-wrap:wrap}
+.fwrap{display:flex;flex-direction:column;gap:6px}
+.flabel{font-size:12px;font-weight:600;color:#475866}
+.frame{background:#F4F6F8;box-shadow:0 1px 3px rgba(20,35,46,.14)}
+.frame.mobile{width:394px;border:2px solid #14232E;border-radius:28px;overflow:hidden}
+.frame.mobile>.app{width:390px}
+.frame.desktop{width:calc(1280px * var(--ds) + 2px);border:1px solid #B9C4CE;border-radius:10px;overflow:hidden}
+.frame.desktop>.app{width:1280px;transform:scale(var(--ds));transform-origin:0 0}
+.notes{margin-top:16px;max-width:1200px;display:grid;grid-template-columns:1fr auto;gap:24px;align-items:start}
+.notes ul{margin:0;padding-left:18px;color:#33424F;font-size:14.5px}
+.notes li{margin:5px 0}
+.notes .covers{font-size:12px;font-weight:600;color:#475866;white-space:nowrap;background:#fff;border:1px solid #D5DCE3;border-radius:8px;padding:5px 9px}
+body.show-opt .app .optional{outline:2px dashed #C77700;outline-offset:3px;position:relative}
+body.show-opt .app .optional::after{content:"Optional";position:absolute;top:-11px;right:4px;background:#C77700;color:#fff;font:700 10px/1 'Inter',sans-serif;padding:3px 6px;border-radius:4px;z-index:3}
+.app.kit{min-height:0;border:1px solid #D5DCE3;border-radius:12px;padding:20px;margin-top:20px}
+.kitgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+@media (max-width:1000px){.dcols,.kitgrid{grid-template-columns:1fr}.swatches{grid-template-columns:repeat(3,1fr)}.notes{grid-template-columns:1fr}}
+
+/* ============ App: tokens ============ */
+.app{
+  --ink:#14232E; --text2:#475866; --text3:#6B7A87;
+  --acc:#0B6E70; --acc-ink:#074B4D; --acc-light:#D6ECEC; --acc-tint:#F0F8F8;
+  --bg:#F4F6F8; --surface:#fff; --line:#D5DCE3; --line2:#E4E9EE; --field:#8796A3;
+  --ok-bg:#DDF1E4; --ok:#14532D; --wa-bg:#FCEBCB; --wa:#7A3E00;
+  --er-bg:#FBE0E0; --er:#8E1B1B; --bl-bg:#DEEAFA; --bl:#17407A; --gr-bg:#E4E9EE; --gr:#33424F;
+  --font:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+}
+
+/* ============ App: base ============ */
+.app{container:app/inline-size;background:var(--bg);color:var(--ink);font:15px/1.45 var(--font);min-height:800px;display:flex;flex-direction:column;position:relative;overflow:hidden;-webkit-font-smoothing:antialiased}
+.app *{box-sizing:border-box}
+:where(.app) a{color:inherit;text-decoration:none;cursor:default}
+:where(.app) :is(p,.help,.sec-h,dd,.sm) a{color:var(--acc);font-weight:600}
+.app p,.app h1,.app h2,.app h3,.app dl{margin:0}
+.app img{display:block;max-width:100%}
+.app .ic{flex:none;vertical-align:middle}
+@container app (max-width:899.98px){.only-d{display:none!important}}
+@container app (min-width:900px){.only-m{display:none!important}}
+
+/* text */
+.title{font-size:24px;font-weight:700;line-height:1.2}
+.h{font-size:17px;font-weight:700}
+.lead{color:var(--text2);font-size:15px;margin-top:6px}
+.body{font-size:15px;line-height:1.6;color:#22323D}
+.sm{font-size:13px;color:var(--text2)}
+.xs{font-size:12px;color:var(--text3)}
+.src{font-size:12px;color:var(--text3)}
+.acc{color:var(--acc)}
+
+/* layout */
+.stack{display:flex;flex-direction:column;gap:12px}
+.s8{gap:8px!important}
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row.sb{justify-content:space-between}
+.cols{display:flex;flex-direction:column;gap:20px}
+.col{display:flex;flex-direction:column;gap:20px;min-width:0}
+.narrow,.narrow-s{display:flex;flex-direction:column;gap:20px;width:100%;max-width:720px}
+.narrow.wide{max-width:960px}
+.narrow-s{max-width:480px}
+.center{margin-left:auto;margin-right:auto}
+.foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding-top:14px;border-top:1px solid var(--line)}
+
+/* shell: phone first */
+.shell{flex:1;display:flex}
+.side{display:none}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.top{display:flex;align-items:center;gap:6px;min-height:56px;padding:8px 10px 8px 16px;background:var(--surface);border-bottom:1px solid var(--line)}
+.top .ttl{flex:1;min-width:0;font-size:17px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.top .tr{display:flex;align-items:center;gap:4px}
+.ib{width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;color:var(--ink);position:relative;flex:none;border-radius:8px}
+.ib.back{margin-left:-8px}
+.cnt-b{position:absolute;top:1px;right:0;min-width:17px;height:17px;border-radius:999px;background:var(--er);color:#fff;font-size:10.5px;font-weight:700;line-height:17px;text-align:center;padding:0 4px}
+.logo{color:var(--acc);font-size:20px;font-weight:800;letter-spacing:-.01em}
+.dsearch{display:none}
+.page{flex:1;padding:16px;display:flex;flex-direction:column;gap:20px}
+.btabs{display:flex;background:var(--surface);border-top:1px solid var(--line)}
+.btabs a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:8px 0 12px;font-size:11.5px;font-weight:500;color:var(--text2)}
+.btabs a.on{color:var(--acc);font-weight:700;box-shadow:inset 0 3px 0 var(--acc)}
+.msearch{padding:10px 12px;background:var(--surface);border-top:1px solid var(--line)}
+
+/* cards, lists, items */
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px 16px;display:flex;flex-direction:column;gap:12px}
+.card.hl{border-color:var(--acc);background:var(--acc-tint)}
+.sct{display:flex;flex-direction:column;gap:10px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.sec-h h2{font-size:17px;font-weight:700}
+.sec-h a{font-size:14px}
+.list{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.list>*+*{border-top:1px solid var(--line2)}
+.list.flat{border:0;border-radius:0;background:transparent}
+.list.flat>.item{padding-left:0;padding-right:0}
+.cards{display:grid;gap:8px}
+.cards>.item{background:var(--surface);border:1px solid var(--line);border-radius:12px}
+.item{display:flex;align-items:center;gap:12px;padding:10px 14px;min-width:0}
+.item .main{flex:1;min-width:0}
+.item .t{font-weight:600;font-size:14.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item .txt{font-size:14px;line-height:1.45}
+.item .sm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.item.wr .sm,.item.wr .t{white-space:normal}
+.item .end{display:flex;align-items:center;gap:10px;flex:none;color:var(--text2)}
+.item.sel{background:var(--acc-light)}
+.item.dim .main,.item.dim>img{opacity:.6}
+.item.unread{background:var(--acc-tint)}
+.item .no{width:18px;text-align:right;font-size:13px;color:var(--text3);flex:none}
+.item .lic{color:var(--acc);display:flex}
+.item .grip{color:var(--text3);display:flex}
+.th{width:48px;height:48px;border-radius:8px;object-fit:cover;flex:none;background:var(--line2)}
+.th.round{border-radius:50%}
+.th.w{width:72px}
+.th.lg{width:64px;height:64px}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--acc);flex:none}
+.liked{color:var(--acc);display:flex}
+.cbx{width:18px;height:18px;accent-color:var(--acc);margin:0;flex:none}
+
+/* tiles */
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 12px}
+.grid.m3{grid-template-columns:repeat(3,minmax(0,1fr));gap:12px 8px}
+.tile{display:flex;flex-direction:column;gap:2px;min-width:0;position:relative;color:var(--ink)}
+.tile img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:8px;background:var(--line2);margin-bottom:4px}
+.tile img.round{border-radius:50%}
+.tile img.w{aspect-ratio:3/2}
+.tile b{font-size:14px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile .sm{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile.sel img{outline:3px solid var(--acc);outline-offset:2px}
+.tick{position:absolute;top:2px;right:2px;width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center}
+.why{display:inline-block;align-self:flex-start;max-width:100%;font-size:12px;font-weight:600;color:var(--acc-ink);background:var(--acc-light);border-radius:6px;padding:1px 7px;margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tile .why{white-space:normal}
+.add{border:1.5px dashed var(--field);border-radius:8px;aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:var(--text2);font-size:13px;font-weight:600;margin-bottom:4px}
+
+/* buttons, chips, pills, tabs */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:40px;padding:0 16px;border-radius:8px;border:2px solid var(--acc);background:var(--acc);color:#fff;font:600 14px/1 var(--font);white-space:nowrap}
+.btn.sec{background:var(--surface);color:var(--acc)}
+.btn.danger{background:var(--er);border-color:var(--er);color:#fff}
+.btn.danger.sec{background:var(--surface);color:var(--er)}
+.btn.ghost{background:transparent;border-color:transparent;color:var(--acc);padding:0 8px}
+.btn.sm{min-height:32px;padding:0 11px;font-size:13px}
+.btn.block{display:flex;width:100%}
+.btns{display:flex;gap:8px;flex-wrap:wrap}
+.chip{display:inline-block;border-radius:999px;padding:2px 9px;font-size:12px;font-weight:600;white-space:nowrap;background:var(--gr-bg);color:var(--gr)}
+.chip.ok{background:var(--ok-bg);color:var(--ok)}
+.chip.wa{background:var(--wa-bg);color:var(--wa)}
+.chip.er{background:var(--er-bg);color:var(--er)}
+.chip.bl{background:var(--bl-bg);color:var(--bl)}
+.chip.ac{background:var(--acc-light);color:var(--acc-ink)}
+.pills{display:flex;flex-wrap:wrap;gap:6px}
+.pill{display:inline-flex;align-items:center;gap:6px;height:34px;padding:0 12px;border:1px solid var(--line);background:var(--surface);border-radius:999px;font-size:13.5px;font-weight:500;color:var(--ink);white-space:nowrap}
+.pill.on{background:var(--acc-light);border-color:var(--acc);color:var(--acc-ink);font-weight:600}
+.pill .n{color:var(--text2);font-size:12px}
+.seg{display:flex;align-self:flex-start;max-width:100%;border:2px solid var(--acc);border-radius:10px;overflow:hidden}
+.seg.full{align-self:stretch}
+.seg a{flex:1;text-align:center;padding:7px 14px;font-size:14px;font-weight:600;color:var(--acc);white-space:nowrap}
+.seg.full a{padding:7px 4px}
+.seg a.on{background:var(--acc);color:#fff}
+
+/* forms */
+.fld{display:flex;flex-direction:column;gap:5px;font-size:13.5px;font-weight:600;color:var(--ink)}
+.inp{font:400 15px var(--font);color:var(--ink);background:var(--surface);border:1px solid var(--field);border-radius:8px;padding:0 12px;min-height:44px;width:100%}
+textarea.inp{padding:10px 12px;line-height:1.5;resize:vertical}
+.inp.bad{border-color:var(--er);border-width:2px}
+.inp.s{min-height:34px;width:auto;border-radius:999px;font-size:13.5px;padding:0 10px}
+.w120{width:120px!important}.w160{width:160px!important}.w130{width:130px!important}
+.help{font-size:12.5px;font-weight:400;color:var(--text2)}
+.err{font-size:13px;font-weight:600;color:var(--er)}
+.opt{display:flex;align-items:flex-start;gap:10px;font-size:14.5px;font-weight:400;padding:3px 0}
+.opt input{width:18px;height:18px;accent-color:var(--acc);flex:none;margin:1px 0 0}
+.opt .sm{display:block}
+.app input[type=range]{accent-color:var(--acc);width:100%;margin:6px 0}
+.sbox{display:flex;align-items:center;gap:8px;border:1px solid var(--field);border-radius:8px;background:var(--surface);padding:0 12px;min-height:44px;color:var(--text2)}
+.sbox input{border:0;outline:0;flex:1;min-width:0;font:15px var(--font);color:var(--ink);background:transparent}
+.row>.sbox{flex:1 1 200px}
+
+/* messages, avatars, stars */
+.msg{border-radius:8px;padding:10px 12px;font-size:13.5px;line-height:1.45;background:var(--gr-bg);color:var(--gr)}
+.msg.ok{background:var(--ok-bg);color:var(--ok)}
+.msg.wa{background:var(--wa-bg);color:var(--wa)}
+.msg.er{background:var(--er-bg);color:var(--er)}
+.msg.bl{background:var(--bl-bg);color:var(--bl)}
+.msg.big{display:flex;gap:12px;align-items:center;font-size:14px;padding:14px}
+.msg.big b{font-size:18px}
+.av{width:40px;height:40px;border-radius:50%;background:var(--acc-light);color:var(--acc-ink);display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;flex:none}
+.av.sm{width:32px;height:32px;font-size:12px}
+.av.xs{width:24px;height:24px;font-size:10px}
+.av.lg{width:72px;height:72px;font-size:24px}
+.avs{display:inline-flex}.avs .av{margin-right:-6px;border:2px solid var(--bg)}
+.stars{color:var(--acc);letter-spacing:1px;white-space:nowrap;font-size:14px}
+.stars .o{color:#B9C4CE}
+.stars.lg{font-size:22px}
+.stars.xl{font-size:32px;letter-spacing:4px}
+
+/* reviews */
+.rev{display:flex;gap:10px;padding:12px 14px}
+.rev .main{flex:1;min-width:0}
+.rev p{font-size:14px;margin-top:4px;line-height:1.5}
+.rev .acts{display:flex;gap:16px;margin-top:6px;font-size:13px;color:var(--text2)}
+.rev .acts a{display:inline-flex;align-items:center;gap:4px}
+.reply{background:var(--acc-tint);border-radius:8px;padding:8px 10px;margin-top:8px;font-size:14px}
+.reply .xs{color:var(--acc-ink);font-weight:600}
+.rsum{display:grid;grid-template-columns:auto 1fr;gap:12px 20px;align-items:center}
+.rsum .big b{display:block;font-size:40px;font-weight:700;line-height:1}
+.rsum .dist{display:flex;flex-direction:column;gap:4px}
+.rsum .drow{display:grid;grid-template-columns:12px 1fr;gap:8px;align-items:center;font-size:12px;color:var(--text2)}
+.rsum .yours{grid-column:1/-1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding-top:10px;border-top:1px solid var(--line2)}
+
+/* numbers */
+.stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.stat b{display:block;font-size:24px;font-weight:700;line-height:1.15}
+.stat span{font-size:13px;color:var(--text2)}
+.tbl-wrap{background:var(--surface);border:1px solid var(--line);border-radius:12px;overflow-x:auto}
+.tbl{width:100%;border-collapse:collapse;font-size:14px}
+.tbl th{text-align:left;font-size:12.5px;font-weight:600;color:var(--text2);padding:10px 14px;border-bottom:1px solid var(--line);white-space:nowrap;background:#FAFBFC}
+.tbl td{padding:10px 14px;border-bottom:1px solid var(--line2);white-space:nowrap}
+.tbl tr:last-child td{border-bottom:0}
+.tbl .num{text-align:right}
+.tbl tr.sel td{background:var(--acc-light)}
+.bars{gap:9px}
+.bars>div{display:grid;grid-template-columns:110px 1fr 56px;gap:10px;align-items:center;font-size:13.5px}
+.bars .v{text-align:right;color:var(--text2);font-size:13px;white-space:nowrap}
+.bar{height:8px;border-radius:4px;background:var(--line2);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:4px}
+.kv{display:grid;grid-template-columns:100px 1fr;gap:7px 12px;font-size:14px}
+.kv dt{color:var(--text2)}
+.kv dd{margin:0}
+
+/* specific parts */
+.banner{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:12px;background:var(--line2)}
+.cover{width:100%;aspect-ratio:1;object-fit:cover;border-radius:12px}
+.map{position:relative;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#EEF0EA}
+.map>img{width:100%;height:100%;object-fit:cover}
+.pin{position:absolute;transform:translate(-50%,-50%);width:24px;height:24px;border-radius:50%;background:var(--acc);color:#fff;font-size:11px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid #fff;box-shadow:0 1px 3px rgba(0,0,0,.3)}
+.pin.f{width:30px;height:30px;background:var(--ink)}
+.pinlab{position:absolute;transform:translate(20px,-50%);background:#fff;border:1px solid var(--line);border-radius:6px;padding:2px 8px;font-size:12px;font-weight:600;white-space:nowrap}
+.osm{position:absolute;right:6px;bottom:4px;font-size:10px;color:#6B7A87;background:rgba(255,255,255,.75);padding:0 4px;border-radius:3px}
+.overlay{position:absolute;inset:0;background:rgba(20,35,46,.45);z-index:5}
+.modal{position:absolute;z-index:6;left:12px;right:12px;top:72px;background:var(--surface);border-radius:12px;padding:16px;display:flex;flex-direction:column;gap:12px;box-shadow:0 12px 32px rgba(20,35,46,.25)}
+.modal .item{padding:0}
+.qr{width:220px;padding:12px;background:#fff;border:1px solid var(--line);border-radius:12px}
+.qr img{width:100%;image-rendering:pixelated}
+.cam{position:relative;aspect-ratio:1;background:#1F2F3A;border-radius:12px;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#B9C4CE;font-size:13px}
+.cam i{position:absolute;inset:22%;border:3px dashed rgba(255,255,255,.8);border-radius:12px}
+.code{display:flex;align-items:center;justify-content:space-between;gap:12px;border:2px dashed var(--acc);border-radius:8px;padding:10px 12px;font:600 17px ui-monospace,Menlo,monospace;letter-spacing:.04em}
+.tl{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:12px}
+.tl li{display:flex;gap:10px;align-items:flex-start;font-size:14px}
+.tl .n{width:24px;height:24px;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;border:2px solid #B9C4CE;color:var(--text2)}
+.tl li.done .n{background:var(--acc);border-color:var(--acc);color:#fff}
+.tl li.on .n{border-color:var(--acc);color:var(--acc)}
+.tl li.on b{color:var(--acc)}
+.calt{width:100%;border-collapse:collapse;table-layout:fixed;background:var(--surface);border:1px solid var(--line)}
+.calt th{font-size:12px;color:var(--text2);font-weight:600;padding:6px 0;border-bottom:1px solid var(--line)}
+.calt td{height:54px;vertical-align:top;border:1px solid var(--line2);padding:3px 4px;font-size:12px}
+.calt td.e{background:#FAFBFC}
+.calt td .chip{display:block;margin-top:2px;padding:1px 4px;font-size:10px;overflow:hidden;text-overflow:ellipsis}
+.logi{display:grid;grid-template-columns:44px 1fr;gap:10px;padding:10px 14px;font-size:14px;line-height:1.45}
+.raw{font:12px/1.5 ui-monospace,Menlo,monospace;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;white-space:pre;overflow:auto;color:var(--gr);margin:0}
+.skel{background:var(--line2);border-radius:8px}
+
+/* ============ App: desktop (frame width ≥ 900px) ============ */
+@container app (min-width:900px){
+  .side{display:flex;flex-direction:column;gap:2px;width:232px;flex:none;background:var(--surface);border-right:1px solid var(--line);padding:18px 12px}
+  .side .logo{padding:4px 10px 16px}
+  .side a{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:8px;font-size:14px;font-weight:500}
+  .side a.on{background:var(--acc-light);color:var(--acc-ink);font-weight:700}
+  .side a .n{margin-left:auto;background:var(--er-bg);color:var(--er);border-radius:999px;padding:0 7px;font-size:12px;font-weight:700}
+  .side .grp{font-size:12px;font-weight:600;color:var(--text2);padding:16px 10px 4px}
+  .side .gbtn{margin-top:auto;padding-top:16px}
+  .btabs,.msearch{display:none}
+  .top{min-height:64px;padding:12px 32px;gap:12px}
+  .top .ttl{font-size:22px}
+  .ib.back{margin-left:-10px}
+  .dsearch{display:flex;align-items:center;gap:8px;width:340px;height:40px;border:1px solid var(--line);border-radius:8px;background:var(--bg);padding:0 12px;color:var(--text3);font-size:14px}
+  .dsearch.typed{color:var(--ink);border-color:var(--field);background:var(--surface)}
+  .page{padding:24px 32px 40px;gap:24px}
+  .title{font-size:28px}
+  .cols{display:grid;grid-template-columns:minmax(0,1fr) 320px;gap:28px;align-items:start}
+  .cols.side-l{grid-template-columns:300px minmax(0,1fr)}
+  .cols.even{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cols.md{grid-template-columns:minmax(0,1fr) minmax(0,1.15fr)}
+  .grid,.grid.m3{grid-template-columns:repeat(4,minmax(0,1fr));gap:20px 16px}
+  .grid.g6{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .grid.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .grid.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .cards.c2{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .stats{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .stats.s5{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .bars>div{grid-template-columns:150px 1fr 70px}
+  .banner{aspect-ratio:auto;height:260px}
+  .map.tall{aspect-ratio:auto!important;height:560px}
+  .modal{left:50%;right:auto;width:480px;transform:translateX(-50%);top:110px}
+  .cam{aspect-ratio:16/10}
+  .calt td{height:84px}
+  .calt td .chip{font-size:11px}
+}
+</style>
+</head>
+<body class="show-opt">
+<div class="doc">
+  <div class="kicker">Programsko inženjerstvo · G10 · Sonar · UI design · simple variant</div>
+  <h1>Sonar: every screen, mobile and desktop, in the simple style</h1>
+  <p class="intro">The v1 look (light, one teal accent, rounded white cards) carried through to every screen of v2. The screens, flows, English copy and placeholder data match v2, so the two versions can be compared screen by screen; every screen links to its v2 twin. Each screen is shown twice from the same markup: a 390 px phone and a 1280 px desktop (scaled down). Dashed outlines mark optional features.</p>
+  <div class="toolbar">
+    <div class="grp">Desktop scale <button data-s=".5">50%</button><button data-s=".6" class="on">60%</button><button data-s=".75">75%</button><button data-s="1">100%</button></div>
+    <div class="grp"><button id="optbtn" class="on">Optional markers</button></div>
+    <a href="sonar-dizajn.html" target="_blank">Open v2 ↗</a>
+    <div class="toc" id="toc"></div>
+  </div>
+  <div id="doc"></div>
+</div>
+
+<script>
+/* =================================================================
+   Placeholder images. Same generators as v2: in the real app covers,
+   artist photos and venue photos are catalog content, not styling.
+   Only the map is redrawn light.
+   ================================================================= */
+function h32(s){let h=2166136261>>>0;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619)}return h>>>0}
+function R(seed){let a=h32(String(seed));return()=>{a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const PALS=[["#ff6a2b","#151515","#f2e6d4"],["#e6d3b8","#2b3a55","#c85c5c"],["#0f4c5c","#e36414","#fb8b24"],["#22223b","#9a8c98","#f2e9e4"],["#2d6a4f","#b7e4c7","#081c15"],["#ffbe0b","#3a0ca3","#f72585"],["#e9edc9","#283618","#bc6c25"],["#14213d","#fca311","#e5e5e5"],["#4a4e69","#c9ada7","#16162a"],["#0b090a","#e5383b","#f5f3f4"],["#d8f3dc","#40916c","#1b4332"],["#3d348b","#7678ed","#f7b801"],["#264653","#e9c46a","#e76f51"],["#101010","#8ecae6","#219ebc"],["#5f0f40","#9a031e","#fb8b24"],["#f1faee","#457b9d","#1d3557"],["#1a1a1a","#d4d4d4","#ff6a2b"],["#6b2737","#e08e45","#f8f4a6"]];
+const pick=(r,a)=>a[Math.floor(r()*a.length)];
+const SVG=(w,h,body)=>'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid slice">${body}</svg>`);
+const grain=(o=.2)=>`<filter id="n" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency="1.15" numOctaves="2" stitchTiles="stitch"/><feColorMatrix type="saturate" values="0"/></filter><rect width="100%" height="100%" filter="url(#n)" opacity="${o}"/>`;
+const CACHE={};
+function memo(k,f){return CACHE[k]||(CACHE[k]=f())}
+function cover(seed){return memo('c'+seed,()=>{
+  const r=R('c'+seed),p=pick(r,PALS),flip=r()<.5,a=flip?p[0]:p[1],b=flip?p[1]:p[0],c=p[2];let g='';
+  switch(Math.floor(r()*6)){
+    case 0:{const cx=15+r()*70,cy=15+r()*70;g=`<rect width="100" height="100" fill="${a}"/>`;for(let i=1;i<10;i++)g+=`<circle cx="${cx}" cy="${cy}" r="${i*8.5}" fill="none" stroke="${i%3?b:c}" stroke-width="${(1+r()*3).toFixed(1)}" opacity="${(.45+r()*.55).toFixed(2)}"/>`;break}
+    case 1:{const ang=Math.floor(r()*4)*45;g=`<rect width="100" height="100" fill="${a}"/><g transform="rotate(${ang} 50 50)">`;for(let i=-70;i<170;i+=7+r()*11)g+=`<rect x="${i.toFixed(1)}" y="-70" width="${(2+r()*7).toFixed(1)}" height="240" fill="${r()<.72?b:c}"/>`;g+='</g>';break}
+    case 2:{const hy=52+r()*26;g=`<rect width="100" height="100" fill="${a}"/><circle cx="${(28+r()*44).toFixed(1)}" cy="${hy.toFixed(1)}" r="${(16+r()*16).toFixed(1)}" fill="${c}"/><rect y="${hy.toFixed(1)}" width="100" height="${(100-hy).toFixed(1)}" fill="${b}"/>`;for(let i=0;i<6;i++)g+=`<rect y="${(hy+3+i*i*1.5).toFixed(1)}" width="100" height="${(0.8+i*.55).toFixed(1)}" fill="${a}" opacity=".55"/>`;break}
+    case 3:{g=`<rect width="100" height="100" fill="${a}"/>`;for(let i=0;i<5;i++)g+=`<rect x="${(r()*72).toFixed(1)}" y="${(r()*72).toFixed(1)}" width="${(12+r()*46).toFixed(1)}" height="${(12+r()*46).toFixed(1)}" fill="${[b,c][i%2]}" opacity="${(.65+r()*.35).toFixed(2)}"/>`;break}
+    case 4:{g=`<defs><linearGradient id="l" x1="0" y1="0" x2="${r().toFixed(2)}" y2="1"><stop offset="0" stop-color="${a}"/><stop offset="1" stop-color="${b}"/></linearGradient></defs><rect width="100" height="100" fill="url(#l)"/><circle cx="${(r()*100).toFixed(1)}" cy="${(r()*100).toFixed(1)}" r="${(9+r()*26).toFixed(1)}" fill="${c}" opacity=".9"/><rect x="0" y="${(r()*90).toFixed(1)}" width="100" height="1.2" fill="${c}"/>`;break}
+    default:{const L=(String(seed).trim()[0]||'S').toUpperCase();g=`<rect width="100" height="100" fill="${a}"/><text x="${r()<.5?4:50}" y="96" ${r()<.5?'':'text-anchor="middle"'} font-family="Arial Narrow, Arial, sans-serif" font-weight="700" font-size="${(92+r()*36).toFixed(0)}" fill="${b}">${L}</text><rect width="100" height="${(5+r()*10).toFixed(1)}" fill="${c}"/>`}
+  }
+  return SVG(100,100,g+grain(.17));})}
+function defaultCover(){return memo('dflt',()=>{let g=`<rect width="100" height="100" fill="#E4E9EE"/>`;for(let i=1;i<8;i++)g+=`<circle cx="50" cy="50" r="${i*7}" fill="none" stroke="#B9C4CE" stroke-width="1.2"/>`;g+=`<circle cx="50" cy="50" r="3" fill="#0B6E70"/>`;return SVG(100,100,g)})}
+function artistImg(seed,w=100,h=100){return memo(`a${seed}${w}`,()=>{
+  const r=R('a'+seed),p=pick(r,PALS);let g=`<defs><radialGradient id="r" cx="${(25+r()*50).toFixed(0)}%" cy="${(10+r()*30).toFixed(0)}%" r="85%"><stop offset="0" stop-color="${p[0]}"/><stop offset=".55" stop-color="${p[2]}" stop-opacity=".35"/><stop offset="1" stop-color="#0b0b0c"/></radialGradient></defs><rect width="${w}" height="${h}" fill="#0b0b0c"/><rect width="${w}" height="${h}" fill="url(#r)"/>`;
+  const n=1+Math.floor(r()*3),k=h/100;
+  for(let i=0;i<n;i++){const cx=w/2+(i-(n-1)/2)*(w/(n+1.3)),s=(.85+r()*.3)*k,top=h*(.34+r()*.08);g+=`<g fill="#09090a" opacity=".93"><circle cx="${cx.toFixed(1)}" cy="${top.toFixed(1)}" r="${(11*s).toFixed(1)}"/><path d="M${(cx-26*s).toFixed(1)} ${h} Q${(cx-24*s).toFixed(1)} ${(top+18*s).toFixed(1)} ${cx.toFixed(1)} ${(top+15*s).toFixed(1)} Q${(cx+24*s).toFixed(1)} ${(top+18*s).toFixed(1)} ${(cx+26*s).toFixed(1)} ${h} Z"/></g>`}
+  return SVG(w,h,g+grain(.22));})}
+function venueImg(seed){return memo('v'+seed,()=>{
+  const r=R('v'+seed),p=pick(r,PALS),gx=(30+r()*100).toFixed(0);let g=`<defs><radialGradient id="s" cx="${gx}" cy="64" r="90" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="${p[0]}" stop-opacity=".55"/><stop offset="1" stop-color="#0d0d0f" stop-opacity="0"/></radialGradient></defs><rect width="160" height="100" fill="#111013"/><rect width="160" height="100" fill="url(#s)"/>`;
+  for(let i=0;i<6;i++){const x=10+r()*140;g+=`<polygon points="${(x-2).toFixed(1)},0 ${(x+2).toFixed(1)},0 ${(x+34-r()*68).toFixed(1)},100 ${(x-34+r()*68).toFixed(1)},100" fill="${p[i%3]}" opacity="${(.18+r()*.26).toFixed(2)}"/>`}
+  g+=`<rect y="64" width="160" height="3" fill="${p[0]}" opacity=".55"/><rect y="67" width="160" height="33" fill="#09090a"/>`;
+  for(let x=0;x<166;x+=5+r()*4)g+=`<circle cx="${x.toFixed(1)}" cy="${(76+r()*7).toFixed(1)}" r="${(3+r()*2.4).toFixed(1)}" fill="#050506"/>`;
+  return SVG(160,100,g+grain(.2));})}
+/* Light street map, like default OpenStreetMap tiles */
+function mapImg(seed){return memo('m'+seed,()=>{
+  const r=R('m'+seed),W=400,H=300;let g=`<rect width="${W}" height="${H}" fill="#EEF0EA"/>`;
+  for(let i=0;i<5;i++)g+=`<rect x="${(r()*W).toFixed(0)}" y="${(r()*H).toFixed(0)}" width="${(30+r()*70).toFixed(0)}" height="${(20+r()*50).toFixed(0)}" rx="6" fill="#D3E5C8"/>`;
+  let d=`M -20 ${(H*(.35+r()*.3)).toFixed(0)}`;for(let x=0;x<=W+60;x+=70)d+=` Q ${x+35} ${(H*(.25+r()*.5)).toFixed(0)} ${x+70} ${(H*(.35+r()*.3)).toFixed(0)}`;
+  g+=`<path d="${d}" stroke="#C3DAE8" stroke-width="18" fill="none"/>`;
+  for(let i=0;i<16;i++){const y=r()*H,x=r()*W;g+=`<path d="M0 ${y.toFixed(0)} L${W} ${(y+(r()-.5)*90).toFixed(0)}" stroke="#fff" stroke-width="3"/><path d="M${x.toFixed(0)} 0 L${(x+(r()-.5)*90).toFixed(0)} ${H}" stroke="#fff" stroke-width="3"/>`}
+  for(let i=0;i<3;i++)g+=`<path d="M0 ${(r()*H).toFixed(0)} C ${W*.3} ${(r()*H).toFixed(0)}, ${W*.6} ${(r()*H).toFixed(0)}, ${W} ${(r()*H).toFixed(0)}" stroke="#F3D68E" stroke-width="5" fill="none"/>`;
+  return SVG(W,H,g);})}
+function qrImg(seed){return memo('q'+seed,()=>{
+  const r=R('q'+seed),N=29;let g=`<rect x="-3" y="-3" width="${N+6}" height="${N+6}" fill="#fff"/>`;
+  const inF=(x,y)=>(x<8&&y<8)||(x>N-9&&y<8)||(x<8&&y>N-9);
+  for(let y=0;y<N;y++)for(let x=0;x<N;x++)if(!inF(x,y)&&r()<.47)g+=`<rect x="${x}" y="${y}" width="1.02" height="1.02" fill="#000"/>`;
+  const fin=(x,y)=>`<rect x="${x}" y="${y}" width="7" height="7" fill="#000"/><rect x="${x+1}" y="${y+1}" width="5" height="5" fill="#fff"/><rect x="${x+2}" y="${y+2}" width="3" height="3" fill="#000"/>`;
+  g+=fin(0,0)+fin(N-7,0)+fin(0,N-7);
+  return 'data:image/svg+xml;charset=utf-8,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="-3 -3 ${N+6} ${N+6}" shape-rendering="crispEdges">${g}</svg>`);})}
+
+/* Icons: same set as v2, drawn with round line ends */
+const IC={
+home:'<path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/>',
+search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+map:'<path d="M9 4L3 6v14l6-2 6 2 6-2V4l-6 2-6-2z"/><path d="M9 4v14M15 6v14"/>',
+ticket:'<path d="M3 7h18v3a2 2 0 000 4v3H3v-3a2 2 0 000-4z"/><path d="M15 7v10" stroke-dasharray="2 2"/>',
+user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1-4 4-6 8-6s7 2 8 6"/>',
+bell:'<path d="M6 17v-6a6 6 0 0112 0v6l2 2H4z"/><path d="M10 21h4"/>',
+plus:'<path d="M12 5v14M5 12h14"/>',
+heart:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z"/>',
+heartf:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.6A4 4 0 0119 10c0 5.5-7 10-7 10z" fill="currentColor"/>',
+chev:'<path d="M9 6l6 6-6 6"/>',back:'<path d="M15 6l-6 6 6 6"/>',down:'<path d="M6 9l6 6 6-6"/>',
+close:'<path d="M6 6l12 12M18 6L6 18"/>',check:'<path d="M5 12l5 5 9-10"/>',
+cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M9 3v4M15 3v4"/>',
+pin:'<path d="M12 21s-6-5.5-6-11a6 6 0 0112 0c0 5.5-6 11-6 11z"/><circle cx="12" cy="10" r="2"/>',
+share:'<path d="M12 3v12M7 8l5-5 5 5"/><path d="M5 13v7h14v-7"/>',
+flag:'<path d="M5 21V4h11l-2 4 2 4H5"/>',
+more:'<path d="M5 12h.01M12 12h.01M19 12h.01" stroke-width="3"/>',
+camera:'<path d="M4 8h3l2-3h6l2 3h3v11H4z"/><circle cx="12" cy="13" r="3.5"/>',
+grip:'<path d="M9 6h.01M15 6h.01M9 12h.01M15 12h.01M9 18h.01M15 18h.01" stroke-width="3"/>',
+settings:'<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/>',
+log:'<path d="M5 4h14v16H5z"/><path d="M8 8h8M8 12h8M8 16h5"/>',
+users:'<circle cx="9" cy="8" r="3.5"/><path d="M2 20c.8-3.5 3.6-5 7-5s6.2 1.5 7 5"/><path d="M16 4.5a3.5 3.5 0 010 7M18 15c2 .6 3.4 2.2 4 5"/>',
+chart:'<path d="M4 20V4M4 20h16"/><path d="M8 16v-5M12 16V8M16 16v-8"/>',
+shield:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/>',
+download:'<path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 20h14"/>',
+upload:'<path d="M12 21V9M7 14l5-5 5 5"/><path d="M5 4h14"/>',
+link:'<path d="M10 14a4 4 0 005.7 0l3-3a4 4 0 00-5.7-5.7l-1 1"/><path d="M14 10a4 4 0 00-5.7 0l-3 3a4 4 0 005.7 5.7l1-1"/>',
+copy:'<rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/>',
+trash:'<path d="M4 7h16M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3"/>',
+list:'<path d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>',
+edit:'<path d="M4 20h4L19 9l-4-4L4 16z"/>',
+info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7h.01"/>',
+warn:'<path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18h.01"/>',
+qr:'<rect x="4" y="4" width="6" height="6"/><rect x="14" y="4" width="6" height="6"/><rect x="4" y="14" width="6" height="6"/><path d="M14 14h2v2h-2zM18 18h2v2h-2zM14 18h1M18 14h2"/>',
+google:'<path d="M20 12.2c0-.6-.1-1.2-.2-1.7H12v3.3h4.5a3.9 3.9 0 01-1.7 2.5v2h2.7c1.6-1.5 2.5-3.6 2.5-6.1z" fill="#4285F4" stroke="none"/><path d="M12 20.5c2.3 0 4.2-.8 5.5-2.1l-2.7-2.1c-.8.5-1.7.8-2.8.8-2.2 0-4-1.5-4.7-3.4H4.5v2.1A8.5 8.5 0 0012 20.5z" fill="#34A853" stroke="none"/><path d="M7.3 13.7a5 5 0 010-3.3V8.3H4.5a8.5 8.5 0 000 7.6z" fill="#FBBC05" stroke="none"/><path d="M12 6.9c1.2 0 2.3.4 3.2 1.3l2.4-2.4A8.4 8.4 0 0012 3.5a8.5 8.5 0 00-7.5 4.8l2.8 2.1C8 8.4 9.8 6.9 12 6.9z" fill="#EA4335" stroke="none"/>',
+};
+const ic=(n,s=18)=>`<svg class="ic" width="${s}" height="${s}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">${IC[n]||''}</svg>`;
+
+/* =================================================================
+   Placeholder data (same as v2)
+   ================================================================= */
+const ART=[{n:'Orbita',g:'indie rock',c:'Zagreb'},{n:'Plavi Sat',g:'dream pop',c:'Rijeka'},{n:'Kiša u Svibnju',g:'shoegaze',c:'Zagreb'},{n:'Noćni Autobus',g:'electronic',c:'Zagreb'},{n:'Mali Mjesec',g:'acoustic',c:'Osijek'},{n:'Zlatna Groznica',g:'post-punk',c:'Pula'},{n:'Mjesečeva Strana',g:'ambient',c:'Split'},{n:'Sidro',g:'folk',c:'Zadar'},{n:'Betonski Vrt',g:'noise rock',c:'Rijeka'},{n:'Ljetna Smjena',g:'synth-pop',c:'Split'},{n:'Tihi Kvart',g:'jazz',c:'Zagreb'},{n:'Crveni Signal',g:'garage rock',c:'Varaždin'}];
+const A=n=>ART.find(a=>a.n===n);
+const REL=[['Valovi','Orbita','Album',2025],['Staklene noći','Plavi Sat','Album',2025],['Signali','Noćni Autobus','EP',2025],['Magla','Kiša u Svibnju','Album',2023],['Pustinja u gradu','Zlatna Groznica','Album',2024],['Neon','Ljetna Smjena','Single',2025],['Kasno','Tihi Kvart','Album',2024],['Obala','Sidro','Album',2022],['Tvornica','Betonski Vrt','EP',2025],['Pun Mjesec','Mali Mjesec','Album',2024],['Daleki odjek','Mjesečeva Strana','Album',2025],['Crvena zona','Crveni Signal','Single',2025]];
+const DISCO=[['Valovi','Orbita','Album',2025],['Bez mjeseca','Orbita','Single',2025],['Uživo u Tvornici','Orbita','Live',2024],['Plima','Orbita','EP',2023],['Sidrište','Orbita','Single',2023],['Prvi val','Orbita','Album',2021],['Kratki spoj','Orbita','EP',2020],['Demo 2019','Orbita','Single',2019]];
+const TRACKS=[['Plima','4:12',4.4],['Bez mjeseca','3:38',4.8],['Valovi','5:21',4.6],['Sidro','3:05',4.1],['Svjetionik','4:47',4.5],['Daleko od obale','6:02',4.7],['Struja','3:29',4.0],['Tišina na moru','4:15',4.3],['Kraj ljeta','5:44',4.6]];
+const CON=[
+ {id:'c1',a:'Orbita',w:'Kiša u Svibnju',v:'Dom kulture',c:'Zagreb',dow:'Fri',d:'20',m:'Nov',t:'20:00',km:3},
+ {id:'c3',a:'Noćni Autobus',v:'Tvornica Zvuka',c:'Zagreb',dow:'Sat',d:'21',m:'Nov',t:'22:00',km:5},
+ {id:'c2',a:'Plavi Sat',w:'Orbita',v:'Klub Obala',c:'Rijeka',dow:'Sat',d:'14',m:'Nov',t:'21:00',km:162},
+ {id:'c4',a:'Mali Mjesec',v:'Dom kulture',c:'Zagreb',dow:'Thu',d:'3',m:'Dec',t:'20:30',km:3},
+ {id:'c5',a:'Zlatna Groznica',v:'Klub Tunel',c:'Split',dow:'Fri',d:'27',m:'Nov',t:'21:00',km:410},
+ {id:'c6',a:'Betonski Vrt',v:'Klub Mlin',c:'Zagreb',dow:'Thu',d:'26',m:'Nov',t:'21:00',km:6},
+ {id:'c7',a:'Tihi Kvart',v:'Podrum',c:'Zadar',dow:'Fri',d:'4',m:'Dec',t:'20:00',km:285}];
+const C=id=>CON.find(c=>c.id===id);
+const VEN=[{n:'Dom kulture',c:'Zagreb',cap:350,km:3,up:3,next:'Fri 20 Nov · Orbita + Kiša u Svibnju'},{n:'Tvornica Zvuka',c:'Zagreb',cap:800,km:5,up:4,next:'Sat 21 Nov · Noćni Autobus'},{n:'Klub Mlin',c:'Zagreb',cap:220,km:6,up:2,next:'Thu 26 Nov · Betonski Vrt'},{n:'Galerija Zvuk',c:'Zagreb',cap:90,km:4,up:1,next:'Wed 2 Dec · Tihi Kvart'},{n:'Sjever',c:'Zagreb',cap:140,km:9,up:1,next:'Sat 12 Dec · Crveni Signal'},{n:'Atrij',c:'Zagreb',cap:300,km:11,up:0,next:'No concerts announced'}];
+
+/* =================================================================
+   The component kit. Everything on every screen is built from these.
+   ================================================================= */
+const isOn=(on,i)=>Array.isArray(on)?on.includes(i):on===i;
+const btn=(t,cls='',i='')=>`<a class="btn ${cls}">${i?ic(i,16):''}${t}</a>`;
+const chip=(t,tone='')=>`<span class="chip ${tone}">${t}</span>`;
+const pills=(a,on=0,cls='')=>`<div class="pills ${cls}">${a.map((p,i)=>`<a class="pill${isOn(on,i)?' on':''}">${p}</a>`).join('')}</div>`;
+const seg=(a,on=0,cls='')=>`<div class="seg ${cls}">${a.map((p,i)=>`<a class="${i===on?'on':''}">${p}</a>`).join('')}</div>`;
+const sec=(h,link,inner,cls='')=>`<section class="sct ${cls}"><div class="sec-h"><h2>${h}</h2>${link?`<a>${link}</a>`:''}</div>${inner}</section>`;
+const item=o=>`<div class="item ${o.cls||''}">${o.pre||''}${o.img?`<img class="th ${o.ic||''}" src="${o.img}" alt="">`:''}<div class="main">${o.t!=null?`<div class="t">${o.t}</div>`:''}${o.txt?`<div class="txt">${o.txt}</div>`:''}${o.s?`<div class="sm">${o.s}</div>`:''}${o.x||''}</div>${o.end!=null&&o.end!==''?`<div class="end">${o.end}</div>`:''}</div>`;
+const list=(a,cls='')=>`<div class="list ${cls}">${a.join('')}</div>`;
+const cards=(a,cls='')=>`<div class="cards ${cls}">${a.join('')}</div>`;
+const th=src=>`<img class="th" src="${src}" alt="">`;
+const stars=(n,cls='')=>`<span class="stars ${cls}">${'★'.repeat(n)}<span class="o">${'★'.repeat(5-n)}</span></span>`;
+const av=(name,cls='')=>`<span class="av ${cls}">${name.replace(/[.]/g,'').split(/\s+/).map(w=>w[0]).join('').slice(0,2).toUpperCase()}</span>`;
+const fld=(label,ctrl,help='',err='',cls='')=>`<label class="fld ${cls}">${label}${ctrl}${err?`<span class="err">${err}</span>`:''}${help?`<span class="help">${help}</span>`:''}</label>`;
+const inp=(v='',ph='',cls='',type='text')=>`<input class="inp ${cls}" type="${type}"${v!==''?` value="${v}"`:''}${ph?` placeholder="${ph}"`:''}>`;
+const ta=(v='',ph='',h=110)=>`<textarea class="inp" style="min-height:${h}px"${ph?` placeholder="${ph}"`:''}>${v}</textarea>`;
+const sel=(opts,on=0,cls='')=>`<select class="inp ${cls}">${opts.map((o,i)=>`<option${i===on?' selected':''}>${o}</option>`).join('')}</select>`;
+const cb=(label,on,sub='')=>`<label class="opt"><input type="checkbox"${on?' checked':''}><span>${label}${sub?`<span class="sm">${sub}</span>`:''}</span></label>`;
+let RN=0;
+const radios=(opts,on=0)=>{const n='r'+(++RN);return opts.map((o,i)=>`<label class="opt"><input type="radio" name="${n}"${i===on?' checked':''}><span>${o}</span></label>`).join('')};
+const range=v=>`<input type="range" min="10" max="300" value="${v}">`;
+const sbox=(v='',ph='',cls='')=>`<div class="sbox ${cls}">${ic('search',16)}<input${v?` value="${v}"`:''}${ph?` placeholder="${ph}"`:''}>${v?ic('close',16):''}</div>`;
+const kv=rows=>`<dl class="kv">${rows.map(([k,v])=>`<dt>${k}</dt><dd>${v}</dd>`).join('')}</dl>`;
+const stats=(a,cls='')=>`<div class="stats ${cls}">${a.map(([v,l])=>`<div class="stat"><b>${v}</b><span>${l}</span></div>`).join('')}</div>`;
+const table=(head,rows,numFrom=99)=>`<div class="tbl-wrap"><table class="tbl"><tr>${head.map((h,i)=>`<th class="${i>=numFrom?'num':''}">${h}</th>`).join('')}</tr>${rows.map(r=>`<tr class="${r.sel?'sel':''}">${(r.cells||r).map((c,i)=>`<td class="${i>=numFrom?'num':''}">${c}</td>`).join('')}</tr>`).join('')}</table></div>`;
+const bars=(rows,max)=>`<div class="card bars">${rows.map(([n,v,lab])=>`<div><span>${n}</span><div class="bar"><i style="width:${v==null?0:v/max*100}%"></i></div><span class="v">${lab??v}</span></div>`).join('')}</div>`;
+const tl=steps=>`<ol class="tl">${steps.map(([t,s,st],i)=>`<li class="${st||''}"><span class="n">${st==='done'?ic('check',13):i+1}</span><div><b>${t}</b>${s?`<div class="sm">${s}</div>`:''}</div></li>`).join('')}</ol>`;
+function mapBox({seed='zg',ratio='4/3',pins=[],cls=''}={}){return `<div class="map ${cls}" style="aspect-ratio:${ratio}"><img src="${mapImg(seed)}" alt="">${pins.map((p,i)=>`<span class="pin${p.f?' f':''}" style="left:${p.x}%;top:${p.y}%">${p.n??i+1}</span>${p.label?`<span class="pinlab" style="left:${p.x}%;top:${p.y}%">${p.label}</span>`:''}`).join('')}<span class="osm">© OpenStreetMap</span></div>`}
+
+/* Content shortcuts built on the kit */
+const lineup=c=>c.w?`${c.a} + ${c.w}`:c.a;
+const when=c=>`${c.dow} ${c.d} ${c.m}${c.t?` · ${c.t}`:''}`;
+const conItem=(c,o={})=>item({img:artistImg(c.a),t:lineup(c),s:o.s??`${when(c)} · ${c.v}, ${c.c}${o.km&&c.km?` · ${c.km} km`:''}`,x:o.x,end:o.end??ic('chev'),cls:o.cls});
+const venItem=(v,cls='')=>item({img:venueImg(v.n),ic:'w',t:v.n,s:`${v.c} · ${v.km} km · capacity ${v.cap}`,x:`<div class="sm">${v.up?'<b>Next:</b> ':''}${v.next}</div>`,end:(v.up?chip(`${v.up} upcoming`):'')+ic('chev'),cls});
+const linkItem=(i,t,end='')=>item({pre:`<span class="lic">${ic(i,18)}</span>`,t,end:end+ic('chev')});
+const relTile=(r,o={})=>`<a class="tile"><img src="${cover(r[0])}" alt=""><b>${r[0]}</b><span class="sm">${o.sub??r[1]}</span>${o.why?`<span class="why">${o.why}</span>`:''}</a>`;
+const artTile=(a,o={})=>`<a class="tile${o.sel?' sel':''}"><img class="round" src="${artistImg(a.n)}" alt="">${o.sel?`<span class="tick">${ic('check',14)}</span>`:''}<b>${a.n}</b><span class="sm">${o.sub??a.g}</span>${o.why?`<span class="why">${o.why}</span>`:''}</a>`;
+const venTile=v=>`<a class="tile"><img class="w" src="${venueImg(v.n)}" alt=""><b>${v.n}</b><span class="sm">${v.c} · ${v.up?v.up+' upcoming':'nothing announced'}</span></a>`;
+const trackItem=(i,t,o={})=>item({pre:o.num===false?'':`<span class="no">${i}</span>`,img:o.thumb,t:t[0],s:o.sub,end:`${o.rate===false?'':`<span class="sm">★ ${t[2].toFixed(1)}</span>`}<span class="sm only-d">${t[1]}</span>${o.liked?`<span class="liked">${ic('heartf',18)}</span>`:ic('heart',18)}${ic('plus',18)}`});
+const review=(u,n,txt,o={})=>`<div class="rev">${av(u,'sm')}<div class="main"><div class="row" style="gap:8px"><b style="font-size:14px">${u}</b>${stars(n)}<span class="xs">${o.when||'3 days ago'}</span></div><p>${txt}</p>${o.reply?`<div class="reply"><div class="xs">Official reply · ${o.reply[0]}</div>${o.reply[1]}</div>`:''}${o.replyField?`<div class="reply stack s8"><div class="xs">Reply as ${o.replyField}</div>${ta('','Write a public reply…',60)}<div>${btn('Post reply','sm')}</div></div>`:''}<div class="acts">${o.more||''}<a>${ic('flag',13)}Report</a></div></div></div>`;
+const ratingSum=(avg,cnt,dist,your,b='Write a review')=>`<div class="card rsum"><div class="big"><b>${avg}</b>${stars(Math.round(avg))}<div class="xs">${cnt} ratings</div></div><div class="dist">${[5,4,3,2,1].map((k,i)=>`<div class="drow"><span>${k}</span><div class="bar"><i style="width:${dist[i]}%"></i></div></div>`).join('')}</div><div class="yours"><span class="sm">Your rating</span>${stars(your,'lg')}${btn(b,'sec sm')}</div></div>`;
+const stepHead=(n,label)=>`<div class="stack s8"><p class="sm">Step ${n} of 3 · ${label}</p><div class="bar"><i style="width:${(n/3*100).toFixed(0)}%"></i></div></div>`;
+const msearch=v=>`<div class="msearch only-m">${sbox(v,'Search')}</div>`;
+const LOGO='<span class="logo">Sonar</span>';
+
+/* =================================================================
+   One shell for every role. Phone: top bar + bottom tabs.
+   Desktop: left sidebar (role sections added to it) + top bar.
+   ================================================================= */
+const ADM=r=>[['Reports','flag',5],['Role requests','shield',2],['Activity log','log']].concat(r==='admin'?[['Users & roles','users'],['Settings & stats','chart']]:[]);
+function shell(o){
+  const L=(i,l,n)=>`<a class="${o.nav===l?'on':''}">${ic(i,18)}<span>${l}</span>${n?`<span class="n">${n}</span>`:''}</a>`;
+  let side='';
+  if(!o.nonav){
+    let s;
+    if(o.pub)s=L('home','Home')+L('map','Map')+`<div class="gbtn">${btn('Sign in with Google','sec block sm','google')}</div>`;
+    else if(o.adm)s=`<div class="grp">${o.adm==='admin'?'Administrator':'Moderator'}</div>`+ADM(o.adm).map(([l,i,n])=>L(i,l,n)).join('')+`<div class="gbtn">${L('back','Back to app')}</div>`;
+    else{
+      s=L('home','Home')+L('search','Search')+L('map','Map')+L('ticket','Tickets')+L('bell','Notifications',2)+L('user','Profile');
+      if(o.role==='artist')s+=`<div class="grp">Artist · Plavi Sat</div>`+L('cal','My concerts',3)+L('plus','Propose a concert')+L('chart','Artist statistics');
+      if(o.role==='venue')s+=`<div class="grp">Venue · Dom kulture</div>`+L('pin','Venue profile')+L('list','Proposals',2)+L('camera','Scan tickets')+L('chart','Venue statistics');
+    }
+    side=`<aside class="side">${LOGO}${s}</aside>`;
+  }
+  const ib=n=>`<a class="ib">${ic(n,20)}${n==='bell'?'<span class="cnt-b">2</span>':''}</a>`;
+  const icons=(o.icons??(o.pub||o.back||o.nonav||o.adm?[]:['search','bell'])).map(ib).join('');
+  const mExtra=o.adm?chip(o.adm):(o.pub&&o.act===undefined?btn('Sign in','sm'):'');
+  const dExtra=o.nonav||o.pub?'':ib('bell')+av('Ana K.','sm');
+  const search=o.nonav||o.adm||o.nosearch?'':`<div class="dsearch${o.q?' typed':''}">${ic('search',16)}<span>${o.q??'Search artists, releases, songs, venues'}</span></div>`;
+  const top=`<header class="top">${o.back?`<a class="ib back${o.adm?' only-m':''}">${ic('back',22)}</a>`:''}<div class="ttl"><span class="only-m">${o.title??LOGO}</span><span class="only-d">${o.dtitle??o.title??''}</span></div>${search}${o.act||''}<div class="only-m tr">${icons}${mExtra}</div><div class="only-d tr">${dExtra}</div></header>`;
+  const tabs=o.nonav||o.adm?'':`<nav class="btabs">${(o.pub?[['home','Home'],['map','Map'],['user','Sign in']]:[['home','Home'],['search','Search'],['map','Map'],['ticket','Tickets'],['user','Profile']]).map(([i,l])=>`<a class="${o.tab===i?'on':''}">${ic(i,20)}<span>${l}</span></a>`).join('')}</nav>`;
+  const admPills=o.adm?`<label class="fld only-m">Section${sel(ADM(o.adm).map(([l,,n])=>n?`${l} (${n})`:l),ADM(o.adm).findIndex(a=>a[0]===o.nav))}</label>`:'';
+  return `<div class="shell">${side}<div class="main">${top}<div class="page">${admPills}${o.body}</div>${o.after||''}${tabs}</div></div>`;
+}
+
+/* =================================================================
+   Screens
+   ================================================================= */
+const SCR=[];const S=(id,title,meta,fn)=>SCR.push({id,title,meta,fn});
+const SECT={
+ '1':['Public & sign-in','Without an account: concerts, popular artists, venues and the map. Everything else asks you to sign in.'],
+ '2':['Onboarding & profile','Three short onboarding steps, then a profile that keeps personal settings and role tools apart.'],
+ '3':['Search & artists','One search page with type filters, a request flow for missing artists, and the artist page.'],
+ '4':['Releases, reviews & lists','Release pages, writing and reading reviews, lists, and adding a song to a list.'],
+ '5':['Feed, notifications & following','The signed-in home is a grid of releases, then concerts near you, then what people you follow are doing.'],
+ '6':['Concerts & tickets','The concert page, one chronological ticket list, and the QR ticket.'],
+ '7':['Roles, reports & privacy','Separate artist and venue verification flows, reporting, and data controls.'],
+ '8':['Artist tools','Proposing starts at a venue; published concerts and pending requests are separate views.'],
+ '9':['Venue tools','Venue profile, incoming proposals, an optional calendar, ticket scanning and statistics.'],
+ '10':['Moderation & administration','The same shell as the rest of the app: the sidebar simply shows the moderation sections.'],
+};
+
+/* ---------- 1. Public ---------- */
+S('1.1','Landing (public)',{tags:['Core'],covers:'F-001 · F-010',notes:[
+ `A plain intro card instead of v2's large headline and cover mosaic.`,
+ `Same content order as v2: concerts, popular artists, venues. Grids wrap (two or three per row on phones, up to six on desktop) instead of swipeable rows.`,
+ `The category pills filter the page, like v2's option B. “Open map” goes to the full map (1.2).`]},
+()=>shell({pub:true,tab:'home',nav:'Home',dtitle:'Discover',body:`
+<div class="card"><h2 class="title">Live music near you, and the records behind it.</h2><p class="lead" style="margin:0">Upcoming concerts, artists and venues in one place. Sign in for recommendations, ratings and free concert registrations.</p><div class="btns">${btn('Sign in with Google')}${btn('Open map','sec','map')}</div></div>
+${pills(['Everything','Concerts <span class="n">24</span>','Artists','Venues <span class="n">18</span>'])}
+${sec('Upcoming concerts','See all',cards(CON.slice(0,4).map(c=>conItem(c)),'c2'))}
+${sec('Popular on Sonar','See all',`<div class="grid g6 m3">${ART.slice(0,6).map(a=>artTile(a)).join('')}</div>`)}
+${sec('Venues','Open map',`<div class="grid">${VEN.slice(0,4).map(venTile).join('')}</div>`)}
+<p class="src">Catalog: MusicBrainz · Tags and popularity: Last.fm · Covers: Cover Art Archive</p>`}));
+
+S('1.2','Map',{tags:['Core','T1'],covers:'F-001',notes:[
+ `Same layout idea as v2: a bordered map with the venue list under it on phones, the map left and the list right on desktop.`,
+ `Filters are pills plus a genre dropdown. Each venue row shows its next concert and opens the venue page (1.4).`,
+ `<b>Optional (T1):</b> the highlighted row matches the dark pin. Unlike v2, the map doesn't stay fixed while the list scrolls, so this stays a plain two-column layout.`]},
+()=>shell({tab:'map',nav:'Map',title:'Map',body:`
+<div class="row">${pills([`${ic('pin',14)}Zagreb`,'This week','Open registrations'])}${sel(['Any genre','indie rock','electronic','jazz'],0,'s')}</div>
+<div class="cols even"><div class="col">${mapBox({seed:'zagreb',ratio:'4/3',cls:'tall',pins:[{x:47,y:44,f:1,label:'Dom kulture'},{x:63,y:58},{x:30,y:31},{x:72,y:25},{x:22,y:67},{x:56,y:80}]})}</div>
+<div class="col s8"><p class="sm">6 venues · 11 upcoming concerts</p>${list(VEN.map((v,i)=>venItem(v,i===0?'sel optional':'')))}</div></div>`}));
+
+S('1.3','Sign in',{tags:['Core','T14'],covers:'F-002',notes:[
+ `One centred card on both sizes. “Continue with Google” is the primary path, as the concept requires (OpenID Connect).`,
+ `The email and password form is optional because it <b>deviates from the concept</b>, which specifies Google only (T14). Same open point as v2.`,
+ `Account messages use the shared message box, one colour per meaning.`]},
+()=>shell({pub:true,tab:'user',nav:'',title:'Sign in',nosearch:true,act:'',body:`<div class="narrow-s center">
+<div class="card"><h2 class="title">Sign in to Sonar</h2><p class="lead" style="margin:0">Recommendations, ratings, reviews and free concert registrations.</p>
+${btn('Continue with Google','sec block','google')}
+<p class="help">We only take your email address from Google. Your account is created on the first sign-in.</p>
+<div class="stack optional" style="padding-top:14px;border-top:1px solid var(--line)">${fld('Email',inp('','you@example.com','','email'))}${fld('Password',inp('','••••••••','','password'))}${btn('Sign in','block')}<p class="help" style="text-align:center">No account yet? <a>Create one</a></p></div></div>
+<div class="stack s8"><p class="sm"><b>Messages you may see</b></p><div class="msg wa">Your account is suspended until <b>28 Oct 2026</b>.</div><div class="msg er">This account has been deactivated.</div><div class="msg">Google sign-in isn't responding. Try again in a few minutes.</div></div></div>`}));
+
+S('1.4','Venue page',{tags:['Core','New'],covers:'F-001 · F-006 · F-021',notes:[
+ `One photo instead of v2's three-photo gallery; the others open from “3 photos”. Photos and the description come from the venue manager (9.1).`,
+ `Upcoming concerts come first. v2's month calendar is dropped because the dated list already answers “what's on”. The .ics link stays (T10).`,
+ `Verified artists see “Propose a concert here”: proposing starts at the venue (8.1). The side column stacks under the main one on phones.`]},
+()=>shell({tab:'map',nav:'Map',back:true,title:'Dom kulture',body:`
+<img class="banner" src="${venueImg('Dom kulture')}" alt="">
+<div class="cols"><div class="col">
+<div class="stack s8"><p class="sm">Venue · Zagreb · <a>3 photos</a></p><h2 class="title">Dom kulture</h2><div class="row"><span class="sm">Ilica 211, Zagreb · capacity 350</span>${chip('verified venue','ok')}</div></div>
+<div class="stack s8"><p class="body">Former cinema turned into a mid-size concert hall in the west of the city. Standing room on the ground floor, a balcony with seats, and a small bar at the back. Doors usually open an hour before the first act.</p><p class="body">Accessible entrance from the courtyard. Tram lines 2, 6 and 11 stop at the door.</p></div>
+${sec('Upcoming at Dom kulture','.ics calendar',list([conItem(C('c1'),{end:btn('Apply','sm')}),conItem(C('c4'),{end:btn('Apply','sm')}),conItem({a:'Tihi Kvart',v:'Dom kulture',c:'Zagreb',dow:'Sat',d:'19',m:'Dec',t:'20:00'},{end:btn('Opens soon','sec sm')})]))}
+${sec('Past concerts','',list([conItem({a:'Orbita',dow:'Fri',d:'2',m:'Oct'},{s:'Fri 2 Oct · held · 312 attended',cls:'dim',end:''}),conItem({a:'Sidro',dow:'Sat',d:'19',m:'Sep'},{s:'Sat 19 Sep · held · 188 attended',cls:'dim',end:''})]))}
+</div><div class="col">
+${mapBox({seed:'dk',ratio:'4/3',pins:[{x:50,y:50,f:1,n:'•'}]})}
+<div class="card"><p class="sm"><b>For verified artists</b></p>${btn('Propose a concert here','block','plus')}<p class="help">Visible only to verified artists. Capacity 350 is the upper limit for places.</p></div>
+</div></div>`}));
+
+/* ---------- 2. Onboarding & profile ---------- */
+S('2.1a','Onboarding · genres',{tags:['Core','T2'],covers:'F-004 · F-019',notes:[
+ `Same three steps as v2: genres, artists, location.`,
+ `Genres are pills, as in v1, instead of image tiles. A search field finds any catalog genre (T2); typing “post” lists matches with checkboxes.`,
+ `The step indicator is a line of text and a progress bar.`]},
+()=>shell({nonav:true,title:LOGO,dtitle:LOGO,act:btn('Skip','ghost sm'),body:`<div class="narrow center">
+${stepHead(1,'Genres')}
+<div><h2 class="title">What do you listen to?</h2><p class="lead">Pick a few genres. They are only a starting point for your recommendations.</p></div>
+<div class="stack s8">${sbox('post','Search genres')}${list(['post-punk','post-rock','post-hardcore'].map((g,i)=>item({pre:`<input type="checkbox" class="cbx"${i===0?' checked':''}>`,t:g,s:`${[312,198,74][i]} artists in the catalog`,cls:i===0?'sel':''})))}</div>
+<div class="stack s8"><p class="sm"><b>Selected · 3</b></p>${pills(['indie rock ×','shoegaze ×','post-punk ×'],[0,1,2])}</div>
+${sec('Popular genres','',pills(['indie rock','electronic','jazz','hip hop','shoegaze','folk','metal','ambient','post-punk','pop'],[0,4,8]))}
+<div class="foot"><span class="sm">3 genres selected</span>${btn('Continue')}</div></div>`}));
+
+S('2.1b','Onboarding · artists',{tags:['Core','T2'],covers:'F-004 · F-019',notes:[
+ `Suggestions are grouped by the genres from step 1, as round artist photos. Search finds any artist in the catalog.`,
+ `Selected artists get a teal ring and a check mark. The counter says “at least 3”, and the step can be skipped.`,
+ `An artist missing from the catalog can be requested from search later (3.2), so this is never a dead end.`]},
+()=>shell({nonav:true,title:LOGO,dtitle:LOGO,act:btn('Skip','ghost sm'),body:`<div class="narrow wide center">
+${stepHead(2,'Artists')}
+<div><h2 class="title">Pick a few artists</h2><p class="lead">Search for anyone, or start with these, based on your genres.</p></div>
+${sbox('','Search artists')}
+${sec('Because you chose indie rock','',`<div class="grid g6 m3">${['Orbita','Crveni Signal','Plavi Sat','Ljetna Smjena','Sidro','Tihi Kvart'].map((n,i)=>artTile(A(n),{sel:[0,2].includes(i)})).join('')}</div>`)}
+${sec('Because you chose shoegaze','',`<div class="grid g6 m3">${['Kiša u Svibnju','Mjesečeva Strana','Betonski Vrt','Zlatna Groznica','Noćni Autobus','Mali Mjesec'].map((n,i)=>artTile(A(n),{sel:[0,3].includes(i)})).join('')}</div>`)}
+<div class="foot"><span class="sm">4 selected · at least 3</span><div class="btns">${btn('Back','sec')}${btn('Continue')}</div></div></div>`}));
+
+S('2.1c','Onboarding · location & notifications',{tags:['Core','T3'],covers:'F-003 · F-035 · F-038',notes:[
+ `The city and radius drive “concerts near you”; without them, concert recommendations and notifications can't work.`,
+ `Standard controls only: a text field, a range slider and two checkboxes, instead of v2's custom slider and switches.`,
+ `The privacy line explains that artists and venues only ever see totals, never your location (concept requirement).`]},
+()=>shell({nonav:true,title:LOGO,dtitle:LOGO,body:`<div class="narrow-s center">
+${stepHead(3,'Location')}
+<div><h2 class="title">Where do you go to concerts?</h2><p class="lead">We use your city to find concerts near you.</p></div>
+<div class="card">${fld('City',inp('Zagreb, Croatia'),'Artists and venues only ever see totals, never your location.')}
+${fld('Notify me about concerts within <span class="acc">50 km</span>',range(50),'From 10 to 300 km.')}
+<div class="fld">How should we reach you?${cb('In the app',1,'Bell icon with a counter')}${cb('Email',1,'ana.k@example.com')}</div></div>
+<div class="foot">${btn('Back','sec')}${btn('Start exploring')}</div></div>`}));
+
+S('2.2','My profile',{tags:['Core'],covers:'F-003 · F-005 · F-011',notes:[
+ `Identity and counts, the verified-artist block and the account links are three cards: a left column on desktop, stacked on phones.`,
+ `Both role requests stay reachable as links, as in v2. Ana is already a verified artist, so only “Request venue status” remains.`,
+ `Profile sections use a segmented control: Activity, Reviews, Lists, Liked. List covers are a single image, not a four-cover mosaic.`]},
+()=>shell({tab:'user',nav:'Profile',role:'artist',title:'Profile',dtitle:'Profile',icons:['settings','bell'],body:`
+<div class="cols side-l"><div class="col">
+<div class="card"><div class="row" style="gap:14px;flex-wrap:nowrap">${av('Ana K.','lg')}<div><h2 class="title">Ana K.</h2><p class="sm">Zagreb · since Oct 2026</p></div></div>
+<p class="body">Indie, shoegaze, anything with too much reverb. Usually at the back near the sound desk.</p>
+<p class="sm">Following <b>24</b> artists · <b>8</b> people · <b>37</b> followers · <b>112</b> ratings</p>
+<div class="btns">${btn('Edit profile','sec sm','edit')}${btn('Share','sec sm','share')}</div></div>
+<div class="card"><div class="row sb"><b>Plavi Sat</b>${chip('verified artist','ok')}</div><p class="sm"><b>1,204</b> followers · <b>4.4</b> avg rating · next concert <b>14 Nov</b></p>
+${list([linkItem('user','Artist page & biography'),linkItem('cal','My concerts',chip('3 requests','bl')),linkItem('chart','Statistics')],'flat')}</div>
+${list([linkItem('ticket','My tickets'),linkItem('pin','Request venue status'),linkItem('settings','Settings & notifications'),linkItem('download','Your data & account')])}
+</div><div class="col">
+${seg(['Activity','Reviews 9','Lists 3','Liked 86'],0,'full')}
+${list([
+ item({txt:`Rated <b>Valovi</b> by Orbita ${stars(5)}`,s:'2 days ago',end:th(cover('Valovi'))}),
+ item({txt:`Going to <b>Orbita + Kiša u Svibnju</b> at Dom kulture`,s:'Fri 20 Nov · 3 days ago',end:th(artistImg('Orbita'))}),
+ item({txt:`Added <b>Plima</b> and 2 more songs to <b>Night drive</b>`,s:'4 days ago',end:th(cover('Plima'))}),
+ item({txt:`Reviewed <b>Magla</b> by Kiša u Svibnju ${stars(4)}`,s:'1 week ago',end:th(cover('Magla'))}),
+ item({txt:`Started following <b>Noćni Autobus</b>`,s:'1 week ago',end:th(artistImg('Noćni Autobus'))})])}
+${sec('Lists','All lists',`<div class="grid">${['Night drive','Favourites','Rainy Sundays','Gym'].map((l,i)=>`<a class="tile"><img src="${cover(REL[(i*3)%REL.length][0])}" alt=""><b>${l}</b><span class="sm">${[12,31,8,20][i]} songs</span></a>`).join('')}</div>`)}
+</div></div>`}));
+
+S('2.3','Edit profile & notifications',{tags:['Core'],covers:'F-003 · F-035 · F-038',notes:[
+ `One column of two cards on both sizes. v2 adds a section index on desktop; the form is short enough without it.`,
+ `Errors sit directly under the field they belong to (v1's rule).`,
+ `Notification channels are checkboxes and the radius is a range slider.`]},
+()=>shell({tab:'user',nav:'Profile',back:true,title:'Edit profile',act:btn('Save','sm'),body:`<div class="narrow">
+<div class="card"><h2 class="h">Profile</h2><div class="row" style="gap:12px">${av('Ana K.','lg')}${btn('Change picture','sec sm','upload')}</div>
+${fld('Name or nickname *',inp('','Your name','bad'),'',`Name or nickname can't be empty.`)}
+${fld('City *',inp('Zagreb, Croatia'),'Used for distances to concerts. Artists and venues see totals only.')}
+${fld('About you',ta('Indie, shoegaze, anything with too much reverb. Usually at the back near the sound desk.'),'94 / 300')}</div>
+<div class="card"><h2 class="h">Notifications</h2>${cb('In the app',1,'Bell icon with a counter')}${cb('Email',1,'ana.k@example.com')}${fld('Concerts within <span class="acc">50 km</span> of Zagreb',range(50))}</div>
+<div class="foot">${btn('Cancel','sec')}${btn('Save changes')}</div></div>`}));
+
+/* ---------- 3. Search & artists ---------- */
+S('3.1','Search',{tags:['Core','T2','T12'],covers:'F-008',notes:[
+ `Kept from v2: on phones the search field is <b>docked at the bottom</b>, above the tabs, where the thumb already is (T12). On desktop it's the field in the top bar.`,
+ `<b>One filter UI for both sizes</b>: type pills plus a genre dropdown (optional). v2 uses tabs on phones and a filter column on desktop.`,
+ `Results come in sections: artists, releases (covers, with the type in the subtitle), songs and venues. Songs that aren't on an album get the default image.`]},
+()=>shell({tab:'search',nav:'Search',q:'mjesec',title:'Search',dtitle:'Results for “mjesec”',icons:['bell'],after:msearch('mjesec'),body:`
+<div class="row">${pills(['All','Artists <span class="n">2</span>','Releases <span class="n">4</span>','Songs <span class="n">6</span>','Venues <span class="n">1</span>','Concerts <span class="n">1</span>'])}<span class="optional">${sel(['Any genre','acoustic','ambient','folk','electronic'],1,'s')}</span></div>
+<div class="cols even"><div class="col">
+${sec('Artists','',list([item({img:artistImg('Mali Mjesec'),ic:'round',t:'Mali Mjesec',s:'acoustic · melancholic · Osijek',end:btn('Follow','sec sm')}),item({img:artistImg('Mjesečeva Strana'),ic:'round',t:'Mjesečeva Strana',s:'ambient · Split',end:btn('Follow','sec sm')})]))}
+${sec('Songs','See all 6',list([trackItem(1,['Mjesec nad morem','3:41',4.5],{num:false,thumb:cover('Pun Mjesec'),sub:'Mali Mjesec · Pun Mjesec'}),trackItem(2,['Bez mjeseca','3:38',4.8],{num:false,thumb:cover('Bez mjeseca'),sub:'Orbita · Single'}),trackItem(3,['Mjesečar','2:58',4.0],{num:false,thumb:defaultCover(),sub:'Sidro · not on an album'})]))}
+${sec('Venues','',list([item({img:venueImg('Klub Mjesečina'),ic:'w',t:'Klub Mjesečina',s:'Osijek · capacity 150 · 2 upcoming',end:ic('chev')})]))}
+</div><div class="col">
+${sec('Releases','See all 4',`<div class="grid g2">${[['Pun Mjesec','Mali Mjesec','Album',2024],['Daleki odjek','Mjesečeva Strana','Album',2025],['Mjesečina','Mali Mjesec','EP',2022],['Nova luna','Mjesečeva Strana','Single',2025]].map(r=>relTile(r,{sub:`${r[2]} · ${r[1]} · ${r[3]}`})).join('')}</div>`)}
+</div></div>`}));
+
+S('3.2','No results · request an artist',{tags:['Core','T2'],covers:'F-009',notes:[
+ `Same wording as v2: no backend jargon, and one clear action, “Request this artist”.`,
+ `After a request, one green confirmation line. A duplicate request simply opens the existing artist.`,
+ `Loading uses grey placeholder tiles with no status text. A message about MusicBrainz or Last.fm being down appears only if the request can't be accepted.`]},
+()=>shell({tab:'search',nav:'Search',q:'zvjezdani prah',title:'Search',dtitle:'Search',icons:['bell'],after:msearch('zvjezdani prah'),body:`<div class="narrow">
+<div class="card"><h2 class="h">No results for “Zvjezdani Prah”</h2><p class="sm">Not in our catalog yet. Ask us to add this artist and we'll let you know when the page is ready.</p><div>${btn('Request this artist','','plus')}</div></div>
+<div class="msg ok">We're adding <b>Zvjezdani Prah</b>. We'll notify you when the page is ready.</div>
+${sec('Did you mean','',list([item({img:artistImg('Zvjezdana Prašina'),ic:'round',t:'Zvjezdana Prašina',s:'psychedelic rock · Pula',end:ic('chev')}),item({img:cover('Prah i pepeo'),t:'Prah i pepeo',s:'Album · Betonski Vrt · 2021',end:ic('chev')})]))}
+${sec('You might like','',`<div class="grid g6 m3">${['Mjesečeva Strana','Kiša u Svibnju','Noćni Autobus','Plavi Sat','Tihi Kvart','Sidro'].map(n=>artTile(A(n))).join('')}</div>`,'optional')}
+${sec('Loading state','',`<div class="grid">${[1,2,3,4].map(()=>`<div class="stack s8"><div class="skel" style="aspect-ratio:1"></div><div class="skel" style="height:12px;width:80%"></div><div class="skel" style="height:10px;width:55%"></div></div>`).join('')}</div>`)}
+</div>`}));
+
+S('3.3','Artist page',{tags:['Core','T3','T4','T5','T6'],covers:'F-008 · F-011 · F-012 · F-013 · F-014 · F-018',notes:[
+ `A header card with a round photo, instead of v2's full-width image with the name laid over it.`,
+ `Same order as v2: <b>the next concert near you</b> with Apply (T3), <b>Discography</b> with release-type pills (T5), popular songs, then ratings and reviews.`,
+ `The side column (upcoming concerts, about, fans also like) stacks under the main column on phones. v2 moves the next-concert box between columns; here it stays in one place.`,
+ `Images: verified artists upload their own, otherwise fanart.tv or Wikimedia, then a default image (T4).`]},
+()=>shell({tab:'search',nav:'Search',back:true,title:'Orbita',icons:['share','more'],body:`
+<div class="card"><div class="row" style="gap:16px;flex-wrap:nowrap"><img class="th round" style="width:96px;height:96px" src="${artistImg('Orbita')}" alt=""><div class="stack s8" style="flex:1;min-width:0"><p class="sm">indie rock · melancholic · Zagreb</p><h2 class="title">Orbita</h2><p class="sm"><b>4.6</b> ★ · 128 ratings · <b>2,341</b> followers</p></div></div><div class="btns">${btn('Follow','sm')}${btn('Like','sec sm','heart')}</div></div>
+<div class="cols"><div class="col">
+<div class="card hl"><div class="row sb" style="flex-wrap:nowrap"><div><p class="sm acc"><b>Next near you · 3 km</b></p><b>Fri 20 Nov · Dom kulture, Zagreb</b><p class="sm">with Kiša u Svibnju · 20:00</p></div>${btn('Apply','sm')}</div></div>
+${sec('Discography','See all 14',`${pills(['All <span class="n">14</span>','Albums <span class="n">3</span>','EPs <span class="n">3</span>','Singles <span class="n">7</span>','Live <span class="n">1</span>'])}<div class="grid m3">${DISCO.map(r=>relTile(r,{sub:`${r[2]} · ${r[3]}`})).join('')}</div>`)}
+${sec('Popular songs','',list(TRACKS.slice(0,5).map((t,i)=>trackItem(i+1,t,{thumb:cover(i===1?'Bez mjeseca':i===0?'Plima':'Valovi'),sub:i===1?'Bez mjeseca · Single':i===0?'Plima · EP':'Valovi · Album',liked:i===1}))))}
+${sec('Ratings & reviews','All 23 reviews',ratingSum(4.6,128,[72,18,6,3,1],4)+list([review('Ivan P.',5,'Best live band in town right now. Valovi grows on you: the last three songs are the reason to own it.',{reply:['Orbita','Thank you! See you at Dom kulture.']}),review('Lea M.',4,'Great songwriting, a bit too polished compared to the first EP.',{when:'1 week ago'})]))}
+</div><div class="col">
+${sec('Upcoming concerts','',list([conItem(C('c1'),{km:1}),conItem(C('c2'),{km:1}),conItem({a:'Orbita',v:'Klub Tunel',c:'Split',dow:'Sat',d:'9',m:'Jan',t:'21:00',km:410},{km:1})]))}
+${sec('About','',`<div class="card"><p class="body">Four-piece from Zagreb. Started in a basement in Trešnjevka in 2018, two albums since. Long songs, loud endings.</p>${list([linkItem('link','orbita.example'),linkItem('link','Bandcamp')],'flat')}<p class="src">Data: MusicBrainz · Last.fm · Image: fanart.tv</p></div>`)}
+${sec('Fans also like','',`<div class="grid g3 m3">${['Kiša u Svibnju','Plavi Sat','Crveni Signal'].map(n=>artTile(A(n),{why:'shared tags'})).join('')}</div>`,'optional')}
+</div></div>`}));
+
+/* ---------- 4. Releases, reviews, lists ---------- */
+S('4.1','Release page (album, EP, single, song)',{tags:['Core','T4','T11'],covers:'F-008 · F-012 · F-013 · F-015',notes:[
+ `Same structure as v2: the cover, then title, artist and release facts, then the track list. On desktop the cover sits left of the details.`,
+ `Kept from the concept: a 1–5 rating with the average and distribution, “like”, and an add-to-list button on every track (4.4).`,
+ `The same layout serves EPs, singles and single songs. Playback is left out of the first version (T11).`]},
+()=>shell({tab:'search',nav:'Search',back:true,title:'Album',icons:['share','more'],body:`
+<div class="cols side-l"><div class="col"><img class="cover" src="${cover('Valovi')}" alt=""></div><div class="col">
+<div class="stack s8"><p class="sm">Album · 2025 · 9 tracks · 41 min</p><h2 class="title">Valovi</h2><p>by <a>Orbita</a></p><p class="sm"><b>4.7</b> ★ · 64 ratings · released 12 Mar 2025 · self-released</p><div class="row"><span class="sm">Your rating</span>${stars(5,'lg')}</div></div>
+<div class="btns">${btn('Liked','sec sm','heartf')}${btn('Add to list','sec sm','plus')}${btn('Write a review','sec sm','edit')}</div>
+${sec('Tracks','',list(TRACKS.map((t,i)=>trackItem(i+1,t,{liked:i===1}))))}
+</div></div>
+<div class="cols"><div class="col">
+${sec('Ratings & reviews','All 11 reviews',ratingSum(4.7,64,[78,15,5,2,0],5)+list([review('Ivan P.',5,'Every track holds up. Daleko od obale is six minutes and still ends too soon.',{reply:['Orbita','That one was recorded in a single take!']}),review('Nina R.',4,'Production is huge, the lyrics could be braver.',{when:'2 weeks ago'})]))}
+</div><div class="col">
+${sec('More from Orbita','',`<div class="grid g3 m3">${DISCO.slice(1,4).map(r=>relTile(r,{sub:`${r[2]} · ${r[3]}`})).join('')}</div>`)}
+${sec('Fans also like','',`<div class="grid g3 m3">${[REL[3],REL[1],REL[4]].map(r=>relTile(r)).join('')}</div>`,'optional')}
+<p class="src">Release data: MusicBrainz · Cover: Cover Art Archive</p>
+</div></div>`}));
+
+S('4.2a','Write a review',{tags:['Core'],covers:'F-012 · F-013',notes:[
+ `Writing is its own focused view without navigation, as in v2.`,
+ `A plain text field and large stars; no rich text editor.`,
+ `Rating again replaces your previous rating, as the concept says. The error sits under the form.`]},
+()=>shell({nonav:true,back:true,title:'Review',act:btn('Publish','sm'),body:`<div class="narrow-s center">
+${list([item({img:cover('Valovi'),t:'Valovi',s:'Orbita · Album · 2025'})])}
+<div class="card"><div class="fld">Your rating *${stars(4,'xl')}<span class="help">Tap to change. Rating again replaces your previous rating.</span></div>
+${fld('Your review',ta(`Huge-sounding record. The first half is the strongest set of songs they've written, though the middle drags a little before`,'',200),'Shown with your name to everyone · 142 / 3000')}
+<p class="err">A review can't be empty. You can also just leave a rating.</p></div>
+<div class="foot">${btn('Cancel','sec')}${btn('Publish review')}</div></div>`}));
+
+S('4.2b','Reviews & official replies',{tags:['Core'],covers:'F-012 · F-013 · F-014',notes:[
+ `Replies unfold under the review; “All reviews” opens this list. Sorting is a dropdown instead of v2's chips.`,
+ `A verified artist sees a reply field under reviews of their own releases. There's one official reply per review, as the concept says.`,
+ `Reporting is a quiet link on each review (7.2).`]},
+()=>shell({tab:'search',nav:'Search',back:true,title:'Reviews · Valovi',body:`<div class="narrow">
+${list([item({img:cover('Valovi'),t:'Valovi · Orbita',s:'4.7 ★ · 64 ratings · 11 reviews',end:btn('Write a review','sm')})])}
+<div class="row"><span class="sm">Sort by</span>${sel(['Newest','Highest','Lowest','With reply'],0,'s')}</div>
+${list([
+ review('Ivan P.',5,'Every track holds up. Daleko od obale is six minutes and still ends too soon.',{reply:['Orbita','That one was recorded in a single take!']}),
+ review('Nina R.',4,'Production is huge, the lyrics could be braver.',{when:'2 weeks ago',replyField:'Orbita'}),
+ review('Marko T.',3,'Good, not great. Liked Prvi val more.',{when:'3 weeks ago',more:`<a>${ic('down',13)}1 reply</a>`}),
+ review('Lea M.',5,'Saw them play this live in October and it was even better.',{when:'1 month ago'})])}
+<p class="xs" style="text-align:center">Artist view shown on the second review: the reply field is visible only to Orbita.</p></div>`}));
+
+S('4.3','A list',{tags:['Core','T2'],covers:'F-015',notes:[
+ `Lists live in the profile. A breadcrumb line replaces v2's compact profile header.`,
+ `The list's picture is its first song's cover, not a four-cover mosaic. Rows have a drag handle and a remove button.`,
+ `Songs are mainly added from where they already are, with the + on any track (4.4). “Add songs” opens a catalog search and is optional (T2).`]},
+()=>shell({tab:'user',nav:'Profile',back:true,title:'Night drive',icons:['more'],body:`<div class="narrow">
+<p class="sm">Ana K. › Lists</p>
+<div class="row" style="gap:14px;flex-wrap:nowrap"><img class="th" style="width:96px;height:96px" src="${cover('Valovi')}" alt=""><div class="stack s8"><p class="sm">List · public</p><h2 class="title">Night drive</h2><p class="sm">12 songs · 51 min · updated 2 days ago</p></div></div>
+<div class="btns">${btn('Add songs','sec sm optional','search')}${btn('Share','sec sm','share')}${btn('Rename','sec sm','edit')}</div>
+<div class="msg er">Plima is already on this list.</div>
+${list([['Plima','Orbita','Valovi'],['Staklo','Plavi Sat','Staklene noći'],['Signal 3','Noćni Autobus','Signali'],['Siva zora','Kiša u Svibnju','Magla'],['Neon','Ljetna Smjena','Neon'],['Mjesečar','Sidro',null]].map((t,i)=>item({pre:`<span class="grip">${ic('grip',16)}</span>`,img:t[2]?cover(t[2]):defaultCover(),t:t[0],s:`${t[1]}${t[2]?' · '+t[2]:' · not on an album'}`,end:`<span class="sm only-d">${['4:12','3:57','5:10','4:33','3:21','2:58'][i]}</span>${ic('close',18)}`})))}
+${sec(`Ana's other lists`,'',`<div class="grid">${['Favourites','Rainy Sundays','Gym'].map((l,i)=>`<a class="tile"><img src="${cover(l+' list')}" alt=""><b>${l}</b><span class="sm">${[31,8,20][i]} songs</span></a>`).join('')}<a class="tile"><div class="add">${ic('plus',24)}</div><b>New list</b></a></div>`)}
+</div>`}));
+
+S('4.4','Add a song to a list',{tags:['Core','New'],covers:'F-015',notes:[
+ `Opens from the + on any track row (artist page, release page, search). <b>One dialog for both sizes</b>, instead of v2's bottom sheet on phones and dialog on desktop.`,
+ `Tick one or more lists, or create a new one inline. Liked songs stay a separate one-tap heart.`]},
+()=>shell({tab:'search',nav:'Search',back:true,title:'Album',after:`<div class="overlay"></div><div class="modal">
+<div class="row sb" style="flex-wrap:nowrap">${item({img:cover('Valovi'),t:'Svjetionik',s:'Orbita · Valovi'})}<a class="ib">${ic('close',20)}</a></div>
+<p class="sm"><b>Add to</b></p>
+<div class="stack s8">${cb('Night drive',1,'added')}${cb('Favourites',0)}${cb('Rainy Sundays',0)}${cb('Gym',0)}</div>
+<div class="row" style="flex-wrap:nowrap">${inp('','New list name')}${btn('Create','sec')}</div>
+${btn('Done','block')}</div>`,body:`
+<div class="cols side-l"><div class="col"><img class="cover" src="${cover('Valovi')}" alt=""></div><div class="col"><h2 class="title">Valovi</h2>${list(TRACKS.slice(0,6).map((t,i)=>trackItem(i+1,t,{})))}</div></div>`}));
+
+/* ---------- 5. Feed, notifications, following ---------- */
+S('5.1','Home (signed in)',{tags:['Core','T3','T6','T13'],covers:'F-016 · F-017 · F-018 · F-019 · F-020',notes:[
+ `Kept from v2: the feed is the core of the product, with <b>lots of release covers first</b>, then concerts near you, then what people you follow are doing.`,
+ `Recommendation reasons are small teal labels (v1's “because…” tag) under the item.`,
+ `Concerts are list cards instead of photo tiles with date badges. The feed updates live without a reload (T13); recommended artists use the shared recommendations component (T6).`]},
+()=>shell({tab:'home',nav:'Home',dtitle:'Home',body:`
+${sec('For you','More',`<div class="grid g6 m3">${REL.slice(0,12).map((r,i)=>relTile(r,{why:i%3===0?`because you like ${['Orbita','shoegaze','Plavi Sat','post-punk'][i/3]}`:''})).join('')}</div>`)}
+${sec('Concerts near you','All concerts',cards([C('c1'),C('c3'),C('c6'),C('c4')].map((c,i)=>conItem(c,{km:1,x:`<span class="why">${['because you like Orbita','because you follow Noćni Autobus','because you like noise rock','popular in Zagreb'][i]}</span>`})),'c2'))}
+<div class="cols"><div class="col">
+${sec('From people you follow','',list([
+ item({pre:av('Ivan P.','sm'),txt:`<b>Ivan P.</b> rated <b>Valovi</b> by Orbita ${stars(5)}`,s:'3 hours ago',end:th(cover('Valovi'))}),
+ item({pre:av('Lea M.','sm'),txt:`<b>Lea M.</b> is going to <b>Noćni Autobus</b> at Tvornica Zvuka`,s:'Sat 21 Nov · 5 hours ago',end:th(artistImg('Noćni Autobus'))}),
+ item({pre:`<span class="av sm">${ic('cal',16)}</span>`,txt:`<b>Orbita</b> announced a concert at <b>Dom kulture</b>, Zagreb`,s:'Fri 20 Nov · yesterday',end:btn('Apply','sm')}),
+ item({pre:av('Marko T.','sm'),txt:`<b>Marko T.</b> added 3 songs to <b>Ljeto 2026</b>`,s:'yesterday',end:th(cover('Neon'))}),
+ item({pre:av('Nina R.','sm'),txt:`<b>Nina R.</b> reviewed <b>Magla</b>: “The best shoegaze record from around here in years.” ${stars(5)}`,s:'2 days ago',end:th(cover('Magla'))})]))}
+</div><div class="col">
+${sec('New from artists you follow','',`<div class="grid g2">${[DISCO[1],REL[2],REL[5],REL[11]].map(r=>relTile(r,{sub:`${r[1]} · ${r[2]}`})).join('')}</div>`)}
+${sec('Artists to discover','',list(['Zlatna Groznica','Mjesečeva Strana','Tihi Kvart'].map(n=>item({img:artistImg(n),ic:'round',t:n,x:`<span class="why">because you like ${n==='Tihi Kvart'?'Kiša u Svibnju':'Orbita'}</span>`,end:btn('Follow','sec sm')}))),'optional')}
+</div></div>`}));
+
+const nItem=o=>item({cls:o.unread?'unread':'',pre:o.img?`<img class="th round" src="${o.img}" alt="">`:o.av?av(o.av):`<span class="av">${ic(o.icon,18)}</span>`,txt:o.txt,s:o.s,x:o.tag?`<div style="margin-top:4px">${o.tag}</div>`:'',end:o.unread?'<span class="dot"></span>':''});
+S('5.2','Notifications',{tags:['Core','T13'],covers:'F-035 · F-036 · F-037 · F-038 · NF-08',notes:[
+ `A plain list, newest first, grouped into Today, This week and Earlier, with a pill filter on top.`,
+ `Unread rows get a light teal background and a dot. v2's three importance levels become a label on the urgent ones (reminder, cancelled).`,
+ `Arrives live (T13); email is sent too if it's enabled.`]},
+()=>shell({tab:'home',nav:'Notifications',back:true,title:'Notifications',act:btn('Mark all read','ghost sm'),body:`<div class="narrow">
+${pills(['All','Concerts','Social','Account'])}
+<div class="sct"><p class="sm"><b>Today</b></p>${list([
+ nItem({unread:1,img:artistImg('Orbita'),txt:`<b>Tomorrow at 20:00:</b> Orbita + Kiša u Svibnju at Dom kulture. Your ticket is ready.`,s:'2 hours ago',tag:chip('reminder','ac')}),
+ nItem({unread:1,icon:'warn',txt:`<b>Cancelled:</b> Mali Mjesec at Klub Mjesečina (28 Nov). Your registration no longer applies.`,s:'5 hours ago',tag:chip('cancelled','er')}),
+ nItem({img:artistImg('Noćni Autobus'),txt:`New concert near you: <b>Noćni Autobus</b> at Tvornica Zvuka, Sat 21 Nov · 5 km`,s:'9 hours ago'})])}</div>
+<div class="sct"><p class="sm"><b>This week</b></p>${list([
+ nItem({icon:'check',txt:`Your request for <b>artist status</b> (Plavi Sat) was approved.`,s:'Tue'}),
+ nItem({av:'Ivan P.',txt:`<b>Ivan P.</b> started following you.`,s:'Mon'})])}</div>
+<div class="sct"><p class="sm"><b>Earlier</b></p>${list([
+ nItem({icon:'flag',txt:`Your report was reviewed: no action taken. Reason: the review doesn't break the rules.`,s:'14 Oct'}),
+ nItem({icon:'info',txt:`Your review of <b>Pustinja u gradu</b> was removed. Reason: insulting another user.`,s:'9 Oct'})])}</div>
+</div>`}));
+
+S('5.3','Following',{tags:['Core','T6'],covers:'F-011',notes:[
+ `A segmented control for Artists, People and Followers, under a breadcrumb line.`,
+ `The button shows the current state (“Following”) and unfollows on tap.`,
+ `Suggestions come from the shared recommendations component (optional, T6).`]},
+()=>shell({tab:'user',nav:'Profile',back:true,title:'Following',body:`<div class="narrow">
+<p class="sm">Ana K. › Following</p>
+${seg(['Artists 24','People 8','Followers 37'],0,'full')}
+${list(['Orbita','Kiša u Svibnju','Noćni Autobus','Mali Mjesec','Mjesečeva Strana','Plavi Sat'].map(n=>item({img:artistImg(n),ic:'round',t:n,s:`${A(n).g} · ${A(n).c}`,end:btn('Following','sec sm','check')})))}
+${sec('Suggested for you','',`<div class="grid g6 m3">${['Zlatna Groznica','Betonski Vrt','Tihi Kvart','Sidro','Crveni Signal','Ljetna Smjena'].map(n=>artTile(A(n),{why:'because you like Orbita'})).join('')}</div>`,'optional')}
+</div>`}));
+
+/* ---------- 6. Concerts & tickets ---------- */
+S('6.1','Concert page',{tags:['Core','T8','T13'],covers:'F-024 · F-018 · NF-08',notes:[
+ `A photo on top and the facts under it, instead of the lineup laid over the image.`,
+ `Places left is a hint shown only below a threshold (“under 10 places left”), never the exact count, and it updates live. Apply turns into Show ticket once you're registered; “Sold out” is a plain line.`,
+ `The map and venue facts sit in the side column; on phones they come after the concert details, so there's no separate phone layout. The Apply box is the one desktop-only part.`]},
+()=>shell({tab:'ticket',nav:'Tickets',back:true,title:'Concert',icons:['share'],body:`
+<img class="banner" src="${artistImg('Orbita',160,90)}" alt="">
+<div class="cols"><div class="col">
+<div class="stack s8"><p class="sm">Fri 20 Nov 2026 · 20:00 · doors 19:00</p><h2 class="title">Orbita + Kiša u Svibnju</h2><p><b>Dom kulture, Zagreb</b> <span class="sm">· Ilica 211 · 3 km from you</span></p><div class="row">${chip('registrations open','ok')}${chip('under 10 places left','wa')}</div></div>
+<div class="only-m stack s8">${btn('Apply · free','block')}<p class="help" style="text-align:center">You can cancel until 19:00 on the day.</p></div>
+${sec('Lineup','',list(['Orbita','Kiša u Svibnju'].map((n,i)=>item({img:artistImg(n),ic:'round',t:n,s:`${A(n).g} · ${i===0?'headliner · 21:15':'support · 20:15'}`,end:i===0?btn('Following','sec sm','check'):btn('Follow','sec sm')}))))}
+${sec('About this concert','',`<div class="card"><p class="body">Orbita close their autumn tour at home, playing Valovi front to back for the first time, followed by older songs picked by the audience. Kiša u Svibnju open with their first Zagreb show since Magla came out.</p><p class="body">Standing on the ground floor, seats on the balcony first come first served. No re-entry after 22:00.</p></div>`)}
+<div class="row optional"><span class="avs">${av('Lea M.','xs')}${av('Ivan P.','xs')}${av('Nina R.','xs')}</span><span class="sm">Lea M. and 2 other people you follow are going</span></div>
+${sec('Other button states','',`<div class="card"><div class="row">${btn('Show ticket','sec sm','ticket')}<span class="sm">You're going · cancel until 19:00</span></div><div class="row"><b>Sold out</b><span class="sm">All places are taken.</span></div></div>`)}
+</div><div class="col">
+<div class="card only-d"><div class="row sb"><span class="h">Free</span>${chip('under 10 left','wa')}</div>${btn('Apply','block')}<p class="help">You can cancel until 19:00 on the day. Your QR ticket appears in Tickets.</p></div>
+${mapBox({seed:'dk',ratio:'16/10',pins:[{x:50,y:50,f:1,label:'Dom kulture'}]})}
+<div class="card">${kv([['Venue','<a>Dom kulture</a>'],['Address','Ilica 211, Zagreb'],['Capacity','350']])}</div>
+</div></div>`}));
+
+const ticketActs=`<div class="btns">${btn('Ticket','sm','qr')}<a class="btn sec sm only-d">Cancel</a></div>`;
+S('6.2','My tickets',{tags:['Core'],covers:'F-024 · F-025',notes:[
+ `One list sorted by date: upcoming first, past below. No tabs, as in v2.`,
+ `Each card has the lineup, date and venue, a status label, and actions (ticket, cancel).`,
+ `A cancelled concert says so in plain words; past concerts show attended or no-show.`]},
+()=>shell({tab:'ticket',nav:'Tickets',title:'My tickets',dtitle:'My tickets',body:`<div class="narrow">
+${cards([
+ conItem(C('c1'),{x:`<div style="margin-top:6px">${chip('registered','ok')}</div>`,end:ticketActs}),
+ conItem(C('c3'),{x:`<div style="margin-top:6px">${chip('registered','ok')}</div>`,end:ticketActs}),
+ conItem({a:'Mali Mjesec',v:'Klub Mjesečina',c:'Osijek',dow:'Sat',d:'28',m:'Nov',t:'21:30'},{x:`<div class="row" style="margin-top:6px">${chip('concert cancelled','er')}<span class="sm">Your registration no longer applies.</span></div>`,end:''})])}
+<p class="help">You can cancel up to one hour before the concert starts.</p>
+${sec('Past','',cards([
+ conItem({a:'Orbita',v:'Dom kulture',c:'Zagreb',dow:'Fri',d:'2',m:'Oct',t:'20:00'},{cls:'dim',x:`<div style="margin-top:6px">${chip('attended','ok')}</div>`,end:btn('Rate','sec sm')}),
+ conItem({a:'Sidro',v:'Dom kulture',c:'Zagreb',dow:'Sat',d:'19',m:'Sep',t:'21:00'},{cls:'dim',x:`<div style="margin-top:6px">${chip('no-show')}</div>`,end:''})]))}
+</div>`}));
+
+S('6.3','Ticket',{tags:['Core','T10'],covers:'F-024 · F-025 · F-027',notes:[
+ `The QR code is large and on white for reliable scanning, with the key facts in the same card.`,
+ `Add to calendar (.ics) or Google Calendar; cancelling is possible until one hour before the start.`,
+ `The same narrow, centred column on both sizes.`]},
+()=>shell({tab:'ticket',nav:'Tickets',back:true,title:'Ticket',body:`<div class="narrow-s center">
+<div class="card" style="align-items:center;text-align:center"><p class="sm">Fri 20 Nov 2026 · doors 19:00 · start 20:00</p><h2 class="title">Orbita + Kiša u Svibnju</h2><p class="sm">Dom kulture, Ilica 211, Zagreb</p>
+<div class="qr"><img src="${qrImg('ticket-0417')}" alt=""></div><div class="row" style="justify-content:center">${chip('registered','ok')}<span class="sm">#0417 · Ana K.</span></div></div>
+<div class="stack s8">${btn('Add to calendar (.ics)','sec block','cal')}${btn('Add to Google Calendar','sec block','google')}${btn('Cancel registration','danger sec block')}</div>
+<p class="help" style="text-align:center">You can cancel until 19:00 on 20 Nov. Show this code at the entrance.</p></div>`}));
+
+/* ---------- 7. Roles, reports, privacy ---------- */
+S('7.1a','Request artist status',{tags:['Core'],covers:'F-033 · F-034 · F-037',notes:[
+ `Its own screen, separate from the venue request. Three numbered cards: pick the artist, give an official link, publish the code.`,
+ `Artists missing from the catalog can be requested right from step 1.`,
+ `A numbered status list (request → review → more info → outcome) sits in the side column and follows the form on phones. No photo band at the top. Every outcome also arrives as a notification.`]},
+()=>shell({tab:'user',nav:'Profile',back:true,title:'Artist status',body:`
+<div class="cols"><div class="col">
+<div><h2 class="title">Request artist status</h2><p class="lead">Verified artists propose concerts, reply officially to reviews and see their statistics.</p></div>
+<div class="card"><h3 class="h">1. Which artist are you?</h3>${sbox('Plavi Sat','Search artists')}${list([item({img:artistImg('Plavi Sat'),ic:'round',t:'Plavi Sat',s:'dream pop · Rijeka · MusicBrainz',cls:'sel',end:ic('check')})])}<p class="help">Not in the catalog? <a>Request the artist first</a>.</p></div>
+<div class="card"><h3 class="h">2. Official page or profile</h3>${fld('Link',inp('https://plavisat.example','','','url'),'Your website, Bandcamp or an official social profile.')}</div>
+<div class="card"><h3 class="h">3. Prove it's yours</h3><p class="body">Publish this code on that page or in the profile bio. A moderator checks it.</p><div class="code">SONAR-7F3K-92QX${btn('Copy','sec sm','copy')}</div></div>
+<div class="foot"><span class="row"><span class="sm">Status</span>${chip('under review','bl')}</span>${btn('Send request')}</div>
+</div><div class="col">
+${sec('Status','',`<div class="card">${tl([['Request sent','20 Oct','done'],['Under review','A moderator is checking the code','on'],['More info needed',`Only if the code isn't visible`],['Approved or rejected','With a reason if rejected']])}</div>`)}
+<div class="msg bl">You'll get a notification and an email about the outcome.</div>
+</div></div>`}));
+
+S('7.1b','Request venue status',{tags:['Core'],covers:'F-033 · F-034 · F-037',notes:[
+ `A separate flow with venue-specific steps: choose the venue (search or map), your role there, an official link and the code.`,
+ `It reuses the cards, code box and status list from 7.1a; the role is a set of radio buttons.`,
+ `After approval the next step is spelled out: set the capacity, or nobody can propose a concert at the venue.`]},
+()=>shell({tab:'user',nav:'Profile',back:true,title:'Venue status',body:`
+<div class="cols"><div class="col">
+<div><h2 class="title">Request venue status</h2><p class="lead">Venue managers accept concert proposals, scan tickets and see attendance.</p></div>
+<div class="card"><h3 class="h">1. Which venue?</h3><div class="row" style="flex-wrap:nowrap">${sbox('Klub Mlin','Search venues')}${btn('Map','sec','map')}</div>${list([item({img:venueImg('Klub Mlin'),ic:'w',t:'Klub Mlin',s:'Zagreb · Jarunska 5 · MusicBrainz',cls:'sel',end:ic('check')})])}<p class="help">Not listed? <a>Request the venue</a>.</p></div>
+<div class="card"><h3 class="h">2. Your role there</h3><div>${radios(['Owner','Manager','Booker'],1)}</div></div>
+<div class="card"><h3 class="h">3. Official page</h3>${fld('Link',inp('https://instagram.com/klubmlin','','','url'))}</div>
+<div class="card"><h3 class="h">4. Prove it's yours</h3><div class="code">SONAR-Q2LM-80TA${btn('Copy','sec sm','copy')}</div><p class="help">Publish the code on that page or in its bio.</p></div>
+<div class="foot"><span class="row"><span class="sm">Status</span>${chip('more info needed','wa')}</span>${btn('Send update')}</div>
+</div><div class="col">
+${sec('Status','',`<div class="card">${tl([['Request sent','18 Oct','done'],['Under review','','done'],['More info needed',`“The code isn't visible on the Instagram bio yet.”`,'on'],['Approved or rejected','']])}</div>`)}
+<div class="msg wa"><b>After approval:</b> enter your capacity in the venue profile. Until then nobody can propose a concert at your venue.</div>
+</div></div>`}));
+
+S('7.2','Report content',{tags:['Core'],covers:'F-029',notes:[
+ `The same dialog as 4.4, on both sizes. The reported item is quoted so it's clear what is being reported.`,
+ `A reason is required (radio buttons); details are optional. The outcome arrives as a notification.`]},
+()=>shell({tab:'search',nav:'Search',back:true,title:'Reviews',after:`<div class="overlay"></div><div class="modal">
+<div class="row sb"><h2 class="h">Report review</h2><a class="ib">${ic('close',20)}</a></div>
+<div class="msg"><b>Dario S.</b> ${stars(1)} “Whoever likes this has no ears…”</div>
+<div class="fld">Reason *<div>${radios(['Offensive or insulting','Inappropriate profile','Spam','Something else'],0)}</div></div>
+${fld('Details (optional)',ta('','Anything the moderators should know',70))}
+${btn('Send report','block')}<p class="help" style="text-align:center">A moderator reviews it and you'll be notified of the decision.</p></div>`,body:`<div class="narrow">${list([review('Dario S.',1,'Whoever likes this has no ears…',{when:'1 day ago'}),review('Ivan P.',5,'Every track holds up.'),review('Nina R.',4,'Production is huge, the lyrics could be braver.')])}</div>`}));
+
+S('7.3','Your data & deleting the account',{tags:['Core'],covers:'F-046 · F-047',notes:[
+ `Same content as v1 and v2: export everything as JSON, or delete the account with anonymisation.`,
+ `The consequences are listed plainly, and deleting needs an explicit checkbox first.`]},
+()=>shell({tab:'user',nav:'Profile',back:true,title:'Your data',body:`<div class="narrow-s">
+<div class="card"><h2 class="h">Download your data</h2><p class="body">Profile, ratings, reviews, lists, follows and concert registrations, as a JSON file.</p><div>${btn('Download data','sec','download')}</div></div>
+<div class="card"><h2 class="h">Delete account</h2><p class="body">After deleting you can't sign in again. Here's what happens to your data:</p>
+${list([['Reviews and concert attendance','stay, anonymised, with no name, email or location'],['Follows, lists, notifications, recommendations','are deleted'],['Moderation log','stays unchanged']].map(([a,b])=>item({t:a,s:b,cls:'wr'})))}
+${cb(`I understand this can't be undone`,1)}
+<div>${btn('Delete my account','danger','trash')}</div><p class="help">We recommend downloading your data first.</p></div></div>`}));
+
+/* ---------- 8. Artist tools ---------- */
+S('8.1','Propose a concert',{tags:['Core','T8','T10'],covers:'F-021',notes:[
+ `Starts on the venue page (“Propose a concert here”), so the venue and its capacity are already filled in.`,
+ `<b>Native date and time inputs</b> plus a list of taken dates, instead of v2's custom calendar with struck-through days (T10).`,
+ `<b>Multi-artist concerts</b> with confirmations stay optional and extend the concept (T8). Places are checked against capacity; no image upload.`]},
+()=>shell({tab:'user',nav:'Propose a concert',role:'artist',back:true,title:'Propose a concert',body:`
+<div class="cols"><div class="col">
+${list([item({img:venueImg('Dom kulture'),ic:'w',t:'Dom kulture, Zagreb',s:'Capacity 350 · verified venue · answers within 7 days',end:btn('Change','ghost sm')})])}
+<div class="card">
+<div class="fld">Date and time *<div class="row" style="flex-wrap:nowrap">${inp('2026-12-11','','','date')}${inp('20:00','','w130','time')}</div><span class="help">Already taken at Dom kulture: Thu 3, Sat 5, Sat 12 and Sat 19 Dec.</span></div>
+<div class="fld optional">Lineup *${list([item({img:artistImg('Plavi Sat'),ic:'round',t:'Plavi Sat (you)',s:'headliner',end:chip('confirmed','ok')}),item({img:artistImg('Sidro'),ic:'round',t:'Sidro',s:'support · invitation sent 2 days ago',end:chip('waiting','wa')})])}<div>${btn('Invite an artist','sec sm','plus')}</div><span class="help">Invited artists confirm in their notifications. The venue sees the proposal once everyone has confirmed.</span></div>
+${fld('Title',inp('Plavi Sat + Sidro'),'Defaults to the lineup.')}
+${fld('Places for registration *',inp('300','','w160','number'),`At most 350, the venue's capacity.`)}
+${fld('Description *',ta('Plavi Sat play Staklene noći in full for the first time in Zagreb…','',140),'<a>Start from a template</a> · shown on the concert page')}
+${fld('Setlist or notes (optional)',ta('','Running order, guests, age limit…',70))}
+</div>
+<div class="foot"><span class="sm">The venue decides within 7 days</span>${btn('Send proposal')}</div>
+</div><div class="col">
+${sec('Taken in December','',list([['Thu 3 Dec','Mali Mjesec'],['Sat 5 Dec','Private event'],['Sat 12 Dec','Zlatna Groznica'],['Sat 19 Dec','Tihi Kvart']].map(([d,w])=>item({t:d,s:w,end:chip('taken')}))))}
+<div class="msg">If the venue doesn't answer within 7 days, the proposal expires and you can send it again.</div>
+</div></div>`}));
+
+const cnt=(c,st,tone,info,acts,pct)=>`<div class="card"><div class="row sb" style="align-items:flex-start;flex-wrap:nowrap"><div><b>${lineup(c)}</b><p class="sm">${when(c)} · ${c.v}, ${c.c}</p></div>${chip(st,tone)}</div>${info?`<p class="sm">${info}</p>`:''}${pct!=null?`<div class="row" style="flex-wrap:nowrap"><div class="bar" style="flex:1;max-width:260px"><i style="width:${pct}%"></i></div><span class="sm">${pct}%</span></div>`:''}${acts?`<div class="btns">${acts}</div>`:''}</div>`;
+S('8.2a','My concerts · published',{tags:['Core'],covers:'F-022 · F-023',notes:[
+ `Published concerts and pending requests are <b>two separate views</b>, switched with a segmented control (v2 uses two links in the header).`,
+ `Each card: lineup, date and venue, state, registrations with a progress bar, and actions.`]},
+()=>shell({tab:'user',nav:'My concerts',role:'artist',back:true,title:'My concerts',body:`<div class="narrow">
+<div class="row sb">${seg(['Published','Requests · 3'],0)}<a class="btn sm only-d">${ic('plus',16)}Propose from a venue</a></div>
+${cnt(C('c2'),'registrations open','ok','Registered <b>42</b> / 120 · <b>78</b> places left',btn('View page','sec sm')+btn('Cancel concert','danger sec sm'),35)}
+${cnt({a:'Plavi Sat',w:'Sidro',v:'Tvornica Zvuka',c:'Zagreb',dow:'Fri',d:'8',m:'Jan',t:'21:00'},'confirmed','bl','Registered <b>0</b> / 300 · registrations open on <b>1 Dec</b>',btn('View page','sec sm')+btn('Cancel concert','danger sec sm'),0)}
+${cnt({a:'Plavi Sat',v:'Klub Obala',c:'Rijeka',dow:'Fri',d:'2',m:'Oct',t:'21:00'},'held','','Registered <b>98</b> / 120 · attended <b>71</b> · no-shows <b>20</b>',btn('Statistics','sec sm'),null)}
+</div>`}));
+
+S('8.2b','My concerts · requests',{tags:['Core','T8'],covers:'F-022 · F-023',notes:[
+ `Proposals that aren't public yet: waiting for invited artists, waiting for the venue (with the deadline), rejected (with the venue's reason) and expired.`,
+ `Actions fit the state: edit or withdraw while pending, propose again after a rejection or expiry.`]},
+()=>shell({tab:'user',nav:'My concerts',role:'artist',back:true,title:'My concerts',body:`<div class="narrow">
+<div class="row sb">${seg(['Published','Requests · 3'],1)}</div>
+${cnt({a:'Plavi Sat',w:'Sidro',v:'Dom kulture',c:'Zagreb',dow:'Fri',d:'11',m:'Dec',t:'20:00'},'waiting for artists','wa',`Sidro hasn't confirmed yet · 1 of 2 confirmed`,btn('Edit','sec sm')+btn('Withdraw','sec sm'))}
+${cnt({a:'Plavi Sat',v:'Klub Mlin',c:'Zagreb',dow:'Sat',d:'12',m:'Dec',t:'21:00'},'waiting for venue','wa','The venue decides by <b>30 Oct</b> · 6 days left',btn('Edit','sec sm')+btn('Withdraw','sec sm'))}
+${cnt({a:'Plavi Sat',v:'Klub Tunel',c:'Split',dow:'Sat',d:'5',m:'Dec',t:'21:00'},'rejected','er','Venue: “That weekend is already booked.”',btn('Propose another date','sec sm'))}
+${cnt({a:'Plavi Sat',v:'Sjever',c:'Zagreb',dow:'Sat',d:'14',m:'Nov',t:'21:00'},'expired','',`The venue didn't answer within 7 days.`,btn('Send again','sec sm'))}
+</div>`}));
+
+S('8.3','Artist statistics',{tags:['Core'],covers:'F-039 · F-040',notes:[
+ `Past concerts land here automatically. Top line: followers, average rating, concerts held, turnout.`,
+ `A per-concert table, then ratings per release and followers near each venue as simple bars (totals only; values under 10 are hidden, as the concept requires).`,
+ `Export to CSV.`]},
+()=>shell({tab:'user',nav:'Artist statistics',role:'artist',back:true,title:'Statistics',act:btn('Export CSV','sec sm','download'),body:`
+<h2 class="title">Plavi Sat · statistics</h2>
+${stats([['1,204','followers'],['4.4 ★','avg rating'],['12','concerts held'],['81%','turnout']])}
+${sec('Concerts','',table(['Date','Venue','Registered','Attended','No-show','Turnout'],[['2 Oct','Klub Obala, Rijeka',98,71,20,'72%'],['19 Sep','Dom kulture, Zagreb',240,214,18,'89%'],['30 Aug','Klub Tunel, Split',150,118,27,'79%'],['12 Jul','Atrij, Zagreb',300,262,31,'87%']],2))}
+<div class="cols even"><div class="col">
+${sec('Ratings by release','',bars([['Staklene noći',4.6,'4.6 · 38'],['Plima (EP)',4.3,'4.3 · 21'],['Staklo (single)',4.5,'4.5 · 17'],['Prvi koraci',3.9,'3.9 · 12']],5))}
+</div><div class="col">
+${sec('Followers near venues','',bars([['Dom kulture',387],['Klub Obala',214],['Tvornica Zvuka',190],['Klub Tunel',null,'under 10']],400)+`<p class="help">Totals only. Values under 10 are hidden, and nobody's location is ever shown.</p>`)}
+</div></div>`}));
+
+/* ---------- 9. Venue tools ---------- */
+S('9.1','My venue · profile',{tags:['Core','T4'],covers:'F-006 · F-021',notes:[
+ `Verification status on top. Name, address and location come from the catalog and are read-only here.`,
+ `<b>Capacity</b> is required, because without it nobody can propose a concert. The error sits under the field.`,
+ `The photo gallery and booking rules are optional (uploads need file storage, T4), as in v2. Booking rules are two number fields.`]},
+()=>shell({tab:'user',nav:'Venue profile',role:'venue',back:true,title:'My venue',act:btn('Save','sm'),body:`
+<div class="cols"><div class="col">
+<div class="stack s8"><p class="sm">Venue · verified since 3 Oct</p><div class="row"><h2 class="title">Dom kulture</h2>${chip('verified','ok')}</div></div>
+<div class="card">${kv([['Address','Ilica 211, 10000 Zagreb'],['Source','MusicBrainz place · read-only']])}</div>
+<div class="card">
+${fld('Capacity *',inp('0','','w160 bad','number'),`Concerts can't have more places than this. Without a capacity, nobody can propose a concert.`,'Capacity must be greater than zero.')}
+${fld('Description',ta('Former cinema turned into a mid-size concert hall in the west of the city. Standing room on the ground floor, a balcony with seats…'))}
+<div class="fld optional">Photos · 3 of 12<div class="grid">${['Dom kulture','Dom kulture b','Dom kulture c'].map(s=>`<img class="th" style="width:100%;height:auto;aspect-ratio:1" src="${venueImg(s)}" alt="">`).join('')}<div class="add">${ic('upload',20)}Upload</div></div><span class="help">JPG or PNG, up to 5 MB each. The first photo is the cover.</span></div>
+<div class="fld optional">Booking rules<div class="row" style="gap:16px">${fld('Minimum notice (days)',inp('21','','w160','number'))}${fld('Answer deadline (days)',inp('7','','w160','number'))}</div></div>
+</div>
+</div><div class="col">
+${mapBox({seed:'dk',ratio:'1/1',pins:[{x:50,y:50,f:1,label:'Dom kulture'}]})}<p class="help">Location from the catalog. Report a wrong pin to the moderators.</p>
+</div></div>`}));
+
+S('9.2','Incoming proposals',{tags:['Core','T8','T10'],covers:'F-022 · F-023',notes:[
+ `List and detail side by side on desktop, stacked on phones. The detail shows <b>everything the artist submitted</b>: lineup with confirmations, date, places, description and notes.`,
+ `A clash check against the venue's calendar, and a button that says what happens next: <b>“Confirm & open registrations”</b>. Rejecting needs a reason; the deadline is visible.`,
+ `Aggregated artist context (followers near the venue, past turnout) helps the decision without exposing anyone.`]},
+()=>shell({tab:'user',nav:'Proposals',role:'venue',back:true,title:'Proposals',body:`
+<div class="row sb">${seg(['Proposals · 2','Calendar'],0)}<span class="sm">Answer within 7 days or they expire</span></div>
+<div class="cols md"><div class="col">${list([
+ item({t:'Plavi Sat + Sidro',s:'Fri 11 Dec · 300 places · by Plavi Sat',x:`<div class="sm">Decide by <b>30 Oct</b> · 6 days left</div>`,end:chip('new','wa'),cls:'sel'}),
+ item({t:'Tihi Kvart',s:'Sat 19 Dec · 90 places · by Tihi Kvart',x:`<div class="sm">Decide by <b>2 Nov</b></div>`,end:chip('new','wa')}),
+ item({t:'Plavi Sat',s:'Sat 14 Nov · not answered in time',end:chip('expired'),cls:'dim'})])}</div>
+<div class="col"><div class="card">
+<p class="sm">Proposal · sent 24 Oct</p><h2 class="h">Plavi Sat + Sidro</h2>
+${kv([['Date','Fri 11 Dec 2026 · 20:00'],['Places','300 of 350'],['Lineup',`<span class="row">${chip('Plavi Sat · confirmed','ok')}${chip('Sidro · confirmed','ok')}</span>`],['Artist','1,204 followers · <b>214</b> near your venue · past turnout 81%']])}
+<div class="msg ok">No other concerts at Dom kulture that day. Nearest: Thu 3 Dec.</div>
+<div><p class="sm"><b>Description</b></p><p class="body">Plavi Sat play Staklene noći in full for the first time in Zagreb, with Sidro opening. Expect a long set and a quiet acoustic encore.</p></div>
+<div><p class="sm"><b>Setlist / notes</b></p><p class="sm">Two-hour slot. Sidro 20:15, Plavi Sat 21:15. No special equipment.</p></div>
+<div class="btns">${btn('Confirm & open registrations','','check')}${btn('Reject','danger sec')}</div>
+${fld('Reason (required to reject)',ta('','e.g. the date is already booked',60))}
+</div></div></div>`}));
+
+function calTable(start,days,marks){
+  const cells=[];for(let i=0;i<start;i++)cells.push('<td class="e"></td>');
+  for(let d=1;d<=days;d++){const m=marks[d];cells.push(`<td><b>${d}</b>${m?chip(m[0],m[1]):''}</td>`)}
+  while(cells.length%7)cells.push('<td class="e"></td>');
+  let rows='';for(let i=0;i<cells.length;i+=7)rows+=`<tr>${cells.slice(i,i+7).join('')}</tr>`;
+  return `<div class="tbl-wrap"><table class="calt"><tr>${['Mon','Tue','Wed','Thu','Fri','Sat','Sun'].map(d=>`<th>${d}</th>`).join('')}</tr>${rows}</table></div>`;
+}
+S('9.2b','Venue calendar',{tags:['Optional','T10'],covers:'F-022',notes:[
+ `Optional. A plain month table: each day lists what's on, with the same labels used everywhere else (confirmed, proposal, blocked).`,
+ `Subscribing with an <b>.ics link</b> puts the programme into any calendar app (T10).`]},
+()=>shell({tab:'user',nav:'Proposals',role:'venue',back:true,title:'Calendar',act:btn('Subscribe (.ics)','sec sm','link'),body:`
+<div class="row sb">${seg(['Proposals · 2','Calendar'],1)}</div>
+<div class="cols"><div class="col s8">
+<div class="row sb"><h2 class="h">December 2026</h2><div class="btns">${btn('','sec sm','back')}${btn('','sec sm','chev')}</div></div>
+${calTable(1,31,{3:['Mali Mjesec','ac'],5:['private','gr'],11:['Plavi Sat','wa'],12:['Zlatna Gr.','ac'],19:['Tihi Kvart','wa'],24:['closed','gr'],25:['closed','gr'],31:['closed','gr']})}
+<div class="row">${chip('confirmed','ac')}${chip('proposal','wa')}${chip('blocked')}</div>
+</div><div class="col">
+${sec('December','',list([
+ conItem(C('c4'),{s:'Thu 3 Dec · confirmed · 212 / 350 registered',end:chip('open','ac')}),
+ item({img:artistImg('Plavi Sat'),t:'Plavi Sat + Sidro',s:'Fri 11 Dec · proposal · decide by 30 Oct',end:chip('pending','wa')}),
+ item({img:artistImg('Tihi Kvart'),t:'Tihi Kvart',s:'Sat 19 Dec · proposal · decide by 2 Nov',end:chip('pending','wa')}),
+ item({t:'Closed for the holidays',s:'24–25 and 31 Dec',end:chip('blocked')})]))}
+</div></div>`}));
+
+S('9.3','Scan tickets',{tags:['Core','T9'],covers:'F-026 · F-028',notes:[
+ `No concert picker: the scanner <b>works out which concert is on right now</b> at this venue and checks each code against it (T9).`,
+ `A fixed-size camera area with the result directly under it, so nothing jumps around.`,
+ `Every outcome uses the shared message box: green for valid, amber for already used, red for another concert or an invalid code, grey for no camera access.`]},
+()=>shell({tab:'user',nav:'Scan tickets',role:'venue',back:true,title:'Scan tickets',icons:['list'],body:`
+<div class="cols"><div class="col">
+<div class="card"><div class="row sb" style="flex-wrap:nowrap"><div><p class="sm acc"><b>Now · doors 19:00 – 23:30</b></p><b>Orbita + Kiša u Svibnju</b></div><div style="text-align:right"><b style="font-size:20px">212</b><span class="sm"> / 340</span><div class="xs">checked in</div></div></div></div>
+<div class="cam"><i></i><span>Camera</span></div>
+<div class="msg ok big">${ic('check',26)}<div><b>Valid</b><div>Ticket #0417 · checked in at 20:07</div></div></div>
+</div><div class="col">
+${sec('Other results','',`<div class="stack s8"><div class="msg wa"><b>Already used</b> · checked in at 19:42</div><div class="msg er"><b>Different concert</b> · this ticket is for Sat 21 Nov, Tvornica Zvuka</div><div class="msg er"><b>Not a Sonar ticket</b> · the code can't be read as a ticket</div><div class="msg"><b>No camera access</b> · allow the camera in your browser settings</div></div>`)}
+${sec('Last scans','Guest list',list([['#0417','20:07','valid','ok'],['#0388','20:06','valid','ok'],['#0211','20:05','already used','wa'],['#0402','20:04','valid','ok']].map(r=>item({t:r[0],end:`${chip(r[2],r[3])}<span class="sm">${r[1]}</span>`}))))}
+</div></div>`}));
+
+S('9.4','Venue statistics',{tags:['Core'],covers:'F-041',notes:[
+ `The same per-concert table as the artist statistics (8.3), for every concert at the venue.`,
+ `Plus general venue data: busiest weekdays and the genre mix, drawn with the same horizontal bars as everything else (v2 adds a vertical bar chart). All totals, no individuals.`]},
+()=>shell({tab:'user',nav:'Venue statistics',role:'venue',back:true,title:'Statistics',body:`
+<h2 class="title">Dom kulture · statistics</h2>
+${stats([['38','concerts held'],['9,640','total attendance'],['78%','avg turnout'],['254','avg per concert'],['4','upcoming']],'s5')}
+${sec('Concerts','All 38',table(['Date','Concert','Registered','Attended','No-show','Turnout'],[['2 Oct','Orbita',340,312,22,'92%'],['19 Sep','Sidro',230,188,35,'82%'],['5 Sep','Zlatna Groznica',300,207,80,'69%'],['28 Nov','Mali Mjesec','—','—','—','cancelled']],2))}
+<div class="cols even"><div class="col">
+${sec('Busiest days','',bars([['Monday',2],['Tuesday',1],['Wednesday',3],['Thursday',6],['Friday',10],['Saturday',12],['Sunday',4]],12))}
+</div><div class="col">
+${sec('Genre mix','',bars([['indie rock',34,'34%'],['electronic',22,'22%'],['folk',14,'14%'],['jazz',12,'12%'],['other',18,'18%']],40))}
+</div></div>`}));
+
+/* ---------- 10. Moderation & admin ---------- */
+S('10.1','Reports',{tags:['Core'],covers:'F-029 · F-030 · F-031 · F-032 · F-037',notes:[
+ `<b>The same app shell as everywhere else</b>: on desktop the sidebar shows the moderation sections, on phones a dropdown switches between them. v2 has a separate admin layout.`,
+ `Inbox and open report stack on phones and sit side by side on desktop. The author's history and the consequence of removing are shown; a reason is required.`]},
+()=>shell({adm:'moderator',nav:'Reports',back:true,title:'Reports',body:`
+<div class="row sb">${pills(['Reported <span class="n">3</span>','In review <span class="n">2</span>','All'])}<span class="sm only-d">Oldest first</span></div>
+<div class="cols md"><div class="col">${list([['Review · Valovi','Offensive','Ana K.','2 h','sel'],['Profile · dario_s','Inappropriate profile','Marko T.','5 h',''],['Review · Plima','Spam','Ivan P.','1 d',''],['Review · Orbita','Other','Lea M.','2 d','']].map(r=>item({t:r[0],s:`${r[1]} · reported by ${r[2]}`,end:`<span class="sm">${r[3]}</span>`,cls:r[4]})))}</div>
+<div class="col"><div class="card">
+<div class="row sb"><p class="sm">Report #218</p>${chip('reported','wa')}</div><h2 class="h">Review of “Valovi”</h2>
+<div class="msg"><b>Dario S.</b> ${stars(1)}<br>“Whoever likes this has no ears. The singer should quit.”</div>
+${kv([['Reason','Offensive or insulting'],['Author','Dario S. · 2 removals so far']])}
+<div class="msg wa">Removing this is the author's 3rd removal: the account will be suspended for 7 days.</div>
+<div class="fld">Decision<div>${radios(['Remove content','Dismiss report'],0)}</div></div>
+${fld('Reason *',ta('Insulting another user.','',64))}
+<div>${btn('Save decision')}</div><p class="help">Logged in the activity log. The reporter and the author are notified.</p>
+</div></div></div>`}));
+
+S('10.2','Role requests',{tags:['Core'],covers:'F-034 · F-032 · F-037',notes:[
+ `The same inbox pattern as 10.1. The open request shows the user, the role, the artist or venue, the link and the issued code, with a two-point checklist.`,
+ `Approve, ask for more info (it returns to review), or reject with a reason. Every decision is logged.`]},
+()=>shell({adm:'moderator',nav:'Role requests',back:true,title:'Role requests',body:`
+${pills(['New <span class="n">1</span>','Under review <span class="n">1</span>','More info <span class="n">1</span>','All'])}
+<div class="cols md"><div class="col">${list([['Ana K.','artist','Plavi Sat','under review','bl','sel'],['Petar V.','venue','Klub Mlin','more info','wa',''],['Lea M.','artist','Mali Mjesec','new','ac','']].map(r=>item({pre:av(r[0],'sm'),t:`${r[0]} → ${r[2]}`,s:`${r[1]} status`,end:chip(r[3],r[4]),cls:r[5]})))}</div>
+<div class="col"><div class="card">
+<p class="sm">Request #57 · artist status</p><h2 class="h">Ana K. → Plavi Sat</h2>
+${kv([['Link','<a>https://plavisat.example</a>'],['Code','<code>SONAR-7F3K-92QX</code>'],['Catalog','Plavi Sat · MusicBrainz · official links: plavisat.example']])}
+<div>${cb('The code is visible on the linked page',1)}${cb('The page belongs to the artist (matches the catalog links)',1)}</div>
+${fld('Note or reason',ta('','Required when rejecting or asking for more info',56))}
+<div class="btns">${btn('Approve & grant role')}${btn('Ask for more info','sec')}${btn('Reject','danger sec')}</div>
+</div></div></div>`}));
+
+S('10.3','Activity log',{tags:['Core','Optional','T7'],covers:'F-032',notes:[
+ `A real log page: every entry is a readable sentence with a type label, the actor and the time, filterable by type and searchable. Logging everything, not only moderator actions, extends the concept (T7).`,
+ `The raw record is optional, as in v2. Moderators see ticket events without listener names; admins see the details.`]},
+()=>shell({adm:'admin',nav:'Activity log',back:true,title:'Activity log',body:`
+<div class="row sb">${pills(['All','Moderation','Concerts','Tickets','Roles','Accounts','Catalog'])}${sbox('','Person, artist, venue…','only-d')}</div>
+<div class="sct"><p class="sm"><b>Today · 24 Oct</b></p>${list([['20:07','Tickets','Ticket #0417 checked in at Dom kulture (Orbita + Kiša u Svibnju)','scanner · Petar V.'],['19:58','Moderation','Marko T. removed a review of “Valovi” by Dario S. · reason: insulting another user','moderator'],['19:58','Accounts','Dario S. suspended for 7 days (3rd removal)','system'],['18:31','Concerts','Dom kulture confirmed “Plavi Sat + Sidro” on 11 Dec · registrations open','venue manager · Petar V.'],['17:12','Roles','Ana K. was granted artist status for Plavi Sat','moderator · Marko T.'],['16:40','Catalog','Artist “Zvjezdani Prah” imported from MusicBrainz (12 releases)','background job'],['15:03','Concerts','Plavi Sat proposed a concert at Klub Mlin on 12 Dec','artist']].map(r=>`<div class="logi"><span class="sm">${r[0]}</span><div>${chip(r[1],r[1]==='Moderation'?'wa':'bl')} ${r[2]}<div class="xs">${r[3]}</div></div></div>`))}</div>
+<div class="optional stack s8"><p class="sm"><b>Raw record</b></p><pre class="raw">{ "type": "registration.scanned", "at": "2026-10-24T20:07:11Z",
+  "registration": 417, "concert": "c1", "venue": "dom-kulture",
+  "actor": { "id": 88, "role": "venue_manager" }, "result": "valid" }</pre></div>`}));
+
+S('10.4','Users & roles',{tags:['Core'],covers:'F-043 · F-045',notes:[
+ `A search field plus two dropdowns (role, status) instead of filter chips. Opening a user shows role controls, account actions and recent activity from the log.`,
+ `Revoking a role and deactivating an account always need a confirmation.`]},
+()=>shell({adm:'admin',nav:'Users & roles',back:true,title:'Users & roles',body:`
+<div class="row">${sbox('','Search users')}${sel(['All roles','Listener','Artist','Venue manager','Moderator','Admin'],0,'s')}${sel(['Any status','Active','Suspended','Deactivated'],0,'s')}</div>
+<div class="cols md"><div class="col">${table(['User','Role','Account','Joined'],[['Ivan P.','listener','active','ok','Mar 2026',1],['Ana K.','artist','active','ok','Oct 2026'],['Dario S.','listener','suspended · 31 Oct','wa','Feb 2026'],['Petar V.','venue manager','active','ok','Sep 2026'],['Marko T.','moderator','active','ok','Jan 2026'],['Lea M.','listener','deactivated','er','Apr 2026']].map(r=>({sel:r[5],cells:[`<span class="row" style="flex-wrap:nowrap">${av(r[0],'xs')}${r[0]}</span>`,r[1],chip(r[2],r[3]),r[4]]})))}</div>
+<div class="col"><div class="card">
+<div class="row" style="gap:12px;flex-wrap:nowrap">${av('Ivan P.')}<div><h2 class="h">Ivan P.</h2><p class="sm">ivan.p@example.com · active · joined Mar 2026</p></div></div>
+${fld('Role',sel(['Listener','Artist','Venue manager','Moderator','Administrator'],0))}
+<div class="btns">${btn('Save role','sec sm')}${btn('Revoke artist / venue role','danger sec sm')}</div>
+<div class="stack s8"><p class="sm"><b>Recent activity</b></p>${list([['Rated “Valovi” 5 ★','3 h'],['Reported a review of “Plima”','1 d'],['Registered for Noćni Autobus','2 d']].map(([a,b])=>item({txt:a,end:`<span class="sm">${b}</span>`})))}</div>
+<div class="stack s8" style="padding-top:12px;border-top:1px solid var(--line)"><div>${btn('Deactivate account','danger')}</div><p class="help">A deactivated user can't sign in. You'll be asked to confirm.</p></div>
+</div></div></div>`}));
+
+S('10.5','Settings & system statistics',{tags:['Core'],covers:'F-042 · F-044',notes:[
+ `The suspension rule (removals until suspension, duration) applies immediately, with no restart.`,
+ `Statistics from the concept plus recent activity and the health of the catalog import. Activity is weekly totals as bars instead of v2's 30-day column chart, so the whole app needs one chart type.`]},
+()=>shell({adm:'admin',nav:'Settings & stats',back:true,title:'Settings & stats',body:`
+${stats([['350','users'],['67','concerts'],['74%','turnout'],['1,982','registrations']])}
+<div class="cols even"><div class="col">
+${sec('Users by role','',bars([['Listeners',312],['Artists',24],['Venue managers',9],['Moderators',3],['Admins',2]],312))}
+${sec('Concerts by state','',bars([['proposed',6],['confirmed',5],['registrations open',9],['held',38],['rejected',4],['expired',3],['cancelled',2]],38))}
+</div><div class="col">
+${sec('Activity · last 4 weeks','',bars([['28 Sep – 4 Oct',318],['5 – 11 Oct',372],['12 – 18 Oct',431],['19 – 25 Oct',526]],526)+`<p class="help">Ratings, reviews, registrations and follows per week.</p>`)}
+${sec('Catalog import','',list([item({t:'MusicBrainz',end:chip('ok · ~1 request/s','ok')}),item({t:'Last.fm',end:chip('slow responses','wa')}),item({t:'Queue',end:'<span class="sm">3 in progress · 1 failed</span>'})]))}
+${sec('Suspension rule','',`<div class="card"><div class="row" style="align-items:flex-end;gap:12px">${fld('Removals until suspension',inp('3','','w120','number'))}${fld('Duration (days)',inp('7','','w120','number'))}${btn('Save rule')}</div><p class="help">Applies to the next suspensions immediately.</p></div>`)}
+</div></div>`}));
+
+/* =================================================================
+   Document: intro, sections, frames
+   ================================================================= */
+function introHTML(){
+  const sw=[['#14232E','Ink · text'],['#0B6E70','Teal · the one accent'],['#D6ECEC','Light teal · selected'],['#F4F6F8','Background'],['#FFFFFF','Surface · cards, bars'],['#D5DCE3','Lines'],['#475866','Secondary text']];
+  const kit=`<div class="app kit"><div class="kitgrid">
+<div class="stack"><p class="sm"><b>Buttons</b></p><div class="btns">${btn('Primary')}${btn('Secondary','sec')}${btn('Delete','danger')}${btn('Cancel concert','danger sec')}${btn('Small','sm')}${btn('Text button','ghost')}</div>
+<p class="sm"><b>Status labels</b> (always text, never colour alone)</p><div class="row">${chip('registrations open','ok')}${chip('waiting','wa')}${chip('rejected','er')}${chip('under review','bl')}${chip('confirmed','ac')}${chip('expired')}</div>
+<p class="sm"><b>Filter pills and segmented control</b></p>${pills(['All','Concerts <span class="n">24</span>','Artists'])}${seg(['Published','Requests · 3'])}
+<p class="sm"><b>Messages</b></p><div class="msg ok">Saved.</div><div class="msg wa">Your account is suspended until 28 Oct.</div><div class="msg er">This account has been deactivated.</div><div class="msg bl">You'll get a notification about the outcome.</div></div>
+<div class="stack">${fld('Field *',inp('Typed value'),'Help text under the field.')}${fld('Field with an error *',inp('','','bad'),'',`This field can't be empty.`)}${fld('Dropdown',sel(['Listener','Artist','Venue manager']))}<div class="fld">Checkboxes and radio buttons${cb('Email',1,'ana.k@example.com')}${radios(['Owner','Manager'],1)}</div>${fld('Range',range(50))}${sbox('','Search field')}</div>
+<div class="stack">${list([item({img:artistImg('Orbita'),ic:'round',t:'List item',s:'Image, title, subtitle, action',end:btn('Follow','sec sm')}),item({img:cover('Valovi'),t:'Selected item',s:'Light teal background',cls:'sel',end:ic('chev')})])}<div class="card"><b>Card</b><p class="sm">A white box with a border. Holds forms, facts and groups of controls.</p></div><div class="grid" style="grid-template-columns:repeat(3,minmax(0,1fr))">${relTile(REL[0])}${artTile(ART[1])}${relTile(REL[2],{why:'because you like Orbita'})}</div><div class="row">${av('Ana K.')}${stars(4)}<div class="bar" style="flex:1"><i style="width:60%"></i></div></div>${stats([['1,204','followers'],['81%','turnout']])}</div>
+</div></div>`;
+  return `
+<h2 class="sect"><span>0</span>What this is & the kit</h2>
+<div class="dcols">
+<div class="dpanel"><h3>What this is</h3><ul>
+<li>v1's look (light background, one teal accent, rounded white cards, Inter) carried through to <b>all 41 screens of v2</b>, each on a phone and on desktop.</li>
+<li>Same screens, flows, English copy and placeholder data as v2. Only the visual language and the number of building blocks differ, so the two can be compared directly.</li>
+<li>Placeholder covers and photos are the same as v2's: in the real app they come from the catalog, so they aren't styling.</li>
+<li>Optional features are marked with a dashed outline, as in v2.</li></ul></div>
+<div class="dpanel"><h3>Simpler than v2</h3><ul>
+<li><b>One shell for every role</b>: bottom tabs on phones, a left sidebar on desktop (v1's own rule). v2 uses a top bar for the app and a separate sidebar for admin.</li>
+<li><b>About 18 building blocks</b> (below) cover every screen.</li>
+<li><b>One font</b>, normal sentence case. No condensed display face and no monospace labels.</li>
+<li><b>Native form controls</b>: dropdowns, checkboxes, radio buttons, range sliders, date and time inputs. v2 draws its own switches, sliders and calendars.</li>
+<li><b>Images in plain thumbnails</b>: no full-width heroes, no text over images, no gradients, ribbons or date badges on images.</li>
+<li><b>No carousels</b>: grids wrap and sections end with “See all”.</li>
+<li><b>One dialog</b> for phone and desktop instead of a bottom sheet plus a dialog.</li>
+<li><b>Dates as lists</b> instead of custom calendars (except the optional venue calendar, a plain table). <b>One chart type</b>: horizontal bars.</li>
+<li><b>Side columns stack under the main column</b> on phones, so very few parts exist only on phones or only on desktop.</li></ul></div>
+<div class="dpanel"><h3>Kept from v2</h3><ul>
+<li>The signed-in home is the core: lots of release covers, then concerts near you, then people you follow.</li>
+<li>Discography with release types (album, EP, single, live).</li>
+<li>Search docked at the bottom on phones (T12).</li>
+<li>Proposing a concert starts at the venue page.</li>
+<li>Published concerts and requests are separate views.</li>
+<li>The ticket scanner detects the current concert itself.</li>
+<li>Separate artist and venue verification, the venue page, onboarding steps, add-to-list, the activity log.</li>
+<li>Open points stay open: email and password login (T14), multi-artist concerts (T8), photo uploads (T4).</li></ul></div>
+</div>
+<h3 class="sub">The building blocks</h3>
+<p class="sect-intro">Shell (top bar, bottom tabs, sidebar) · card · list with items · tile grid · button · status label · filter pill · segmented control · field · checkbox and radio · message · avatar · stars · table · bar · stat · map · dialog. Plus four small one-offs: code box, status steps, calendar table, QR.</p>
+${kit}
+<h3 class="sub">Colour</h3><div class="swatches">${sw.map(([c,n])=>`<div class="swatch"><i style="background:${c}"></i><span>${n}<br>${c}</span></div>`).join('')}</div>
+<p class="sect-intro" style="margin-top:10px">States use v1's soft label colours: green ok, amber waiting, red problem, blue in progress, grey neutral.</p>
+<h3 class="sub">Type and navigation</h3>
+<div class="dcols">
+<div class="dpanel"><h3>Type: Inter only</h3><div style="font-size:28px;font-weight:700;line-height:1.2">Page title 24 / 28</div><div style="font-size:17px;font-weight:700;margin-top:6px">Section heading 17</div><div style="margin-top:6px">Body text 15, line height 1.45 to 1.6</div><div style="font-size:13px;color:#475866;margin-top:6px">Secondary text and labels 13</div></div>
+<div class="dpanel"><h3>Phone</h3><ul><li>Bottom tabs: Home, Search, Map, Tickets, Profile.</li><li>The bell with a counter sits in the top bar.</li><li>Search screens dock the field at the bottom (T12).</li><li>Artist and venue tools are links in the profile.</li><li>Moderation switches sections with a dropdown under the top bar.</li></ul></div>
+<div class="dpanel"><h3>Desktop</h3><ul><li>Left sidebar: the same five places plus Notifications, then a group for Artist or Venue tools when verified.</li><li>Moderators and admins get the same sidebar with their sections.</li><li>Top bar: page title, search field, bell, avatar.</li><li>At most two columns: main content and a 320 px side column.</li></ul></div>
+</div>`;
+}
+function render(){
+  const only=(new URLSearchParams(location.search).get('only')||'').split(',').filter(Boolean);
+  const doc=document.getElementById('doc');let html=only.length?'':introHTML(),last='';
+  const toc=['<a href="#s0">0 Kit</a>'];
+  for(const s of SCR.filter(s=>!only.length||only.includes(s.id))){
+    const sec=s.id.split('.')[0];
+    if(sec!==last){last=sec;const [t,intro]=SECT[sec];html+=`<h2 class="sect" id="sec${sec}"><span>${sec}</span>${t}</h2><p class="sect-intro">${intro}</p>`;toc.push(`<a href="#sec${sec}">${sec} ${t.split(' ')[0].replace(',','')}</a>`)}
+    // Rendered twice so radio groups in the two frames get separate names.
+    let m,d;try{m=s.fn();d=s.fn()}catch(e){m=d=`<div class="page"><p class="err">Render error: ${e.message}</p></div>`;console.error(s.id,e)}
+    html+=`<section class="scr" id="s${s.id.replace(/\./g,'-')}"><div class="scr-h"><span class="num">${s.id}</span><h3>${s.title}</h3>${(s.meta.tags||[]).map(t=>`<span class="badge ${t.toLowerCase()}">${t}</span>`).join('')}<a class="cmp" href="sonar-dizajn.html?only=${s.id}" target="_blank">Same screen in v2 ↗</a></div>
+    <div class="frames"><div class="fwrap"><div class="flabel">Phone · 390 px</div><div class="frame mobile"><div class="app">${m}</div></div></div><div class="fwrap"><div class="flabel">Desktop · 1280 px</div><div class="frame desktop"><div class="app">${d}</div></div></div></div>
+    <div class="notes"><ul>${s.meta.notes.map(n=>`<li>${n}</li>`).join('')}</ul>${s.meta.covers?`<div class="covers">Covers ${s.meta.covers}</div>`:''}</div></section>`;
+  }
+  doc.innerHTML=`<div id="s0"></div>`+html;document.getElementById('toc').innerHTML=toc.join('');fit();
+}
+function fit(){const s=parseFloat(getComputedStyle(document.body).getPropertyValue('--ds'))||.6;document.querySelectorAll('.frame.desktop').forEach(f=>{f.style.height=(f.firstElementChild.offsetHeight*s+2)+'px'})}
+document.querySelectorAll('[data-s]').forEach(b=>b.addEventListener('click',()=>{document.body.style.setProperty('--ds',b.dataset.s);document.querySelectorAll('[data-s]').forEach(x=>x.classList.toggle('on',x===b));fit()}));
+document.getElementById('optbtn').addEventListener('click',e=>{document.body.classList.toggle('show-opt');e.target.classList.toggle('on')});
+render();
+if(document.fonts&&document.fonts.ready)document.fonts.ready.then(fit);
+window.addEventListener('load',fit);window.addEventListener('resize',fit);
+</script>
+</body>
+</html>
