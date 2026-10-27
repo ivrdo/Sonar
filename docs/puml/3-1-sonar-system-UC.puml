@@ -84,7 +84,7 @@ Moderator --> UC012
 Administrator --> UC014
 
 ' Vanjski sustavi
-UC001 -- Google
+UC001 --> Google
 UC003 -- Izvori
 
 ' Obavijesti
