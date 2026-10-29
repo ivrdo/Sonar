@@ -1,0 +1,75 @@
+@startuml
+title Sustav Sonar – dijagram obrazaca uporabe
+left to right direction
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #212529
+
+skinparam actor {
+    BackgroundColor #F8F9FA
+    BorderColor #212529
+    BackgroundColor<<external system>> #FFF3CD
+    BorderColor<<external system>> #856404
+}
+
+skinparam usecase {
+    BackgroundColor #E7F1FF
+    BorderColor #0D6EFD
+}
+
+actor Korisnik as "Neregistrirani\nkorisnik"
+actor Slusatelj as "Slušatelj"
+actor Izvodac as "Verificirani\nizvođač"
+actor Upravitelj as "Verificirani\nupravitelj\nmjesta"
+actor Moderator as "Moderator"
+actor Administrator as "Administrator"
+actor "Google\n(pružatelj identiteta)" as Google <<external system>>
+actor "MusicBrainz\ni Last.fm\n(izvori podataka)" as Izvori <<external system>>
+
+' Izvođač i upravitelj mjesta imaju sve mogućnosti slušatelja
+Izvodac --|> Slusatelj
+Upravitelj --|> Slusatelj
+
+rectangle "Sustav Sonar" as Sonar {
+    usecase "UC-001\nJavni pregled i prijava\nputem Googlea" as UC001
+    usecase "UC-002\nUpravljanje profilom\ni računom" as UC002
+    usecase "UC-003\nPretraga kataloga i zahtjev\nza dodavanje izvođača" as UC003
+    usecase "UC-004\nOcjenjivanje, recenziranje\ni liste" as UC004
+    usecase "UC-005\nPraćenje, feed, preporuke\ni obavijesti" as UC005
+    usecase "UC-006\nPredlaganje koncerta" as UC006
+    usecase "UC-007\nObrada prijedloga\nkoncerta" as UC007
+    usecase "UC-008\nPrijava na koncert i\notkazivanje prijave" as UC008
+    usecase "UC-009\nSkeniranje QR ulaznice" as UC009
+    usecase "UC-010\nPrijava sadržaja\ni moderacija" as UC010
+    usecase "UC-011\nZahtjev za ulogu\ni verifikacija" as UC011
+    usecase "UC-012\nStatistika izvođača i\nupravitelja mjesta" as UC012
+    usecase "UC-013\nAdministracija" as UC013
+}
+
+Korisnik --> UC001
+Slusatelj --> UC002
+Slusatelj --> UC003
+Slusatelj --> UC004
+Slusatelj --> UC005
+Slusatelj --> UC008
+Slusatelj --> UC010
+Slusatelj --> UC011
+Izvodac --> UC002
+Izvodac --> UC004
+Izvodac --> UC006
+Izvodac --> UC007
+Izvodac --> UC012
+Upravitelj --> UC002
+Upravitelj --> UC007
+Upravitelj --> UC009
+Upravitelj --> UC012
+
+Moderator --> UC010
+Moderator --> UC011
+Administrator --> UC013
+
+' Vanjski sustavi
+UC001 --> Google
+UC003 -- Izvori
+@enduml
