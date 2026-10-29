@@ -18,7 +18,7 @@ skinparam usecase {
     BorderColor #0D6EFD
 }
 
-actor Posjetitelj as "Neregistrirani\nkorisnik"
+actor Korisnik as "Neregistrirani\nkorisnik"
 actor Slusatelj as "Slušatelj"
 actor Izvodac as "Verificirani\nizvođač"
 actor Upravitelj as "Verificirani\nupravitelj\nmjesta"
@@ -32,63 +32,44 @@ Izvodac --|> Slusatelj
 Upravitelj --|> Slusatelj
 
 rectangle "Sustav Sonar" as Sonar {
-    usecase "UC-016\nJavni pregled karte i\npopularnih izvođača" as UC016
-    usecase "UC-001\nRegistracija i prijava\nputem Googlea" as UC001
-    usecase "UC-002\nUređivanje profila\ni onboarding" as UC002
+    usecase "UC-001\nJavni pregled i prijava\nputem Googlea" as UC001
+    usecase "UC-002\nUpravljanje profilom\ni računom" as UC002
     usecase "UC-003\nPretraga kataloga i zahtjev\nza dodavanje izvođača" as UC003
-    usecase "UC-004\nOcjenjivanje i\nrecenziranje" as UC004
-    usecase "UC-005\nPraćenje i feed" as UC005
-    usecase "UC-006\nPregled preporuka" as UC006
-    usecase "UC-018\nIzrada lista" as UC018
-    usecase "UC-007\nPredlaganje koncerta" as UC007
-    usecase "UC-008\nObrada prijedloga\nkoncerta" as UC008
-    usecase "UC-009\nPrijava na koncert i\notkazivanje prijave" as UC009
-    usecase "UC-010\nSkeniranje QR ulaznice" as UC010
-    usecase "UC-011\nPrijava sadržaja\ni moderacija" as UC011
-    usecase "UC-012\nZahtjev za ulogu\ni verifikacija" as UC012
-    usecase "UC-013\nStatistika izvođača i\nupravitelja mjesta" as UC013
-    usecase "UC-014\nAdministracija" as UC014
-    usecase "UC-015\nPreuzimanje podataka\ni brisanje računa" as UC015
-    usecase "UC-017\nObavijesti i podsjetnici" as UC017
+    usecase "UC-004\nOcjenjivanje, recenziranje\ni liste" as UC004
+    usecase "UC-005\nPraćenje, feed, preporuke\ni obavijesti" as UC005
+    usecase "UC-006\nPredlaganje koncerta" as UC006
+    usecase "UC-007\nObrada prijedloga\nkoncerta" as UC007
+    usecase "UC-008\nPrijava na koncert i\notkazivanje prijave" as UC008
+    usecase "UC-009\nSkeniranje QR ulaznice" as UC009
+    usecase "UC-010\nPrijava sadržaja\ni moderacija" as UC010
+    usecase "UC-011\nZahtjev za ulogu\ni verifikacija" as UC011
+    usecase "UC-012\nStatistika izvođača i\nupravitelja mjesta" as UC012
+    usecase "UC-013\nAdministracija" as UC013
 }
 
-Posjetitelj --> UC016
-Posjetitelj --> UC001
-
+Korisnik --> UC001
 Slusatelj --> UC002
 Slusatelj --> UC003
 Slusatelj --> UC004
 Slusatelj --> UC005
-Slusatelj --> UC006
-Slusatelj --> UC009
+Slusatelj --> UC008
+Slusatelj --> UC010
 Slusatelj --> UC011
-Slusatelj --> UC012
-Slusatelj --> UC015
-Slusatelj --> UC017
-Slusatelj --> UC018
-
 Izvodac --> UC002
 Izvodac --> UC004
+Izvodac --> UC006
 Izvodac --> UC007
-Izvodac --> UC008
-Izvodac --> UC013
-
+Izvodac --> UC012
 Upravitelj --> UC002
-Upravitelj --> UC008
-Upravitelj --> UC010
-Upravitelj --> UC013
+Upravitelj --> UC007
+Upravitelj --> UC009
+Upravitelj --> UC012
 
+Moderator --> UC010
 Moderator --> UC011
-Moderator --> UC012
-
-Administrator --> UC014
+Administrator --> UC013
 
 ' Vanjski sustavi
 UC001 --> Google
 UC003 -- Izvori
-
-' Obavijesti
-UC008 ..> UC017 : <<include>>
-UC011 ..> UC017 : <<include>>
-UC012 ..> UC017 : <<include>>
 @enduml
