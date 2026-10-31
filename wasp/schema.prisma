@@ -40,3 +40,101 @@ model Tag {
 
   tasks Task[]
 }
+
+// ENUMI
+enum KorisnikUloga {
+  SLUSATELJ         @map("slusatelj")
+  IZVODJAC          @map("izvodjac")
+  UPRAVITELJ_MJESTA @map("upravitelj mjesta")
+  MODERATOR         @map("moderator")
+  ADMINISTRATOR     @map("administrator")
+}
+
+enum KorisnikStatus {
+  AKTIVAN     @map("aktivan")
+  SUSPENDIRAN @map("suspendiran")
+  DEAKTIVIRAN @map("deaktiviran")
+  OBRISAN     @map("obrisan")
+}
+
+// KORISNICI I ADMINISTRACIJA
+model Korisnik {
+  sifKorisnik        Int            @id @default(autoincrement())
+  nazKorisnik        String
+  email              String         @unique
+  opis               String?
+  uloga              KorisnikUloga  @default(SLUSATELJ)
+  status             KorisnikStatus @default(AKTIVAN)
+  postavkeObavijesti Json           @default("{}")
+  maxUdaljenostKm    Float          @default(50)
+
+  // ŽiviU
+  sifMjesto Int?
+  mjesto    Mjesto? @relation("ZiviU", fields: [sifMjesto], references: [sifMjesto])
+
+  // Zastupa
+  zastupaMbid      String?
+  zastupaIzvodjaca Izvodjac? @relation("Zastupa", fields: [zastupaMbid], references: [mbid])
+
+  // Upravlja
+  upravljaSifMjestoKoncerta Int?
+  upravljaMjestom           MjestoKoncerta? @relation("Upravlja", fields: [upravljaSifMjestoKoncerta], references: [sifMjestoKoncerta])
+
+  // Registracija(implicitne M:N veze)
+  odabraneOznake    Oznaka[]   @relation("OdabraoPriRegOznaku")
+  odabraniIzvodjaci Izvodjac[] @relation("OdabraoPriRegIzv")
+
+  // Praćenja
+  pratiIzvodajce PracenjeIzvodjaca[]
+  pratiKorisnike PracenjeKorisnika[] @relation("Pratitelj")
+  pratitelji     PracenjeKorisnika[] @relation("Praceni")
+
+  // Ocjene
+  ocjeneIzvodjaca OcjenaIzvodjaca[]
+  ocjeneAlbuma    OcjenaAlbuma[]
+  ocjenePjesama   OcjenePjesama[]
+
+  // Društveni dio
+  recenzije Recenzija[]
+  liste     Lista[]
+
+  // Koncerti
+  prijaveNaKoncerte PrijavaNaKoncert[]
+
+  // Preporuke
+  preporukeIzvodjaca PreporukaIzvodjaca[]
+  preporukeKoncerata PreporukaKoncerta[]
+
+  // Moderacija, uloge, obavijesti
+  podnesenePrijave PrijavaSadrzaja[] @relation("PodnioPrijavu")
+  primljenePrijave PrijavaSadrzaja[] @relation("PrijavljenKorisnik")
+  zahtjevi         ZahtjevZaUlogu[]
+  obavijesti       Obavijest[]
+  zapisi           Zapis[]
+
+  // AdminPodešava
+  pravila PraviloSustava[] @relation("AdminPodesava")
+
+  @@index([sifMjesto])
+}
+
+// Slabi entitet: ključ = (sifKorisnik, datumVrijemeZapis)
+model Zapis {
+  sifKorisnik       Int
+  datumVrijemeZapis DateTime @default(now())
+  vrstaRadnje       String
+  opis              String?
+
+  korisnik Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Restrict)
+
+  @@id([sifKorisnik, datumVrijemeZapis])
+}
+
+model PraviloSustava {
+  sifPravilo  Int    @id @default(autoincrement())
+  nazPravilo  String @unique
+  opisPravilo String
+  vrijednost  String
+
+  adiministratori Korisnik[] @relation("AdminPodesava")
+}
