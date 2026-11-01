@@ -57,15 +57,15 @@ enum KorisnikStatus {
   OBRISAN     @map("obrisan")
 }
 
-enum stanjeDohvata {
+enum StanjeDohvata {
   U_OBRADI  @map("u obradi")
   DOHVACEN  @map("dohvacen")
   NEUSPJELO @map("neuspjelo")
 }
 
 enum OznakaTip {
-  ZANR        @map("zanr")
-  RASPLOZENJE @map("raspolozenje")
+  ZANR         @map("zanr")
+  RASPOLOZENJE @map("raspolozenje")
 }
 
 enum RecenzijaStanje {
@@ -114,7 +114,7 @@ enum ZahtjevZaUloguStanje {
 model Korisnik {
   sifKorisnik        Int            @id @default(autoincrement())
   nazKorisnik        String
-  email              String         @unique
+  email              String?        @unique
   opis               String?
   uloga              KorisnikUloga  @default(SLUSATELJ)
   status             KorisnikStatus @default(AKTIVAN)
@@ -138,14 +138,14 @@ model Korisnik {
   odabraniIzvodjaci Izvodjac[] @relation("OdabraoPriRegIzv")
 
   // Praćenja
-  pratiIzvodajce PracenjeIzvodjaca[]
+  pratiIzvodjace PracenjeIzvodjaca[]
   pratiKorisnike PracenjeKorisnika[] @relation("Pratitelj")
   pratitelji     PracenjeKorisnika[] @relation("Praceni")
 
   // Ocjene
   ocjeneIzvodjaca OcjenaIzvodjaca[]
   ocjeneAlbuma    OcjenaAlbuma[]
-  ocjenePjesama   OcjenePjesama[]
+  ocjenePjesama   OcjenaPjesme[]
 
   // Društveni dio
   recenzije Recenzija[]
@@ -189,7 +189,7 @@ model PraviloSustava {
   opisPravilo String
   vrijednost  String
 
-  adiministratori Korisnik[] @relation("AdminPodesava")
+  administratori Korisnik[] @relation("AdminPodesava")
 }
 
 // cjelina: GLAZBENI KATALOG
@@ -207,7 +207,7 @@ model Izvodjac {
   pratitelji         PracenjeIzvodjaca[]
   ocjene             OcjenaIzvodjaca[]
   recenzije          Recenzija[]
-  preoporuke         PreporukaIzvodjaca[]
+  preporuke          PreporukaIzvodjaca[]
   zastupnici         Korisnik[]           @relation("Zastupa")
   odabraliPriReg     Korisnik[]           @relation("OdabraoPriRegIzv")
   predlozeniKoncerti Koncert[]            @relation("Predlozio")
@@ -280,12 +280,12 @@ model Mjesto {
   nazMjesto  String
   koordinate String
 
-  stanovnici      Korisnik         @relation("ZiviU")
+  stanovnici      Korisnik[]       @relation("ZiviU")
   mjestaKoncerata MjestoKoncerta[]
 }
 
-model MjestoKocerta {
-  sifMjestoKocerta     Int    @id @default(autoincrement())
+model MjestoKoncerta {
+  sifMjestoKoncerta    Int    @id @default(autoincrement())
   mbid                 String @unique
   nazMjestoKoncerta    String
   adresaMjestoKoncerta String
@@ -364,7 +364,7 @@ model Koncert {
   razlogOdbijanja String?
 
   sifMjestoKoncerta Int
-  mjesto            MjestoKocerta @relation(fields: [sifMjestoKoncerta], references: [sifMjestoKocerta])
+  mjesto            MjestoKoncerta @relation(fields: [sifMjestoKoncerta], references: [sifMjestoKoncerta])
 
   predlozioMbid String
   predlozio     Izvodjac @relation("Predlozio", fields: [predlozioMbid], references: [mbid])
@@ -496,10 +496,10 @@ model PrijavaSadrzaja {
   podnositelj    Korisnik @relation("PodnioPrijavu", fields: [sifPodnositelj], references: [sifKorisnik])
 
   sifRecenzija Int?
-  recenzija    Recenzija @relation(fields: [sifRecenzija], references: [sifRecenzija], onDelete: Cascade)
+  recenzija    Recenzija? @relation(fields: [sifRecenzija], references: [sifRecenzija], onDelete: Cascade)
 
   sifPrijavljeni Int?
-  prijavljeni    Korisnik @relation("PrijavljeniKorisnik", fields: [sifPrijavljeni], references: [sifKorisnik])
+  prijavljeni    Korisnik? @relation("PrijavljenKorisnik", fields: [sifPrijavljeni], references: [sifKorisnik])
 
   @@index([sifPodnositelj])
   @@index([stanje])
@@ -517,11 +517,11 @@ model ZahtjevZaUlogu {
   sifKorisnik Int
   korisnik    Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik])
 
-  izvodjacMbid String
-  izvodjac     Izvodjac @relation(fields: [izvodjacMbid], references: [mbid])
+  izvodjacMbid String?
+  izvodjac     Izvodjac? @relation(fields: [izvodjacMbid], references: [mbid])
 
-  sifMjestoKoncerta Int
-  mjestoKoncerta    MjestoKocerta? @relation(fields: [sifMjestoKoncerta], references: [sifMjestoKocerta])
+  sifMjestoKoncerta Int?
+  mjestoKoncerta    MjestoKoncerta? @relation(fields: [sifMjestoKoncerta], references: [sifMjestoKoncerta])
 
   @@index([sifKorisnik])
   @@index([stanje])
