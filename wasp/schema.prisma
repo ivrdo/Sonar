@@ -90,6 +90,26 @@ enum PrijavaNaKoncertStanje {
   OTKAZAN    @map("otkazan")
 }
 
+enum PrijavaSadrzajaStanje {
+  PRIJAVLJENO @map("prijavljeno")
+  U_OBRADI    @map("u obradi")
+  UKLONJENO   @map("uklonjeno")
+  ODBACENO    @map("odbaceno")
+}
+
+enum ZahtjevZaUloguTip {
+  IZVODJAC          @map("izvodjac")
+  UPRAVITELJ_MJESTA @map("upravitelj mjesta")
+}
+
+enum ZahtjevZaUloguStanje {
+  ZAHTJEV         @map("zahtjev")
+  PROVJERA        @map("provjera")
+  POTREBNA_DOPUNA @map("potrebna dopuna")
+  POTVRDJEN       @map("potvrdjen")
+  ODBIJEN         @map("odbijen")
+}
+
 // cjelina: KORISNICI I ADMINISTRACIJA
 model Korisnik {
   sifKorisnik        Int            @id @default(autoincrement())
@@ -462,4 +482,61 @@ model PreporukaKoncerta {
   koncert  Koncert  @relation(fields: [sifKoncert], references: [sifKoncert], onDelete: Cascade)
 
   @@id([sifKorisnik, sifKoncert])
+}
+
+// cjelina: MODERACIJA, ULOGE I OBAVIJESTI
+model PrijavaSadrzaja {
+  sifPrijava   Int                   @id @default(autoincrement())
+  razlog       String
+  stanje       PrijavaSadrzajaStanje @default(PRIJAVLJENO)
+  datum        DateTime              @default(now())
+  razlogOdluke String?
+
+  sifPodnositelj Int
+  podnositelj    Korisnik @relation("PodnioPrijavu", fields: [sifPodnositelj], references: [sifKorisnik])
+
+  sifRecenzija Int?
+  recenzija    Recenzija @relation(fields: [sifRecenzija], references: [sifRecenzija], onDelete: Cascade)
+
+  sifPrijavljeni Int?
+  prijavljeni    Korisnik @relation("PrijavljeniKorisnik", fields: [sifPrijavljeni], references: [sifKorisnik])
+
+  @@index([sifPodnositelj])
+  @@index([stanje])
+}
+
+model ZahtjevZaUlogu {
+  sifZahtjev         Int                  @id @default(autoincrement())
+  tipUloge           ZahtjevZaUloguTip
+  poveznica          String
+  kod                String               @unique
+  stanje             ZahtjevZaUloguStanje @default(ZAHTJEV)
+  napomenaModeratora String?
+  datum              DateTime             @default(now())
+
+  sifKorisnik Int
+  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik])
+
+  izvodjacMbid String
+  izvodjac     Izvodjac @relation(fields: [izvodjacMbid], references: [mbid])
+
+  sifMjestoKoncerta Int
+  mjestoKoncerta    MjestoKocerta? @relation(fields: [sifMjestoKoncerta], references: [sifMjestoKocerta])
+
+  @@index([sifKorisnik])
+  @@index([stanje])
+}
+
+model Obavijest {
+  sifObavijest Int      @id @default(autoincrement())
+  tip          String
+  tekst        String
+  poveznica    String?
+  procitano    Boolean  @default(false)
+  datum        DateTime @default(now())
+
+  sifKorisnik Int
+  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Cascade)
+
+  @@index([sifKorisnik, procitano])
 }
