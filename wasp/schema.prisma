@@ -57,7 +57,18 @@ enum KorisnikStatus {
   OBRISAN     @map("obrisan")
 }
 
-// KORISNICI I ADMINISTRACIJA
+enum stanjeDohvata {
+  U_OBRADI  @map("u obradi")
+  DOHVACEN  @map("dohvacen")
+  NEUSPJELO @map("neuspjelo")
+}
+
+enum OznakaTip {
+  ZANR        @map("zanr")
+  RASPLOZENJE @map("raspolozenje")
+}
+
+// cjelina: KORISNICI I ADMINISTRACIJA
 model Korisnik {
   sifKorisnik        Int            @id @default(autoincrement())
   nazKorisnik        String
@@ -137,4 +148,114 @@ model PraviloSustava {
   vrijednost  String
 
   adiministratori Korisnik[] @relation("AdminPodesava")
+}
+
+// cjelina: GLAZBENI KATALOG
+model Izvodjac {
+  mbid          String        @id
+  nazIzvodjaca  String
+  biografija    String?
+  popularnost   Float         @default(0)
+  stanjeDohvata StanjeDohvata @default(U_OBRADI)
+
+  albumi Album[]
+  pjesme Pjesma[]
+  oznake IzvodjacOznaka[]
+
+  pratitelji         PracenjeIzvodjaca[]
+  ocjene             OcjenaIzvodjaca[]
+  recenzije          Recenzija[]
+  preoporuke         PreporukaIzvodjaca[]
+  zastupnici         Korisnik[]           @relation("Zastupa")
+  odabraliPriReg     Korisnik[]           @relation("OdabraoPriRegIzv")
+  predlozeniKoncerti Koncert[]            @relation("Predlozio")
+  nastupi            Koncert[]            @relation("Nastupa")
+  zahtjevi           ZahtjevZaUlogu[]
+}
+
+model Album {
+  sifAlbum      Int    @id @default(autoincrement())
+  mbid          String @unique
+  nazAlbum      String
+  godinaIzdanja Int?
+
+  izvodjacMbid String
+  izvodjac     Izvodjac @relation(fields: [izvodjacMbid], references: [mbid])
+
+  pjesme    Pjesma[]
+  ocjene    OcjenaAlbuma[]
+  recenzije Recenzija[]
+
+  @@index([izvodjacMbid])
+}
+
+model Pjesma {
+  sifPjesma Int    @id @default(autoincrement())
+  mbid      String @unique
+  nazPjesma String
+  trajanje  Int? // u sekundama
+
+  sifAlbum Int?
+  album    Album? @relation(fields: [sifAlbum], references: [sifAlbum])
+
+  izvodjacMbid String
+  izvodjac     Izvodjac @relation(fields: [izvodjacMbid], references: [mbid])
+
+  ocjene    OcjenaPjesme[]
+  recenzije Recenzija[]
+  naListama ListaPjesama[]
+
+  @@index([izvodjacMbid])
+  @@index([sifAlbum])
+}
+
+model Oznaka {
+  sifOznaka Int       @id @default(autoincrement())
+  nazOznaka String
+  tip       OznakaTip
+
+  izvodjaci      IzvodjacOznaka[]
+  odabraliPriReg Korisnik[]       @relation("OdabraoPriRegOznaku")
+
+  @@unique([nazOznaka, tip])
+}
+
+// veza Pripada(s atributom tezina)
+model IzvodjacOznaka {
+  mbid      String
+  sifOznaka Int
+  tezina    Float
+
+  izvodjac Izvodjac @relation(fields: [mbid], references: [mbid], onDelete: Cascade)
+  oznaka   Oznaka   @relation(fields: [sifOznaka], references: [sifOznaka], onDelete: Cascade)
+
+  @@id([mbid, sifOznaka])
+}
+
+// cjelina: MJESTA
+model Mjesto {
+  sifMjesto  Int    @id @default(autoincrement())
+  nazMjesto  String
+  koordinate String
+
+  stanovnici      Korisnik         @relation("ZiviU")
+  mjestaKoncerata MjestoKoncerta[]
+}
+
+model MjestoKocerta {
+  sifMjestoKocerta     Int    @id @default(autoincrement())
+  mbid                 String @unique
+  nazMjestoKoncerta    String
+  adresaMjestoKoncerta String
+  koordinate           String
+  kapacitet            Int?
+
+  sifMjesto Int
+  mjesto    Mjesto @relation(fields: [sifMjesto], references: [sifMjesto])
+
+  upravitelji Korisnik[]       @relation("Upravlja")
+  koncerti    Koncert[]
+  zahtjevi    ZahtjevZaUlogu[]
+
+  @@index([sifMjesto])
 }
