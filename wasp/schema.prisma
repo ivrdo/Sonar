@@ -68,6 +68,21 @@ enum OznakaTip {
   RASPLOZENJE @map("raspolozenje")
 }
 
+enum RecenzijaStanje {
+  VIDLJIVA  @map("vidljiva")
+  UKLONJENA @map("uklonjena")
+}
+
+enum KoncertStanje {
+  PREDLOZEN        @map("predlozen")
+  POTVRDEN         @map("potvrden")
+  OTVORENE_PRIJAVE @map("otvorene prijave")
+  ODRZAN           @map("odrzan")
+  ODBIJEN          @map("odbijen")
+  ISTEKAO          @map("istekao")
+  OTKAZAN          @map("otkazan")
+}
+
 // cjelina: KORISNICI I ADMINISTRACIJA
 model Korisnik {
   sifKorisnik        Int            @id @default(autoincrement())
@@ -258,4 +273,81 @@ model MjestoKocerta {
   zahtjevi    ZahtjevZaUlogu[]
 
   @@index([sifMjesto])
+}
+
+// cjelina: DRUŠTVENI DIO
+model Recenzija {
+  sifRecenzija     Int             @id @default(autoincrement())
+  tekst            String
+  datum            DateTime        @default(now())
+  stanje           RecenzijaStanje @default(VIDLJIVA)
+  odgovorIzvodjaca String?
+
+  sifKorisnik Int
+  autor       Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik])
+
+  // točno jedan od tri(CHECK u migraciji)
+  izvodjacMbid String?
+  izvodjac     Izvodjac? @relation(fields: [izvodjacMbid], references: [mbid])
+  sifAlbum     Int?
+  album        Album?    @relation(fields: [sifAlbum], references: [sifAlbum])
+  sifPjesma    Int?
+  pjesma       Pjesma?   @relation(fields: [sifPjesma], references: [sifPjesma])
+
+  prijave PrijavaSadrzaja[]
+
+  @@index([sifKorisnik])
+  @@index([izvodjacMbid])
+  @@index([sifAlbum])
+  @@index([sifPjesma])
+  @@index([datum])
+}
+
+model Lista {
+  sifLista Int    @id @default(autoincrement())
+  nazLista String
+
+  sifKorisnik Int
+  autor       Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Cascade)
+
+  pjesme ListaPjesama[]
+
+  @@index([sifKorisnik])
+}
+
+// veza Sadrži(s atributom redniBroj)
+model ListaPjesama {
+  sifLista  Int
+  sifPjesma Int
+  redniBroj Int
+
+  lista  Lista  @relation(fields: [sifLista], references: [sifLista], onDelete: Cascade)
+  pjesma Pjesma @relation(fields: [sifPjesma], references: [sifPjesma], onDelete: Cascade)
+
+  @@index([sifLista, sifPjesma])
+  @@unique([sifLista, redniBroj])
+}
+
+model Koncert {
+  sifKoncert      Int           @id @default(autoincrement())
+  datumVrijeme    DateTime
+  brojMjesta      Int
+  stanje          KoncertStanje @default(PREDLOZEN)
+  rokZaPotvrdu    DateTime
+  razlogOdbijanja String?
+
+  sifMjestoKoncerta Int
+  mjesto            MjestoKocerta @relation(fields: [sifMjestoKoncerta], references: [sifMjestoKocerta])
+
+  predlozioMbid String
+  predlozio     Izvodjac @relation("Predlozio", fields: [predlozioMbid], references: [mbid])
+
+  izvodjaci Izvodjac[] @relation("Nastupa")
+
+  prijave   PrijavaNaKoncert[]
+  preporuke PreporukaKoncerta[]
+
+  @@index([sifMjestoKoncerta])
+  @@index([predlozioMbid])
+  @@index([stanje, datumVrijeme])
 }
