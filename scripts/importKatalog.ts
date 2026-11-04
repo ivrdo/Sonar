@@ -1,5 +1,5 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
-import { join } from "node:path";
+import { join, dirname } from "node:path";
 
 // ---------------------------------------------------------------------------
 // KONSTANTE
@@ -45,8 +45,22 @@ type Izvodjac = {
     mbid: string;
     naziv: string;
     slusatelji: number;
-    oznake: { naziv: string; tezina: number }[];
     popularnost: number;
+    oznake: { naziv: string; tezina: number }[];
+};
+
+type KatalogIzvodjac = {
+    mbid: string;
+    naziv: string;
+    popularnost: number;
+    oznake: { naziv: string; tezina: number }[];
+};
+
+type Katalog = {
+    gradovi: { nazMjesto: string; koordinate: string }[];
+    mjestaKoncerta: MjestoKoncerta[];
+    oznake: { naziv: string; tip: "zanr" | "raspolozenje" }[];
+    izvodjaci: KatalogIzvodjac[];
 };
 
 // ---------------------------------------------------------------------------
@@ -138,8 +152,8 @@ function dodaj(niz: any[]) {
             mbid: element.mbid,
             naziv: element.name,
             slusatelji: Number(element.listeners),
-            oznake: [],
             popularnost: 0,
+            oznake: [],
         });
     }
 }
@@ -190,7 +204,7 @@ async function dohvatiZagrebackeIzvodjace(): Promise<void> {
     let dodano = 0;
     for (const k of najpopularniji) {
         if (izvodjaci.has(k.mbid)) continue;
-        izvodjaci.set(k.mbid, { ...k, oznake: [], popularnost: 0, });
+        izvodjaci.set(k.mbid, { ...k, popularnost: 0, oznake: [], });
         dodano++;
     }
     console.log(`Zagreb: ${miss.length} nepoznato Last.fmu, ${dodano} dodano u katalog`);
@@ -267,6 +281,38 @@ function provjere(): void {
     }
 }
 
+async function zapisiKatalog(): Promise<void> {
+    const nazivi = new Set<string>();
+    for (const izv of izvodjaci.values()) {
+        for (const o of izv.oznake) {
+            nazivi.add(o.naziv);
+        }
+    }
+    const oznake = [...nazivi].sort().map(naziv => ({ naziv, tip: "zanr" as const }));
+
+    const izv: KatalogIzvodjac[] = [...izvodjaci.values()]
+        .map(el => ({
+            mbid: el.mbid,
+            naziv: el.naziv,
+            popularnost: el.popularnost,
+            oznake: el.oznake,
+        }))
+        .sort((a, b) => (a.mbid < b.mbid ? -1 : 1));
+
+    const katalog: Katalog = {
+        gradovi: GRADOVI,
+        mjestaKoncerta: [...svaMjesta].sort((a, b) => (a.mbid < b.mbid ? -1 : 1)),
+        oznake,
+        izvodjaci: izv,
+    };
+
+    const putanja = join(import.meta.dirname, "..", "wasp", "src", "seed", "data", "katalog.json");
+    await mkdir(dirname(putanja), { recursive: true });
+    await writeFile(putanja, JSON.stringify(katalog, null, 2) + "\n", "utf8");
+
+    console.log(`katalog.json: ${katalog.gradovi.length} gradova, ${katalog.mjestaKoncerta.length} mjesta, ${katalog.oznake.length} oznaka, ${katalog.izvodjaci.length} izvođača`);
+}
+
 // ---------------------------------------------------------------------------
 // MAIN
 // ---------------------------------------------------------------------------
@@ -281,6 +327,8 @@ async function main() {
     await dohvatiOznake();
     normalizirajPopularnost();
     provjere();
+
+    await zapisiKatalog();
 
     const poPop = [...izvodjaci.values()].sort((a, b) => b.popularnost - a.popularnost);
     console.log("najpopularniji:", poPop[0].naziv, poPop[0].popularnost.toFixed(3));
