@@ -10,6 +10,7 @@ import {
   seedProba,
   pregledBaze,
   seedKatalogProba,
+  seedKatalog,
 } from "./src/seed/index" with { type: "ref" };
 import { tagsSpec } from "./src/tags/tags.wasp";
 import { tasksSpec } from "./src/tasks/task.wasp";
@@ -43,7 +44,7 @@ export default app({
     provider: "Dummy",
   },
   db: {
-    seeds: [seedProba, pregledBaze, seedKatalogProba],
+    seeds: [seedProba, pregledBaze, seedKatalogProba, seedKatalog],
   },
   client: {
     rootComponent: App,

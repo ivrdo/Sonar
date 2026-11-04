@@ -42,3 +42,26 @@ export const seedKatalogProba: DbSeedFn = async () => {
     katalog.mjestaKoncerta.length,
   );
 };
+
+export const seedKatalog: DbSeedFn = async (prisma) => {
+  let nazToSif = new Map<string, number>();
+  for (const grad of katalog.gradovi) {
+    const g =
+      (await prisma.mjesto.findFirst({
+        where: { nazMjesto: grad.nazMjesto },
+      })) ??
+      (await prisma.mjesto.create({
+        data: { nazMjesto: grad.nazMjesto, koordinate: grad.koordinate },
+      }));
+    nazToSif.set(g.nazMjesto, g.sifMjesto);
+  }
+  const o = await prisma.oznaka.createMany({
+    data: katalog.oznake.map(el => {
+      const tip: "ZANR" | "RASPOLOZENJE" = el.tip === "zanr" ? "ZANR" : "RASPOLOZENJE";
+      return { nazOznaka: el.naziv, tip }
+    }),
+    skipDuplicates: true,
+  });
+
+  console.log("Mjesto:", await prisma.mjesto.count(), "| Oznaka:", await prisma.oznaka.count());
+};
