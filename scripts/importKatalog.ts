@@ -132,21 +132,44 @@ function dodaj(niz: any[]) {
 }
 
 async function dohvatiTopIzvodjace(): Promise<void> {
-    let geoIzvodjaci = await cached("geo-artists-${LIMIT_IZVODJACA}", () => lfm({ method: "geo.gettopartists", country: "croatia", limit: String(LIMIT_IZVODJACA) }));
-    let chartIzvodjaci = await cached("chart-artists-${LIMIT_IZVODJACA}", () => lfm({ method: "chart.gettopartists", limit: String(LIMIT_IZVODJACA) }));
+    let geoIzvodjaci = await cached(`geo-artists-${LIMIT_IZVODJACA}`, () => lfm({ method: "geo.gettopartists", country: "croatia", limit: String(LIMIT_IZVODJACA) }));
+    let chartIzvodjaci = await cached(`chart-artists-${LIMIT_IZVODJACA}`, () => lfm({ method: "chart.gettopartists", limit: String(LIMIT_IZVODJACA) }));
     geoIzvodjaci = geoIzvodjaci.topartists.artist;
     chartIzvodjaci = chartIzvodjaci.artists.artist;
     dodaj(geoIzvodjaci);
     dodaj(chartIzvodjaci);
-    console.log("izvođača u Mapi:", izvodjaci.size, "| bez MBID-a:", preskoceno);
-    console.log([...izvodjaci.values()].slice(0, 5));
-    const sl = [...izvodjaci.values()].map(i => i.slusatelji);
-    console.log("min:", Math.min(...sl), "max:", Math.max(...sl));
 }
 
 async function dohvatiOznake(): Promise<void> {
-    // TODO 4: za svakog izvođača iz Mape: artist.gettoptags (mbid)
-    //         i spremi { naziv, tezina } (count / 100)
+    let miss: string[] = [];
+    for (const izv of izvodjaci.values()) {
+        try {
+            const tags = await cached(`lfm-tags-${izv.mbid}`, () => lfm({method: "artist.gettoptags", mbid: izv.mbid})) ?? [];
+            const info = await cached(`lfm-info-${izv.mbid}`, () => lfm({method: "artist.getinfo", mbid: izv.mbid}));
+            izv.slusatelji = Number(info.artist.stats.listeners);
+            izv.oznake = tags.toptags.tag.map((element: any) => ({
+                naziv: element.name.toLowerCase().trim(),
+                tezina: Number(element.count) / 100,
+            }));
+        } catch (e) {
+            console.log(e.message);
+            miss.push(izv.naziv);
+            izvodjaci.delete(izv.mbid);
+        }
+    }
+    console.log(miss, miss.length);
 }
 
 await dohvatiTopIzvodjace();
+console.log("izvođača u Mapi:", izvodjaci.size, "| bez MBID-a:", preskoceno);
+
+await dohvatiOznake();
+const sl = [...izvodjaci.values()].map(i => i.slusatelji);
+console.log("izvođača:", izvodjaci.size, "| min:", Math.min(...sl), "| max:", Math.max(...sl));
+console.dir([...izvodjaci.values()].slice(0, 2), { depth: null });
+
+const brojac = new Map<string, number>();
+for (const izv of izvodjaci.values())
+    for (const o of izv.oznake)
+        brojac.set(o.naziv, (brojac.get(o.naziv) ?? 0) + 1);
+console.log([...brojac.entries()].sort((a, b) => b[1] - a[1]).slice(0, 60));
