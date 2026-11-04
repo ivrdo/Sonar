@@ -2,6 +2,7 @@ import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join } from "node:path";
 
 const LIMIT_IZVODJACA = 20;
+const LIMIT_ZAGREB = 20;
 
 const MB = "https://musicbrainz.org/ws/2/";
 const LFM = "https://ws.audioscrobbler.com/2.0/";
@@ -31,10 +32,10 @@ async function mb(path: string) {
 async function lfm(params: Record<string, string>) {
     const qs = new URLSearchParams({ ...params, api_key: key, format: "json" });
     const res = await fetch(`${LFM}?${qs}`);
+    await pauza(250);
     if (!res.ok) throw new Error(`Last.fm ${res.status}`);
     const data = await res.json();
     if (data.error) throw new Error(`Last.fm ${data.message}`);
-    await pauza(250);
     return data;
 }
 
@@ -157,19 +158,37 @@ async function dohvatiOznake(): Promise<void> {
             izvodjaci.delete(izv.mbid);
         }
     }
-    console.log(miss, miss.length);
+    console.log("oznake: preskočeno", miss.length);
 }
 
 await dohvatiTopIzvodjace();
 console.log("izvođača u Mapi:", izvodjaci.size, "| bez MBID-a:", preskoceno);
 
+await pregledZagreba();
+
 await dohvatiOznake();
 const sl = [...izvodjaci.values()].map(i => i.slusatelji);
 console.log("izvođača:", izvodjaci.size, "| min:", Math.min(...sl), "| max:", Math.max(...sl));
-console.dir([...izvodjaci.values()].slice(0, 2), { depth: null });
 
-const brojac = new Map<string, number>();
-for (const izv of izvodjaci.values())
-    for (const o of izv.oznake)
-        brojac.set(o.naziv, (brojac.get(o.naziv) ?? 0) + 1);
-console.log([...brojac.entries()].sort((a, b) => b[1] - a[1]).slice(0, 60));
+async function pregledZagreba(): Promise<void> {
+    const upit = `artist?query=${encodeURIComponent(`area:Zagreb`)}&limit=100&fmt=json`;
+    const rez = await cached(`artists_Zagreb_0`, () => mb(upit));
+    let miss: string[] = [];
+    let izv: { naziv: string; mbid: string; slusatelji: number }[] = [];
+    for (const a of rez.artists ?? []) {
+        try {
+            const info = await cached(`lfm-info-${a.id}`, () => lfm({method: "artist.getinfo", mbid: a.id}));
+            izv.push({ naziv: a.name, mbid: a.id, slusatelji: Number(info.artist.stats.listeners) });
+        } catch (e) {
+            miss.push(a.name);
+        }
+    }
+    const najpopularniji = izv.sort((a, b) => b.slusatelji - a.slusatelji).slice(0, LIMIT_ZAGREB);
+    let dodano = 0;
+    for (const k of najpopularniji) {
+        if (izvodjaci.has(k.mbid)) continue;
+        izvodjaci.set(k.mbid, { ...k, oznake: [] });
+        dodano++;
+    }
+    console.log(`Zagreb: ${miss.length} nepoznato Last.fmu, ${dodano} dodano u katalog`);
+}
