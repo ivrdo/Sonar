@@ -6,7 +6,11 @@ import { PasswordResetPage } from "./src/auth/email/PasswordResetPage" with { ty
 import { RequestPasswordResetPage } from "./src/auth/email/RequestPasswordResetPage" with { type: "ref" };
 import { SignupPage } from "./src/auth/email/SignupPage" with { type: "ref" };
 import { userSignupFields } from "./src/auth/email/userSignupFields" with { type: "ref" };
-import { seedProba, pregledBaze } from "./src/seed/index" with { type: "ref" };
+import {
+  seedProba,
+  pregledBaze,
+  seedKatalogProba,
+} from "./src/seed/index" with { type: "ref" };
 import { tagsSpec } from "./src/tags/tags.wasp";
 import { tasksSpec } from "./src/tasks/task.wasp";
 
@@ -39,7 +43,7 @@ export default app({
     provider: "Dummy",
   },
   db: {
-    seeds: [seedProba, pregledBaze],
+    seeds: [seedProba, pregledBaze, seedKatalogProba],
   },
   client: {
     rootComponent: App,

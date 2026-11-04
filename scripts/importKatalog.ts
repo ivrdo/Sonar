@@ -306,9 +306,12 @@ async function zapisiKatalog(): Promise<void> {
         izvodjaci: izv,
     };
 
-    const putanja = join(import.meta.dirname, "..", "wasp", "src", "seed", "data", "katalog.json");
+    const putanja = join(import.meta.dirname, "..", "wasp", "src", "seed", "data", "katalog.ts");
     await mkdir(dirname(putanja), { recursive: true });
-    await writeFile(putanja, JSON.stringify(katalog, null, 2) + "\n", "utf8");
+    const sadrzaj =
+        "// GENERIRANO skriptom scripts/importKatalog.ts, ne uređivati ručno.\n" +
+        `export const katalog = ${JSON.stringify(katalog, null, 2)};\n`;
+    await writeFile(putanja, sadrzaj, "utf8");
 
     console.log(`katalog.json: ${katalog.gradovi.length} gradova, ${katalog.mjestaKoncerta.length} mjesta, ${katalog.oznake.length} oznaka, ${katalog.izvodjaci.length} izvođača`);
 }

@@ -1,4 +1,5 @@
 import type { DbSeedFn } from "wasp/server";
+import { katalog } from "./data/katalog.js";
 
 export const seedProba: DbSeedFn = async (prisma) => {
   const mjesto =
@@ -31,4 +32,13 @@ export const pregledBaze: DbSeedFn = async (prisma) => {
     koncert: await prisma.koncert.count(),
     mjesto: await prisma.mjesto.count(),
   });
+};
+
+export const seedKatalogProba: DbSeedFn = async () => {
+  console.log(
+    "izvođača:",
+    katalog.izvodjaci.length,
+    "| mjesta:",
+    katalog.mjestaKoncerta.length,
+  );
 };

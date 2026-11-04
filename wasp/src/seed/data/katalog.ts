@@ -1,4 +1,5 @@
-{
+// GENERIRANO skriptom scripts/importKatalog.ts, ne uređivati ručno.
+export const katalog = {
   "gradovi": [
     {
       "nazMjesto": "Zagreb",
@@ -3180,4 +3181,4 @@
       ]
     }
   ]
-}
+};
