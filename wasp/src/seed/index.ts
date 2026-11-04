@@ -15,3 +15,20 @@ export const seedProba: DbSeedFn = async (prisma) => {
 
   console.log(`Seed OK, sifMjesto=${mjesto.sifMjesto}`);
 };
+
+export const pregledBaze: DbSeedFn = async (prisma) => {
+  console.log("Mjesto:", await prisma.mjesto.findMany());
+  console.log(
+    "Izvodjac (prvih 10):",
+    await prisma.izvodjac.findMany({ take: 10 }),
+  );
+  console.log("Brojevi redaka:", {
+    korisnik: await prisma.korisnik.count(),
+    izvodjac: await prisma.izvodjac.count(),
+    album: await prisma.album.count(),
+    pjesma: await prisma.pjesma.count(),
+    mjestoKoncerta: await prisma.mjestoKoncerta.count(),
+    koncert: await prisma.koncert.count(),
+    mjesto: await prisma.mjesto.count(),
+  });
+};

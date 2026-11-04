@@ -52,3 +52,101 @@ async function cached<T>(kljuc: string, poziv: () => Promise<T>): Promise<T> {
     await writeFile(join(mapa, `${ime}.json`), JSON.stringify(rez), 'utf8');
     return rez;
 }
+
+type MjestoKoncerta = {
+    mbid: string;
+    naziv: string;
+    adresa: string;
+    koordinate: string;
+    grad: string;
+};
+
+const svaMjesta: MjestoKoncerta[] = [];
+
+const GRADOVI = [
+    { nazMjesto: "Zagreb", koordinate: "45.8150,15.9819" },
+    { nazMjesto: "Split", koordinate: "43.5081,16.4402" },
+    { nazMjesto: "Pula", koordinate: "44.8683,13.8481"},
+];
+const DOZVOLJENI_TIPOVI = new Set(["Venue", "Club", "Indoor arena", "Stadium", "Festival stage", "Amphitheatre"]);
+const DODATNO_UKLJUCI = new Set(["Zagrebački hipodrom"]);
+const ISKLJUCI = new Set([]);
+
+async function dohvatiMjesta(grad: string): Promise<{ ukupno: number; mjesta: MjestoKoncerta[] }> {
+    const upit = `place?query=${encodeURIComponent(`area:${grad}`)}&limit=100&fmt=json`;
+    const rez = await cached(`places_${grad}_0`, () => mb(upit));
+    const ukupno = rez.count;
+    let mjesta = rez.places ?? [];
+    mjesta = mjesta.filter((element: any) => {
+        return (element?.coordinates &&
+                element?.coordinates?.latitude &&
+                element?.coordinates?.longitude &&
+                (DOZVOLJENI_TIPOVI.has(element.type) || DODATNO_UKLJUCI.has(element.name))
+        );
+    }).map((element: any) => ({
+        mbid: element.id,
+        naziv: element.name,
+        adresa: element?.address || grad,
+        koordinate: `${element?.coordinates.latitude},${element?.coordinates.longitude}`,
+        grad: grad
+    }));
+    return { ukupno, mjesta };
+}
+
+for (const i of GRADOVI) {
+    const { ukupno, mjesta } = await dohvatiMjesta(i.nazMjesto);
+    svaMjesta.push(...mjesta);
+    console.log(`${i.nazMjesto} | ${ukupno} | ${mjesta.length}`);
+}
+
+if (new Set(svaMjesta.map(m => m.mbid)).size === svaMjesta.length) {
+    console.log(svaMjesta.length);
+} else console.log(-1);
+
+
+type Izvodjac = {
+    mbid: string;
+    naziv: string;
+    slusatelji: number;
+    oznake: { naziv: string; tezina: number }[];
+};
+
+const izvodjaci = new Map<string, Izvodjac>();
+let preskoceno = 0;
+
+function dodaj(niz: any[]) {
+    for (const element of niz) {
+        if (!element.mbid) {
+            preskoceno++;
+            continue;
+        } else if (izvodjaci.has(element.mbid)) {
+            continue;
+        }
+        izvodjaci.set(element.mbid, {
+            mbid: element.mbid,
+            naziv: element.name,
+            slusatelji: Number(element.listeners),
+            oznake: [],
+        });
+    }
+}
+
+async function dohvatiTopIzvodjace(): Promise<void> {
+    let geoIzvodjaci = await cached("geo-artists-${LIMIT_IZVODJACA}", () => lfm({ method: "geo.gettopartists", country: "croatia", limit: String(LIMIT_IZVODJACA) }));
+    let chartIzvodjaci = await cached("chart-artists-${LIMIT_IZVODJACA}", () => lfm({ method: "chart.gettopartists", limit: String(LIMIT_IZVODJACA) }));
+    geoIzvodjaci = geoIzvodjaci.topartists.artist;
+    chartIzvodjaci = chartIzvodjaci.artists.artist;
+    dodaj(geoIzvodjaci);
+    dodaj(chartIzvodjaci);
+    console.log("izvođača u Mapi:", izvodjaci.size, "| bez MBID-a:", preskoceno);
+    console.log([...izvodjaci.values()].slice(0, 5));
+    const sl = [...izvodjaci.values()].map(i => i.slusatelji);
+    console.log("min:", Math.min(...sl), "max:", Math.max(...sl));
+}
+
+async function dohvatiOznake(): Promise<void> {
+    // TODO 4: za svakog izvođača iz Mape: artist.gettoptags (mbid)
+    //         i spremi { naziv, tezina } (count / 100)
+}
+
+await dohvatiTopIzvodjace();
