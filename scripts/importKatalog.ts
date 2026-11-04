@@ -8,6 +8,9 @@ import { join } from "node:path";
 const LIMIT_IZVODJACA = 20;
 const LIMIT_ZAGREB = 20;
 
+const POP_DNO = 0;
+const POP_VRH = 1;
+
 const MB = "https://musicbrainz.org/ws/2/";
 const LFM = "https://ws.audioscrobbler.com/2.0/";
 const ua = process.env.MB_USER_AGENT ?? "";
@@ -43,6 +46,7 @@ type Izvodjac = {
     naziv: string;
     slusatelji: number;
     oznake: { naziv: string; tezina: number }[];
+    popularnost: number;
 };
 
 // ---------------------------------------------------------------------------
@@ -135,6 +139,7 @@ function dodaj(niz: any[]) {
             naziv: element.name,
             slusatelji: Number(element.listeners),
             oznake: [],
+            popularnost: 0,
         });
     }
 }
@@ -185,7 +190,7 @@ async function dohvatiZagrebackeIzvodjace(): Promise<void> {
     let dodano = 0;
     for (const k of najpopularniji) {
         if (izvodjaci.has(k.mbid)) continue;
-        izvodjaci.set(k.mbid, { ...k, oznake: [] });
+        izvodjaci.set(k.mbid, { ...k, oznake: [], popularnost: 0, });
         dodano++;
     }
     console.log(`Zagreb: ${miss.length} nepoznato Last.fmu, ${dodano} dodano u katalog`);
@@ -198,9 +203,68 @@ async function dohvatiSvaMjesta(): Promise<void> {
         console.log(`${i.nazMjesto} | ${ukupno} | ${mjesta.length}`);
     }
 
-    if (new Set(svaMjesta.map(m => m.mbid)).size === svaMjesta.length) {
-        console.log(svaMjesta.length);
-    } else console.log(-1);
+    console.log(svaMjesta.length);
+}
+
+function normalizirajPopularnost(): void {
+    const lista = [...izvodjaci.values()];
+
+    for (const i of lista) {
+        if (!Number.isFinite(i.slusatelji) || i.slusatelji <= 0) {
+            throw new Error(`Neispravan broj slušatelja za ${i.naziv}: ${i.slusatelji}`);
+        }
+    }
+
+    const sviSlusatelji = lista.map(i => i.slusatelji);
+    const min = Math.min(...sviSlusatelji), max = Math.max(...sviSlusatelji);
+    if (min === max) {
+        throw new Error("Svi izvođači imaju isti broj slušatelja, normalizacija nije moguća");
+    }
+
+    const lnMin = Math.log(min), lnMax = Math.log(max);
+    for (const i of lista) {
+        const x = (Math.log(i.slusatelji) - lnMin) / (lnMax - lnMin);
+        const p = POP_DNO + (POP_VRH - POP_DNO) * x;
+        if (!Number.isFinite(p)) {
+            throw new Error(`Popularnost nije broj za ${i.naziv}`);
+        }
+        i.popularnost = p;
+    }
+}
+
+function provjere(): void {
+    const greske: string[] = [];
+
+    const vidjeni = new Set<string>();
+    for (const m of svaMjesta) {
+        if (vidjeni.has(m.mbid)) {
+            greske.push(`Duplikat MBID-a mjesta: ${m.naziv} (${m.mbid})`);
+        }
+        vidjeni.add(m.mbid);
+    }
+
+    for (const i of izvodjaci.values()) {
+        if (!Number.isFinite(i.popularnost) || i.popularnost < 0 || i.popularnost > 1) {
+            greske.push(`Neispravna popularnost za ${i.naziv}: ${i.popularnost}`);
+        }
+        if (!Number.isFinite(i.slusatelji) || i.slusatelji <= 0) {
+            greske.push(`Neispravni slusatelji za ${i.naziv}: ${i.slusatelji}`);
+        }
+        const duplikat = new Set<string>();
+        for (const j of i.oznake) {
+            if (duplikat.has(j.naziv)) {
+                greske.push(`Duplikat naziva oznake: ${i.naziv} (${j.naziv})`);
+            }
+            duplikat.add(j.naziv);
+            if (!Number.isFinite(j.tezina) || j.tezina < 0 || j.tezina > 1) {
+                greske.push(`Neispravna težina za ${i.naziv} za oznaku ${j.naziv}: ${j.tezina}`);
+            }
+        }
+    }
+
+    if (greske.length > 0) {
+        throw new Error("Provjere nisu prošle:\n" + greske.join("\n"));
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -214,7 +278,13 @@ async function main() {
     console.log("izvođača u Mapi:", izvodjaci.size, "| bez MBID-a:", preskoceno);
 
     await dohvatiZagrebackeIzvodjace();
-    await dohvatiOznake();   // mora biti nakon svih koji dodaju izvođače
+    await dohvatiOznake();
+    normalizirajPopularnost();
+    provjere();
+
+    const poPop = [...izvodjaci.values()].sort((a, b) => b.popularnost - a.popularnost);
+    console.log("najpopularniji:", poPop[0].naziv, poPop[0].popularnost.toFixed(3));
+    console.log("najmanje popularan:", poPop[poPop.length - 1].naziv, poPop[poPop.length - 1].popularnost.toFixed(3));
 
     const sl = [...izvodjaci.values()].map(i => i.slusatelji);
     console.log("izvođača:", izvodjaci.size, "| min:", Math.min(...sl), "| max:", Math.max(...sl));
