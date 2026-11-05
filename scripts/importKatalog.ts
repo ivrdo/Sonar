@@ -5,8 +5,8 @@ import { join, dirname } from "node:path";
 // KONSTANTE
 // ---------------------------------------------------------------------------
 
-const LIMIT_IZVODJACA = 20;
-const LIMIT_ZAGREB = 20;
+const LIMIT_IZVODJACA = 50;
+const LIMIT_ZAGREB = 60;
 const LIMIT_ALBUMI = 3;
 const MAX_STRANICA = 5;
 
