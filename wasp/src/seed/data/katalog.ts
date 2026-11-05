@@ -12,15 +12,66 @@ export const katalog = {
     {
       "nazMjesto": "Pula",
       "koordinate": "44.8683,13.8481"
+    },
+    {
+      "nazMjesto": "Ljubljana",
+      "koordinate": "46.0569,14.5058"
+    },
+    {
+      "nazMjesto": "Graz",
+      "koordinate": "47.0707,15.4395"
+    },
+    {
+      "nazMjesto": "Sarajevo",
+      "koordinate": "43.8563,18.4131"
+    },
+    {
+      "nazMjesto": "Budapest",
+      "koordinate": "47.4984,19.0405"
     }
   ],
   "mjestaKoncerta": [
+    {
+      "mbid": "06380063-7ca3-49d8-bfff-e7596b685d9d",
+      "naziv": "Fonó Budai Zeneház",
+      "adresa": "Budapest, Sztregova u. 3, 1116, Hungary",
+      "koordinate": "47.459916,19.043221",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "0e911e84-d8fb-4d78-a395-4f520d4c30ee",
+      "naziv": "Orpheum",
+      "adresa": "Orpheumgasse 8, 8020 Graz",
+      "koordinate": "47.072228,15.430072",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "116678a6-930f-412c-89cc-6b83052b9f31",
+      "naziv": "Ötvenhatosok tere",
+      "adresa": "Budapest",
+      "koordinate": "47.511389,19.081389",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "131e550d-c635-478b-aa4e-5460fce1708f",
+      "naziv": "Papp László Budapest Sportaréna",
+      "adresa": "Budapest, Stefánia út 2, 1143 Hungary",
+      "koordinate": "47.502565,19.105671",
+      "grad": "Budapest"
+    },
     {
       "mbid": "13b29133-c246-4ffd-b78b-85d827f65b63",
       "naziv": "Pula Arena",
       "adresa": "Flavijevska ul., 52100, Pula, Croatia",
       "koordinate": "44.873,13.85",
       "grad": "Pula"
+    },
+    {
+      "mbid": "16ac1a40-9f30-4769-bf94-856639cfb348",
+      "naziv": "Royal Riding Hall – Buda Castle, Budapest",
+      "adresa": "1014 Budapest, Csikós udvar",
+      "koordinate": "47.495998,19.037933",
+      "grad": "Budapest"
     },
     {
       "mbid": "17420b67-d53c-47b8-a9f5-6ef6477c6132",
@@ -30,11 +81,95 @@ export const katalog = {
       "grad": "Zagreb"
     },
     {
+      "mbid": "18655b15-f040-45ba-8620-83c86395adba",
+      "naziv": "Grazer Congress: Kammermusiksaal",
+      "adresa": "Graz",
+      "koordinate": "47.0696,15.4377",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "1cf67be2-0105-49e9-86ec-d399e4bb5ed9",
+      "naziv": "Ferenc Puskás Stadium",
+      "adresa": "Budapest, Istvánmezei út 3-5, 1146",
+      "koordinate": "47.503094,19.0982",
+      "grad": "Budapest"
+    },
+    {
       "mbid": "20197f56-c64f-45ed-a761-357d6d01a107",
       "naziv": "Košarkaški centar Dražen Petrović",
       "adresa": "Savska 30, 10000 Zagreb",
       "koordinate": "45.802561,15.963267",
       "grad": "Zagreb"
+    },
+    {
+      "mbid": "22c54180-a6e7-42da-af9b-48f47ccdd9ca",
+      "naziv": "Kisstadion",
+      "adresa": "Budapest",
+      "koordinate": "47.504747,19.094564",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "23934a55-e835-48f1-8871-d672e28c8779",
+      "naziv": "Stavba Slovenske filharmonije: Velika dvorana",
+      "adresa": "Ljubljana",
+      "koordinate": "46.04952,14.504823",
+      "grad": "Ljubljana"
+    },
+    {
+      "mbid": "2410eb30-2227-4c68-bf40-0c24f5d32c36",
+      "naziv": "Messe Congress Graz",
+      "adresa": "Messeplatz 1, 8010 Graz",
+      "koordinate": "47.058631,15.446802",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "2a56cd15-2801-4713-a2a9-e23c47580a2c",
+      "naziv": "Kisüzem",
+      "adresa": "Kis Diófa u. 2, 1077",
+      "koordinate": "47.499727,19.062803",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "2dc0b457-3595-4dc1-9ed1-8c259d816e2f",
+      "naziv": "Müpa Budapest",
+      "adresa": "Budapest",
+      "koordinate": "47.469444,19.071667",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "3113a363-f372-41ce-9727-7acc14b48def",
+      "naziv": "Petőfi Csarnok",
+      "adresa": "Budapest, Zichy Mihály út 14, 1146",
+      "koordinate": "47.514131,19.088437",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "31d3b86f-73e6-4105-8efd-5341e186fb13",
+      "naziv": "Bartók Béla National Concert Hall",
+      "adresa": "Budapest",
+      "koordinate": "47.4696,19.0717",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "357b2a69-0f46-4cd7-9eb1-3231c3599540",
+      "naziv": "Gala Hala",
+      "adresa": "Masarykova 24, 1000 Ljubljana",
+      "koordinate": "46.0574,14.51679",
+      "grad": "Ljubljana"
+    },
+    {
+      "mbid": "3a03224d-5258-4ed4-8950-44a627f19334",
+      "naziv": "Opernhaus Graz",
+      "adresa": "Kaiser-Josef-Platz 10, 8010 Graz",
+      "koordinate": "47.069019,15.445665",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "410f11b1-0f52-4f29-84e9-1576f1652e5e",
+      "naziv": "Dom im Berg",
+      "adresa": "Schloßbergplatz 1, 8020 Graz",
+      "koordinate": "47.0732,15.436912",
+      "grad": "Graz"
     },
     {
       "mbid": "4532ccdb-b2b6-47ba-b456-a823b3d17c56",
@@ -49,6 +184,20 @@ export const katalog = {
       "adresa": "Split",
       "koordinate": "43.519699,16.431856",
       "grad": "Split"
+    },
+    {
+      "mbid": "486e57ad-cd0a-493c-898e-7e0bafb279b7",
+      "naziv": "Stadthalle Graz",
+      "adresa": "Messeplatz 1, 8010 Graz, Austria",
+      "koordinate": "47.05783,15.446783",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "4f82da2d-30e8-4582-9b1a-72a08e0dbdf8",
+      "naziv": "Kino Šiška",
+      "adresa": "Trg prekomorskih brigad 3",
+      "koordinate": "46.068869,14.48895",
+      "grad": "Ljubljana"
     },
     {
       "mbid": "50a3811d-3dda-4a0f-a180-a44672517f40",
@@ -72,11 +221,109 @@ export const katalog = {
       "grad": "Zagreb"
     },
     {
+      "mbid": "6daec024-acf6-4073-90fe-959d8006fcb7",
+      "naziv": "Thália Színház",
+      "adresa": "Nagymező u. 22-24, 1065 Budapest, Hungary",
+      "koordinate": "47.503686,19.059751",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "6e8b73c7-f425-461d-81ce-f417448b2e7c",
+      "naziv": "Dürer Kert",
+      "adresa": "Ajtósi Dürer sor 19-21,1146 Budapest",
+      "koordinate": "47.509781,19.090035",
+      "grad": "Budapest"
+    },
+    {
       "mbid": "70569e1d-3736-4a01-a15b-fb63207ed98d",
       "naziv": "Koncertna dvorana Vatroslava Lisinskog: Main Hall",
       "adresa": "Zagreb",
       "koordinate": "45.801111,15.980278",
       "grad": "Zagreb"
+    },
+    {
+      "mbid": "731349c6-3b20-40c1-8f24-8a48c39a0c15",
+      "naziv": "Tube’s",
+      "adresa": "Grieskai 74a, 8020 Graz, Austria",
+      "koordinate": "47.062139,15.433423",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "7525b4b0-97de-4a84-ac6b-e7d512a12f18",
+      "naziv": "Hidegkuti Nándor Stadium",
+      "adresa": "Budapest",
+      "koordinate": "47.490919,19.106725",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "792839f2-dae8-494d-9bec-b77bdefdd723",
+      "naziv": "Asim Ferhatović Hase Stadium",
+      "adresa": "Sarajevo",
+      "koordinate": "43.873889,18.408611",
+      "grad": "Sarajevo"
+    },
+    {
+      "mbid": "795a0172-6510-47eb-b2fa-a7d754522e90",
+      "naziv": "Hard Rock Café Budapest",
+      "adresa": "Budapest, Deák Ferenc u. 3-5, 1051",
+      "koordinate": "47.495984,19.050889",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "861b1e9a-1f13-422d-b55c-5b495fcf92a2",
+      "naziv": "Budapest Jazz Club",
+      "adresa": "1136 Budapest, Hollán Ernő u. 7.",
+      "koordinate": "47.513842,19.050164",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "8d772282-663f-4125-8404-d236278fd8d9",
+      "naziv": "Eisstadion Graz-Liebenau",
+      "adresa": "Graz",
+      "koordinate": "47.044722,15.455278",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "8e5da598-afb2-471d-9bf2-72c4a1126e53",
+      "naziv": "Erkel Theatre",
+      "adresa": "1087 Budapest, II. János Pál pápa tér 30",
+      "koordinate": "47.496944,19.076667",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "a057e02c-b179-41fe-8210-676acfb1a854",
+      "naziv": "Merkur Arena",
+      "adresa": "Stadionplatz 1, 8041 Graz, Österreich",
+      "koordinate": "47.04651,15.454759",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "a258727d-9c0f-4e54-90cd-32d5ab13107e",
+      "naziv": "Hala Tivoli",
+      "adresa": "Celovška cesta 25, 1000 Ljubljana",
+      "koordinate": "46.059722,14.495",
+      "grad": "Ljubljana"
+    },
+    {
+      "mbid": "a344a373-53e5-4a6b-9cd3-53ae2f7cb877",
+      "naziv": "Klub CD",
+      "adresa": "Prešernova cesta 10, 1000 Ljubljana, Slovenia",
+      "koordinate": "46.050682,14.498409",
+      "grad": "Ljubljana"
+    },
+    {
+      "mbid": "a3a30d81-f623-4ccd-a033-bc7b1eaf4686",
+      "naziv": "Križanke",
+      "adresa": "Ljubljana",
+      "koordinate": "46.046806,14.503203",
+      "grad": "Ljubljana"
+    },
+    {
+      "mbid": "a79713c4-969e-4627-b5e2-60294108b905",
+      "naziv": "Cankarjev dom: Štihova Hall",
+      "adresa": "Ljubljana",
+      "koordinate": "46.05,14.499",
+      "grad": "Ljubljana"
     },
     {
       "mbid": "ab0d0b88-81ee-4032-8c58-a479357832c0",
@@ -86,11 +333,88 @@ export const katalog = {
       "grad": "Split"
     },
     {
+      "mbid": "b4772b3d-382d-4a40-a2d4-b6824ad18669",
+      "naziv": "Cankarjev dom: Gallus Hall",
+      "adresa": "Ljubljana",
+      "koordinate": "46.05,14.499",
+      "grad": "Ljubljana"
+    },
+    {
+      "mbid": "b59b7a29-7302-4cb6-b8d1-cc33aa31cf06",
+      "naziv": "Narodno pozorište Sarajevo",
+      "adresa": "Obala Kulina bana 9, Sarajevo 71000, Bosnia & Herzegovina",
+      "koordinate": "43.857372,18.420783",
+      "grad": "Sarajevo"
+    },
+    {
+      "mbid": "b79373d9-b3ba-433d-a294-7b43d9c1cfb3",
+      "naziv": "Bundesstadion Liebenau",
+      "adresa": "Stadionplatz 1, 8041 Graz, Österreich",
+      "koordinate": "47.04651,15.454759",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "bd7bc54c-74b3-4921-bb3d-f09709a595bc",
+      "naziv": "Budapest Opera Theatre",
+      "adresa": "Budapest",
+      "koordinate": "47.502808,19.058189",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "becc3f79-a105-4a38-9d7f-f2e6f4b75ac3",
+      "naziv": "Millenáris",
+      "adresa": "Kis Rókus u. 16-20, 1024 Budapest, Hungary",
+      "koordinate": "47.5115,19.0248",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "bf553d8e-b352-46cd-955b-478ed991157f",
+      "naziv": "Grazer Congress",
+      "adresa": "Sparkassenplatz 1, 8010 Graz, Österreich",
+      "koordinate": "47.069861,15.437477",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "c38f2905-811c-4c61-8abb-05a53839fbdd",
+      "naziv": "Budapest Music Center",
+      "adresa": "Mátyás u. 8, Budapest, 1093 Hungary",
+      "koordinate": "47.485687,19.060915",
+      "grad": "Budapest"
+    },
+    {
       "mbid": "c9824afd-9b6d-4b69-abdd-178bedf60f8d",
       "naziv": "Arena Zagreb",
       "adresa": "Ulica Vice Vukova 8, Zagreb, Croatia",
       "koordinate": "45.771667,15.942833",
       "grad": "Zagreb"
+    },
+    {
+      "mbid": "cd9e690a-c1b7-4eb5-89c4-5e17e7745d0b",
+      "naziv": "Skenderija",
+      "adresa": "Terezija BB, 71000 Sarajevo",
+      "koordinate": "43.854561,18.414083",
+      "grad": "Sarajevo"
+    },
+    {
+      "mbid": "cecef814-ab7f-4195-a140-11b292334f8d",
+      "naziv": "Mixát Stage",
+      "adresa": "Krúdy Gyula utca 7",
+      "koordinate": "47.490083,19.06762",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "cf11b47f-73c1-483d-9811-1c3ccbcf155d",
+      "naziv": "Dürer Kert",
+      "adresa": "Budapest, Vízpart U. 1, 1117 Hungary",
+      "koordinate": "47.466137,19.058362",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "d08b1d33-6f3a-4b9b-a4f6-9fb0d10e5b5f",
+      "naziv": "Schloßbergbühne Kasematten",
+      "adresa": "Schloßberg 6, 8010 Graz",
+      "koordinate": "47.076334,15.437412",
+      "grad": "Graz"
     },
     {
       "mbid": "d24a6858-2efa-4c09-a736-31c8be090c51",
@@ -100,11 +424,32 @@ export const katalog = {
       "grad": "Zagreb"
     },
     {
+      "mbid": "d2507b0d-80b6-4cf0-89d7-2057ed224f09",
+      "naziv": "Puskás Aréna",
+      "adresa": "Budapest",
+      "koordinate": "47.503176,19.094446",
+      "grad": "Budapest"
+    },
+    {
       "mbid": "d472d63a-d3f0-4f78-b979-f9611d0ec7a8",
       "naziv": "Hrvatsko narodno kazalište u Zagrebu",
       "adresa": "Trg maršala Tita 15, 10000, Zagreb, Croatia",
       "koordinate": "45.809444,15.97",
       "grad": "Zagreb"
+    },
+    {
+      "mbid": "d6b2c550-7d7e-4445-8c3e-2afd5c982c41",
+      "naziv": "Budapesti Olasz Kultúrintézet",
+      "adresa": "Budapest",
+      "koordinate": "47.492222,19.0625",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "d8b9f13c-2e2d-4a08-a9cc-5d04a0e67ac6",
+      "naziv": "A38",
+      "adresa": "Petőfi bridge, Buda side",
+      "koordinate": "47.476614,19.062964",
+      "grad": "Budapest"
     },
     {
       "mbid": "d9ed1a22-5230-4909-8481-f430de561bcc",
@@ -114,6 +459,13 @@ export const katalog = {
       "grad": "Zagreb"
     },
     {
+      "mbid": "da3afe0f-a4f7-4e49-bd5e-70dcf8c879c7",
+      "naziv": "Stefaniensaal",
+      "adresa": "Sparkassenplatz 1, 8010",
+      "koordinate": "47.069833,15.437917",
+      "grad": "Graz"
+    },
+    {
       "mbid": "dc60b426-f466-4434-97f3-bb3287957847",
       "naziv": "KSET",
       "adresa": "Unska ul. 3, 10000, Zagreb, Croatia",
@@ -121,11 +473,39 @@ export const katalog = {
       "grad": "Zagreb"
     },
     {
+      "mbid": "dfa6c962-1510-4ef1-8c46-2f192a9af6d6",
+      "naziv": "Cankarjev dom",
+      "adresa": "Prešernova cesta 10, 1000 Ljubljana",
+      "koordinate": "46.05,14.498889",
+      "grad": "Ljubljana"
+    },
+    {
       "mbid": "e233ac61-f240-4500-aaae-f7b537e67e76",
       "naziv": "Zagrebački hipodrom",
       "adresa": "10000, Zagreb, Croatia",
       "koordinate": "45.785278,15.971667",
       "grad": "Zagreb"
+    },
+    {
+      "mbid": "e9a3ec58-55b5-49bf-ac21-8a35bd666781",
+      "naziv": "Grazer Landhaus",
+      "adresa": "Herrengasse 16, 8010",
+      "koordinate": "47.069722,15.439167",
+      "grad": "Graz"
+    },
+    {
+      "mbid": "edd7cb70-d944-47f9-b227-cc7f87af6ca5",
+      "naziv": "Szimpla Kert",
+      "adresa": "1075 Budapest VII. kerület, Kazinczy utca 14",
+      "koordinate": "47.497,19.0634",
+      "grad": "Budapest"
+    },
+    {
+      "mbid": "f606b37b-308e-4f21-b332-8c54290487bd",
+      "naziv": "Hungarian Heritage House",
+      "adresa": "1051 Budapest, Vigadó tér 2, Hungary",
+      "koordinate": "47.495894,19.049456",
+      "grad": "Budapest"
     }
   ],
   "oznake": [

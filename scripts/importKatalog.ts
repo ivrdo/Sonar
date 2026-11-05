@@ -30,6 +30,10 @@ const GRADOVI = [
     { nazMjesto: "Zagreb", koordinate: "45.8150,15.9819" },
     { nazMjesto: "Split", koordinate: "43.5081,16.4402" },
     { nazMjesto: "Pula", koordinate: "44.8683,13.8481"},
+    { nazMjesto: "Ljubljana", koordinate: "46.0569,14.5058" },
+    { nazMjesto: "Graz", koordinate: "47.0707,15.4395" },
+    { nazMjesto: "Sarajevo", koordinate: "43.8563,18.4131" },
+    { nazMjesto: "Budapest", koordinate: "47.4984,19.0405" },
 ];
 const DOZVOLJENI_TIPOVI = new Set(["Venue", "Club", "Indoor arena", "Stadium", "Festival stage", "Amphitheatre"]);
 const DODATNO_UKLJUCI = new Set(["Zagrebački hipodrom"]);
