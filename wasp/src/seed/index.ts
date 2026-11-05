@@ -97,6 +97,25 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     skipDuplicates: true,
   });
 
+  let mjk = [];
+  for (const mjk1 of katalog.mjestaKoncerta) {
+    const sifMjesto = nazToSifMj.get(mjk1.grad);
+    if (sifMjesto === undefined) {
+      throw new Error(`MjKonc: ${mjk1.naziv} | Grad: ${mjk1.grad}`);
+    }
+    mjk.push({
+      mbid: mjk1.mbid,
+      nazMjestoKoncerta: mjk1.naziv,
+      adresaMjestoKoncerta: mjk1.adresa,
+      koordinate: mjk1.koordinate,
+      sifMjesto,
+    });
+  }
+  const MjKonc = await prisma.mjestoKoncerta.createMany({
+    data: mjk,
+    skipDuplicates: true,
+  });
+
   console.log(
     "Mjesto:",
     await prisma.mjesto.count(),
@@ -111,4 +130,5 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     "| očekivano veza:",
     katalog.izvodjaci.reduce((s1, s2) => s1 + s2.oznake.length, 0),
   );
+  console.log("MjestoKoncerta:", await prisma.mjestoKoncerta.count());
 };
