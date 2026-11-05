@@ -7,9 +7,14 @@ import { join, dirname } from "node:path";
 
 const LIMIT_IZVODJACA = 20;
 const LIMIT_ZAGREB = 20;
+const LIMIT_ALBUMI = 3;
+const MAX_STRANICA = 5;
 
 const POP_DNO = 0;
 const POP_VRH = 1;
+
+const GODINA_MIN = 1800;
+const GODINA_MAX = 2100;
 
 const MB = "https://musicbrainz.org/ws/2/";
 const LFM = "https://ws.audioscrobbler.com/2.0/";
@@ -61,6 +66,23 @@ type Katalog = {
     mjestaKoncerta: MjestoKoncerta[];
     oznake: { naziv: string; tip: "zanr" | "raspolozenje" }[];
     izvodjaci: KatalogIzvodjac[];
+    albumi: Album[];
+    pjesme: Pjesma[];
+};
+
+type Album = {
+    mbid: string;
+    naziv: string;
+    godina: number | null;
+    izvodjacMbid: string;
+};
+
+type Pjesma = {
+    mbid: string;
+    naziv: string;
+    trajanje: number | null;
+    albumMbid: string | null;
+    izvodjacMbid: string;
 };
 
 // ---------------------------------------------------------------------------
@@ -69,6 +91,8 @@ type Katalog = {
 
 const svaMjesta: MjestoKoncerta[] = [];
 const izvodjaci = new Map<string, Izvodjac>();
+const albumi = new Map<string, Album>();
+const pjesme = new Map<string, Pjesma>();
 let preskoceno = 0;
 
 // ---------------------------------------------------------------------------
@@ -246,6 +270,86 @@ function normalizirajPopularnost(): void {
     }
 }
 
+async function dohvatiAlbume(mbid: string): Promise<Album[]> {
+    const sve: any[] = [];
+    let ukupno = 0;
+    let offset = 0;
+    do {
+        const upit = `release-group?artist=${mbid}&type=album&limit=100&offset=${offset}&fmt=json`;
+        const rez = await cached(`albums-${mbid}-${offset}`, () => mb(upit));
+        ukupno = rez["release-group-count"];
+        sve.push(...(rez["release-groups"] ?? []));
+        offset += 100;
+    } while (offset < ukupno && offset < MAX_STRANICA * 100);
+
+    const stud = sve.filter((a) => (a["secondary-types"] ?? []).length === 0).map(el => {
+        const datum: string = el["first-release-date"] ?? "";
+        return {
+            mbid: el.id,
+            naziv: el.title,
+            godina: datum.length >= 4 ? Number(datum.slice(0, 4)) : null,
+            izvodjacMbid: mbid,
+        };
+    }).sort((a, b) => {
+        if (a.godina === null && b.godina === null) return a.mbid < b.mbid ? -1 : 1;
+        if (a.godina === null) return 1;
+        if (b.godina === null) return -1;
+        if (a.godina !== b.godina) return b.godina - a.godina;
+        return a.mbid < b.mbid ? -1 : 1;
+    }).slice(0, LIMIT_ALBUMI);
+
+    return stud;
+}
+
+async function dohvatiPjesme(album: Album): Promise<Pjesma[]> {
+    const upit = `release?release-group=${album.mbid}&status=official&inc=recordings&limit=1&fmt=json`;
+    const rez = await cached(`tracks-official-${album.mbid}`, () => mb(upit));
+    const izdanje = rez.releases?.[0];
+    if (!izdanje) return [];
+    const pjes = (izdanje.media?.[0]?.tracks ?? []).filter((t) => (t.recording?.id)).map((el) => {
+        return {
+            mbid: el.recording.id,
+            naziv: el.title,
+            trajanje: typeof el.length === "number" ? Math.round(el.length / 1000) : null,
+            albumMbid: album.mbid,
+            izvodjacMbid: album.izvodjacMbid,
+        };
+    });
+
+    return pjes;
+}
+
+async function dohvatiAlbumeIPjesme(): Promise<void> {
+    let bezAlbuma: string[] = [];
+    const neuspjelo: string[] = [];
+
+    for (const izv of izvodjaci.values()) {
+        try {
+            const noviAlbumi: Album[] = await dohvatiAlbume(izv.mbid);
+            const novePjesme: Pjesma[] = [];
+            for (const album of noviAlbumi) {
+                const pj = await dohvatiPjesme(album);
+                novePjesme.push(...pj);
+            }
+            noviAlbumi.forEach(a => {
+                if (!albumi.has(a.mbid)) {
+                    albumi.set(a.mbid, a);
+                }
+            });
+            novePjesme.forEach(p => {
+                if (!pjesme.has(p.mbid)) {
+                    pjesme.set(p.mbid, p);
+                }
+            });
+            if (noviAlbumi.length === 0) bezAlbuma.push(izv.naziv);
+        } catch (e) {
+            neuspjelo.push(`${izv.naziv}: ${e.message}`);
+        }
+    }
+    if (neuspjelo.length > 0) console.log(neuspjelo);
+    console.log(`albumi: ${albumi.size} | pjesme: ${pjesme.size} | izvođača bez albuma: ${bezAlbuma} | neuspjelo: ${neuspjelo.length}`);
+}
+
 function provjere(): void {
     const greske: string[] = [];
 
@@ -273,6 +377,26 @@ function provjere(): void {
             if (!Number.isFinite(j.tezina) || j.tezina < 0 || j.tezina > 1) {
                 greske.push(`Neispravna težina za ${i.naziv} za oznaku ${j.naziv}: ${j.tezina}`);
             }
+        }
+    }
+
+    for (const a of albumi.values()) {
+        if (!izvodjaci.has(a.izvodjacMbid)) {
+            greske.push(`Album ${a.naziv}: nepoznat izvođač ${a.izvodjacMbid}`);
+        }
+        if (a.godina !== null && (!Number.isInteger(a.godina) || a.godina < GODINA_MIN || a.godina > GODINA_MAX)) {
+            greske.push(`Album ${a.naziv}: neispravna godina ${a.godina}`);
+        }
+    }
+    for (const p of pjesme.values()) {
+        if (!izvodjaci.has(p.izvodjacMbid)) {
+            greske.push(`Pjesma ${p.naziv}: nepoznat izvođač ${p.izvodjacMbid}`);
+        }
+        if (p.albumMbid === null || !albumi.has(p.albumMbid)) {
+            greske.push(`Pjesma ${p.naziv}: nepoznat album ${p.albumMbid}`);
+        }
+        if (p.trajanje !== null && (!Number.isInteger(p.trajanje) || p.trajanje <= 0)) {
+            greske.push(`Pjesma ${p.naziv}: neispravno trajanje ${p.trajanje}`);
         }
     }
 
@@ -304,6 +428,8 @@ async function zapisiKatalog(): Promise<void> {
         mjestaKoncerta: [...svaMjesta].sort((a, b) => (a.mbid < b.mbid ? -1 : 1)),
         oznake,
         izvodjaci: izv,
+        albumi: [...albumi.values()].sort((a, b) => (a.mbid < b.mbid ? -1 : 1)),
+        pjesme: [...pjesme.values()].sort((a, b) => (a.mbid < b.mbid ? -1 : 1)),
     };
 
     const putanja = join(import.meta.dirname, "..", "wasp", "src", "seed", "data", "katalog.ts");
@@ -313,7 +439,7 @@ async function zapisiKatalog(): Promise<void> {
         `export const katalog = ${JSON.stringify(katalog, null, 2)};\n`;
     await writeFile(putanja, sadrzaj, "utf8");
 
-    console.log(`katalog.json: ${katalog.gradovi.length} gradova, ${katalog.mjestaKoncerta.length} mjesta, ${katalog.oznake.length} oznaka, ${katalog.izvodjaci.length} izvođača`);
+    console.log(`katalog.json: ${katalog.gradovi.length} gradova, ${katalog.mjestaKoncerta.length} mjesta, ${katalog.oznake.length} oznaka, ${katalog.izvodjaci.length} izvođača, ${katalog.albumi.length} albuma, ${katalog.pjesme.length} pjesama`);
 }
 
 // ---------------------------------------------------------------------------
@@ -328,6 +454,7 @@ async function main() {
 
     await dohvatiZagrebackeIzvodjace();
     await dohvatiOznake();
+    await dohvatiAlbumeIPjesme();
     normalizirajPopularnost();
     provjere();
 
