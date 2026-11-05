@@ -116,6 +116,45 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     skipDuplicates: true,
   });
 
+  let albm = [];
+  for (const albm1 of katalog.albumi) {
+    albm.push({
+      mbid: albm1.mbid,
+      nazAlbum: albm1.naziv,
+      godinaIzdanja: albm1.godina,
+      izvodjacMbid: albm1.izvodjacMbid,
+    });
+  }
+  const Albumi = await prisma.album.createMany({
+    data: albm,
+    skipDuplicates: true,
+  });
+
+  const al = await prisma.album.findMany();
+  let mbidToSifAlbum = new Map<string, number>();
+  for (const ali of al) {
+    mbidToSifAlbum.set(ali.mbid, ali.sifAlbum);
+  }
+
+  let pjsm = [];
+  for (const pjsm1 of katalog.pjesme) {
+    const sifAlbum = mbidToSifAlbum.get(pjsm1.albumMbid);
+    if (sifAlbum === undefined) {
+      throw new Error(`Pjesma: ${pjsm1.naziv} | Album: ${pjsm1.albumMbid}`);
+    }
+    pjsm.push({
+      mbid: pjsm1.mbid,
+      nazPjesma: pjsm1.naziv,
+      trajanje: pjsm1.trajanje,
+      sifAlbum,
+      izvodjacMbid: pjsm1.izvodjacMbid,
+    });
+  }
+  const Pjesme = await prisma.pjesma.createMany({
+    data: pjsm,
+    skipDuplicates: true,
+  });
+
   console.log(
     "Mjesto:",
     await prisma.mjesto.count(),
@@ -131,4 +170,6 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     katalog.izvodjaci.reduce((s1, s2) => s1 + s2.oznake.length, 0),
   );
   console.log("MjestoKoncerta:", await prisma.mjestoKoncerta.count());
+  console.log("Albumi:", await prisma.album.count());
+  console.log("Pjesme:", await prisma.pjesma.count());
 };
