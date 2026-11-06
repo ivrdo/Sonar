@@ -6,8 +6,6 @@ import { PasswordResetPage } from "./src/auth/email/PasswordResetPage" with { ty
 import { RequestPasswordResetPage } from "./src/auth/email/RequestPasswordResetPage" with { type: "ref" };
 import { SignupPage } from "./src/auth/email/SignupPage" with { type: "ref" };
 import { userSignupFields } from "./src/auth/email/userSignupFields" with { type: "ref" };
-import { tagsSpec } from "./src/tags/tags.wasp";
-import { tasksSpec } from "./src/tasks/task.wasp";
 
 export default app({
   name: "sonar",
@@ -41,8 +39,6 @@ export default app({
     rootComponent: App,
   },
   spec: [
-    tasksSpec,
-    tagsSpec,
     route("LoginRoute", "/login", page(LoginPage)),
     route("SignupRoute", "/signup", page(SignupPage)),
     route(
