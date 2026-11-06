@@ -58,4 +58,30 @@
     --color-status-plavi-pozadina: #DEEAFA;
     --color-status-sivi: #33424F;
     --color-status-sivi-pozadina: #E4E9EE;
+
+    /*
+        Ok, ovo je sad bitno za responzivnost.
+
+        Znači, definicija:
+        --breakpoint-(sm|md|lg|xl)
+
+        Svaka pojedina breakpoint definicija, koja već ima unaprijed zadane postavke,
+        ali koje se mogu mijenjati, generiraju prefiks istog oblika kao oni nastavci, znači
+        sm:, md:, lg:, xl:
+
+        Ti prefiksi se mogu dodati nekoj klasi koju dodajemo nekom HTML elementu.
+
+        Tipa negdje ćemo napisati lg:flex-row
+
+        Sve što to radi je zadaje da ako je onaj media width, ono što smo koristili za
+        responzivnost, veći od vrijednosti koju zadajemo ili one koja je zadana,
+        recimo @media (width >= zadana) { }, onda se primjenjuje pravilo.
+
+        lg je definiran na 64 rem.
+
+        Ja ću pak sada definirati novi breakpoint koji možemo koristiti za desktop.
+
+        S primjerice desktop:flex-row
+     */
+    --breakpoint-desktop: 64rem; /* Koristim zadanu lg vrijednost, najbliža je specifikaciji */
 }
