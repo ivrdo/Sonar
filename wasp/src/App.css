@@ -94,3 +94,23 @@
      */
     --font-sans: "Inter Variable", system-ui, sans-serif;
 }
+
+/*
+    Ovo je nešto specifično za Wasp + TailwindCSS. NAIME,
+
+    Wasp automatski generira index.html file. <body> element je dio te
+    datoteke. Tako da ne možemo s .jsx styleati <body> element. Umjesto toga,
+    to radimo ovdje u CSS-u.
+
+    S @apply možemo dodati, isto kao što bi recimo napravili u nekom style blocku
+    TailwindCSS klasu... Ono što sad isto možemo napraviti je koristiti ove definicije
+    od prije, tj. koristiti klase koje se su generirale kako bi styleali body.
+
+    text-[]/[] zadaje velicinu fonta / visinu linije izrazeno
+    kao 1.5 puta velicine fonta, ovako odokativno
+ */
+@layer base {
+    body {
+        @apply bg-pozadinska text-tekst-prva antialiased text-[15px]/[1.5];
+    }
+}
