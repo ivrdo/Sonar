@@ -84,4 +84,13 @@
         S primjerice desktop:flex-row
      */
     --breakpoint-desktop: 64rem; /* Koristim zadanu lg vrijednost, najbliža je specifikaciji */
+
+    /*
+        Slično --coloru, ovo definicija za font nam dozovljava da dobijemo
+        svojstva kao -bold i -medium, -normal.
+
+        TailwindCSS postavlja --font-sans kao zadani. Tako da ćemo definirati
+        -sans za naše potrebe.
+     */
+    --font-sans: "Inter Variable", system-ui, sans-serif;
 }

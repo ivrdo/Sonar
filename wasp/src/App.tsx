@@ -1,3 +1,9 @@
+/*
+    "@fontsource-variable/inter" - Importiramo font koji smo dodali kao npm paket.
+    { Outlet } from "react-router" - Ovo je dio Reacta
+    "./App.css" - naš css
+ */
+import "@fontsource-variable/inter";
 import { Outlet } from "react-router";
 import "./App.css";
 
