@@ -1,4 +1,61 @@
+/*
+    TailwindCSS dolazi s unaprijed napravljenim stilskim komponentama
+    koje možemo odmah primjenjivati na elemente DOMa, no isto tako da
+    mijenjamo postavke unaprijed zadanih komponenata, da generiramo komponente
+    time da zadamo vrijednosti/imena tim komponentama, itd.
+
+    Važno je razumjeti da se se TailwindCSS koristi u stilu inline-stylinga,
+    a nama je poznato da smo prije zapravo pisali puno toga u .css. No,
+    znamo da na kraju uvijek upisujemo barem klase u HTML element.
+
+    TailwindCSS komponente su moćne, tako ćemo puno manje CSS-a u datotekama
+    morat pisati, a puno više njih mogu biti tamo gdje će biti i elementi stranice,
+    ... u .jsx React datotekama.
+
+    E sad, ovaj import statement postoji i u normalnom CSS-u. Sve što radi je
+    importira sve unaprijed definirane Tailwind stilove.
+*/
 @import "tailwindcss";
 
 @theme {
+    /*
+        Ovdje definiramo boje koje ćemo koristiti kroz projekt.
+
+        TailwindCSS razumije ove zapise u navedenom obliku.
+
+        --color-<ime> je način definiranja.
+
+        Tailwind odmah generira klase kao:
+        bg-<ime>, text-<ime>, border-<ime>
+    */
+    --color-tekst-prva: #14232E;
+    --color-tekst-druga: #475866;
+    --color-tekst-treća: #6B7A87;
+
+    /* Akcent je naziv za boju koja upotpunjuje projekt da ne bude dosadan */
+    --color-akcent: #0B6E70;
+    --color-akcent-jaki: #074B4D;
+    --color-akcent-blijedi: #F0F8F8;
+    --color-akcent-mekani: #D6ECEC;
+
+    /* Za pozadine */
+    --color-pozadinska: #F4F6F8;
+    --color-bijela: #FFFFFF;
+
+    /* Za bordere */
+    --color-rubovi-1: #D5DCE3;
+    --color-rubovi-2: #E4E9EE;
+    --color-input-polja: #8796A3;
+
+    /* Za statuse (pilule) */
+    --color-status-zeleni: #14532D;
+    --color-status-zeleni-pozadina: #DDF1E4;
+    --color-status-smedjkasti: #7A3E00;
+    --color-status-smedjkasti-pozadina: #FCEBCB;
+    --color-status-crveni: #8E1B1B;
+    --color-status-crveni-pozadina: #FBE0E0;
+    --color-status-plavi: #17407A;
+    --color-status-plavi-pozadina: #DEEAFA;
+    --color-status-sivi: #33424F;
+    --color-status-sivi-pozadina: #E4E9EE;
 }
