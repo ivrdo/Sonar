@@ -1,5 +1,5 @@
 -- CreateEnum
-CREATE TYPE "KorisnikUloga" AS ENUM ('slusatelj', 'izvodjac', 'upravitelj mjesta', 'moderator', 'administrator');
+CREATE TYPE "KorisnikUloga" AS ENUM ('slusatelj', 'izvodjac', 'upravitelj_mjesta', 'moderator', 'administrator');
 
 -- CreateEnum
 CREATE TYPE "KorisnikStatus" AS ENUM ('aktivan', 'suspendiran', 'deaktiviran', 'obrisan');
@@ -11,22 +11,28 @@ CREATE TYPE "StanjeDohvata" AS ENUM ('u obradi', 'dohvacen', 'neuspjelo');
 CREATE TYPE "OznakaTip" AS ENUM ('zanr', 'raspolozenje');
 
 -- CreateEnum
+CREATE TYPE "StavkaTip" AS ENUM ('izvodjac', 'album', 'pjesma', 'koncert');
+
+-- CreateEnum
 CREATE TYPE "RecenzijaStanje" AS ENUM ('vidljiva', 'uklonjena');
 
 -- CreateEnum
-CREATE TYPE "KoncertStanje" AS ENUM ('predlozen', 'potvrden', 'otvorene prijave', 'odrzan', 'odbijen', 'istekao', 'otkazan');
+CREATE TYPE "KoncertStanje" AS ENUM ('predlozen', 'potvrden', 'otvorene_prijave', 'odrzan', 'odbijen', 'istekao', 'otkazan');
 
 -- CreateEnum
-CREATE TYPE "PrijavaNaKoncertStanje" AS ENUM ('prijavljen', 'dosao', 'nije dosao', 'otkazan');
+CREATE TYPE "PrijavaNaKoncertStanje" AS ENUM ('prijavljen', 'dosao', 'nije_dosao', 'otkazan');
 
 -- CreateEnum
-CREATE TYPE "PrijavaSadrzajaStanje" AS ENUM ('prijavljeno', 'u obradi', 'uklonjeno', 'odbaceno');
+CREATE TYPE "PrijavaSadrzajaStanje" AS ENUM ('prijavljeno', 'u_obradi', 'uklonjeno', 'odbaceno');
 
 -- CreateEnum
-CREATE TYPE "ZahtjevZaUloguTip" AS ENUM ('izvodjac', 'upravitelj mjesta');
+CREATE TYPE "ZahtjevZaUloguTip" AS ENUM ('izvodjac', 'upravitelj_mjesta');
 
 -- CreateEnum
 CREATE TYPE "ZahtjevZaUloguStanje" AS ENUM ('zahtjev', 'provjera', 'potrebna dopuna', 'potvrdjen', 'odbijen');
+
+-- CreateEnum
+CREATE TYPE "ZapisVrstaRadnje" AS ENUM ('uklanjanje_sadrzaja', 'odbacivanje_prijave', 'potvrda_zahtjeva', 'odbijanje_zahtjeva', 'trazenje_dopune');
 
 -- CreateTable
 CREATE TABLE "Korisnik" (
@@ -49,7 +55,7 @@ CREATE TABLE "Korisnik" (
 CREATE TABLE "Zapis" (
     "sifKorisnik" INTEGER NOT NULL,
     "datumVrijemeZapis" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "vrstaRadnje" TEXT NOT NULL,
+    "vrstaRadnje" "ZapisVrstaRadnje" NOT NULL,
     "opis" TEXT,
 
     CONSTRAINT "Zapis_pkey" PRIMARY KEY ("sifKorisnik","datumVrijemeZapis")
@@ -58,11 +64,18 @@ CREATE TABLE "Zapis" (
 -- CreateTable
 CREATE TABLE "PraviloSustava" (
     "sifPravilo" SERIAL NOT NULL,
-    "nazPravilo" TEXT NOT NULL,
-    "opisPravilo" TEXT NOT NULL,
-    "vrijednost" TEXT NOT NULL,
+    "brojUklonjenihDoSuspenzije" INTEGER NOT NULL,
+    "trajanjeSuspenzijeDana" INTEGER NOT NULL,
 
     CONSTRAINT "PraviloSustava_pkey" PRIMARY KEY ("sifPravilo")
+);
+
+-- CreateTable
+CREATE TABLE "Stavka" (
+    "sifStavka" SERIAL NOT NULL,
+    "tip" "StavkaTip" NOT NULL,
+
+    CONSTRAINT "Stavka_pkey" PRIMARY KEY ("sifStavka")
 );
 
 -- CreateTable
@@ -72,6 +85,7 @@ CREATE TABLE "Izvodjac" (
     "biografija" TEXT,
     "popularnost" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "stanjeDohvata" "StanjeDohvata" NOT NULL DEFAULT 'u obradi',
+    "sifStavka" INTEGER NOT NULL,
 
     CONSTRAINT "Izvodjac_pkey" PRIMARY KEY ("mbid")
 );
@@ -82,6 +96,7 @@ CREATE TABLE "Album" (
     "mbid" TEXT NOT NULL,
     "nazAlbum" TEXT NOT NULL,
     "godinaIzdanja" INTEGER,
+    "sifStavka" INTEGER NOT NULL,
     "izvodjacMbid" TEXT NOT NULL,
 
     CONSTRAINT "Album_pkey" PRIMARY KEY ("sifAlbum")
@@ -93,6 +108,7 @@ CREATE TABLE "Pjesma" (
     "mbid" TEXT NOT NULL,
     "nazPjesma" TEXT NOT NULL,
     "trajanje" INTEGER,
+    "sifStavka" INTEGER NOT NULL,
     "sifAlbum" INTEGER,
     "izvodjacMbid" TEXT NOT NULL,
 
@@ -147,9 +163,7 @@ CREATE TABLE "Recenzija" (
     "stanje" "RecenzijaStanje" NOT NULL DEFAULT 'vidljiva',
     "odgovorIzvodjaca" TEXT,
     "sifKorisnik" INTEGER NOT NULL,
-    "izvodjacMbid" TEXT,
-    "sifAlbum" INTEGER,
-    "sifPjesma" INTEGER,
+    "sifStavka" INTEGER NOT NULL,
 
     CONSTRAINT "Recenzija_pkey" PRIMARY KEY ("sifRecenzija")
 );
@@ -164,12 +178,31 @@ CREATE TABLE "Lista" (
 );
 
 -- CreateTable
-CREATE TABLE "ListaPjesama" (
+CREATE TABLE "ListaStavka" (
     "sifLista" INTEGER NOT NULL,
-    "sifPjesma" INTEGER NOT NULL,
+    "sifStavka" INTEGER NOT NULL,
     "redniBroj" INTEGER NOT NULL,
 
-    CONSTRAINT "ListaPjesama_pkey" PRIMARY KEY ("sifLista","sifPjesma")
+    CONSTRAINT "ListaStavka_pkey" PRIMARY KEY ("sifLista","sifStavka")
+);
+
+-- CreateTable
+CREATE TABLE "Ocjena" (
+    "sifKorisnik" INTEGER NOT NULL,
+    "sifStavka" INTEGER NOT NULL,
+    "ocjena" INTEGER NOT NULL,
+    "datum" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Ocjena_pkey" PRIMARY KEY ("sifKorisnik","sifStavka")
+);
+
+-- CreateTable
+CREATE TABLE "Svidja" (
+    "sifKorisnik" INTEGER NOT NULL,
+    "sifStavka" INTEGER NOT NULL,
+    "datum" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "Svidja_pkey" PRIMARY KEY ("sifKorisnik","sifStavka")
 );
 
 -- CreateTable
@@ -180,10 +213,24 @@ CREATE TABLE "Koncert" (
     "stanje" "KoncertStanje" NOT NULL DEFAULT 'predlozen',
     "rokZaPotvrdu" TIMESTAMP(3) NOT NULL,
     "razlogOdbijanja" TEXT,
+    "sifStavka" INTEGER NOT NULL,
     "sifMjestoKoncerta" INTEGER NOT NULL,
     "predlozioMbid" TEXT NOT NULL,
 
     CONSTRAINT "Koncert_pkey" PRIMARY KEY ("sifKoncert")
+);
+
+-- CreateTable
+CREATE TABLE "PrijavaNaKoncert" (
+    "sifPrijavaNa" SERIAL NOT NULL,
+    "sifKorisnik" INTEGER NOT NULL,
+    "sifKoncert" INTEGER NOT NULL,
+    "stanje" "PrijavaNaKoncertStanje" NOT NULL DEFAULT 'prijavljen',
+    "qrKod" TEXT NOT NULL,
+    "datumPrijave" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "vrijemeSkeniranja" TIMESTAMP(3),
+
+    CONSTRAINT "PrijavaNaKoncert_pkey" PRIMARY KEY ("sifPrijavaNa")
 );
 
 -- CreateTable
@@ -202,74 +249,6 @@ CREATE TABLE "PracenjeKorisnika" (
     "datum" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "PracenjeKorisnika_pkey" PRIMARY KEY ("sifPratitelj","sifPraceni")
-);
-
--- CreateTable
-CREATE TABLE "OcjenaIzvodjaca" (
-    "sifKorisnik" INTEGER NOT NULL,
-    "mbid" TEXT NOT NULL,
-    "ocjenaIzv" INTEGER,
-    "svidjaIzv" BOOLEAN,
-    "datumIzv" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "OcjenaIzvodjaca_pkey" PRIMARY KEY ("sifKorisnik","mbid")
-);
-
--- CreateTable
-CREATE TABLE "OcjenaAlbuma" (
-    "sifKorisnik" INTEGER NOT NULL,
-    "sifAlbum" INTEGER NOT NULL,
-    "ocjenaAlb" INTEGER,
-    "svidjaAlb" BOOLEAN,
-    "datumAlb" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "OcjenaAlbuma_pkey" PRIMARY KEY ("sifKorisnik","sifAlbum")
-);
-
--- CreateTable
-CREATE TABLE "OcjenaPjesme" (
-    "sifKorisnik" INTEGER NOT NULL,
-    "sifPjesma" INTEGER NOT NULL,
-    "ocjenaPjes" INTEGER,
-    "svidjaPjes" BOOLEAN,
-    "datumPjes" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "OcjenaPjesme_pkey" PRIMARY KEY ("sifKorisnik","sifPjesma")
-);
-
--- CreateTable
-CREATE TABLE "PrijavaNaKoncert" (
-    "sifPrijavaNa" SERIAL NOT NULL,
-    "sifKorisnik" INTEGER NOT NULL,
-    "sifKoncert" INTEGER NOT NULL,
-    "stanje" "PrijavaNaKoncertStanje" NOT NULL DEFAULT 'prijavljen',
-    "qrKod" TEXT NOT NULL,
-    "datumPrijave" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "vrijemeSkeniranja" TIMESTAMP(3),
-
-    CONSTRAINT "PrijavaNaKoncert_pkey" PRIMARY KEY ("sifPrijavaNa")
-);
-
--- CreateTable
-CREATE TABLE "PreporukaIzvodjaca" (
-    "sifKorisnik" INTEGER NOT NULL,
-    "mbid" TEXT NOT NULL,
-    "razlog" TEXT NOT NULL,
-    "bodovi" DOUBLE PRECISION NOT NULL,
-    "datumIzracuna" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "PreporukaIzvodjaca_pkey" PRIMARY KEY ("sifKorisnik","mbid")
-);
-
--- CreateTable
-CREATE TABLE "PreporukaKoncerta" (
-    "sifKorisnik" INTEGER NOT NULL,
-    "sifKoncert" INTEGER NOT NULL,
-    "razlog" TEXT NOT NULL,
-    "bodovi" DOUBLE PRECISION NOT NULL,
-    "datumIzracuna" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-
-    CONSTRAINT "PreporukaKoncerta_pkey" PRIMARY KEY ("sifKorisnik","sifKoncert")
 );
 
 -- CreateTable
@@ -316,6 +295,18 @@ CREATE TABLE "Obavijest" (
 );
 
 -- CreateTable
+CREATE TABLE "Preporuka" (
+    "sifPreporuka" SERIAL NOT NULL,
+    "razlog" TEXT NOT NULL,
+    "bodovi" DOUBLE PRECISION NOT NULL,
+    "datumIzracuna" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "sifKorisnik" INTEGER NOT NULL,
+    "sifStavka" INTEGER NOT NULL,
+
+    CONSTRAINT "Preporuka_pkey" PRIMARY KEY ("sifPreporuka")
+);
+
+-- CreateTable
 CREATE TABLE "_OdabraoPriRegOznaku" (
     "A" INTEGER NOT NULL,
     "B" INTEGER NOT NULL
@@ -346,16 +337,22 @@ CREATE UNIQUE INDEX "Korisnik_email_key" ON "Korisnik"("email");
 CREATE INDEX "Korisnik_sifMjesto_idx" ON "Korisnik"("sifMjesto");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "PraviloSustava_nazPravilo_key" ON "PraviloSustava"("nazPravilo");
+CREATE UNIQUE INDEX "Izvodjac_sifStavka_key" ON "Izvodjac"("sifStavka");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Album_mbid_key" ON "Album"("mbid");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Album_sifStavka_key" ON "Album"("sifStavka");
 
 -- CreateIndex
 CREATE INDEX "Album_izvodjacMbid_idx" ON "Album"("izvodjacMbid");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Pjesma_mbid_key" ON "Pjesma"("mbid");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Pjesma_sifStavka_key" ON "Pjesma"("sifStavka");
 
 -- CreateIndex
 CREATE INDEX "Pjesma_izvodjacMbid_idx" ON "Pjesma"("izvodjacMbid");
@@ -376,13 +373,7 @@ CREATE INDEX "MjestoKoncerta_sifMjesto_idx" ON "MjestoKoncerta"("sifMjesto");
 CREATE INDEX "Recenzija_sifKorisnik_idx" ON "Recenzija"("sifKorisnik");
 
 -- CreateIndex
-CREATE INDEX "Recenzija_izvodjacMbid_idx" ON "Recenzija"("izvodjacMbid");
-
--- CreateIndex
-CREATE INDEX "Recenzija_sifAlbum_idx" ON "Recenzija"("sifAlbum");
-
--- CreateIndex
-CREATE INDEX "Recenzija_sifPjesma_idx" ON "Recenzija"("sifPjesma");
+CREATE INDEX "Recenzija_sifStavka_idx" ON "Recenzija"("sifStavka");
 
 -- CreateIndex
 CREATE INDEX "Recenzija_datum_idx" ON "Recenzija"("datum");
@@ -391,7 +382,16 @@ CREATE INDEX "Recenzija_datum_idx" ON "Recenzija"("datum");
 CREATE INDEX "Lista_sifKorisnik_idx" ON "Lista"("sifKorisnik");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "ListaPjesama_sifLista_redniBroj_key" ON "ListaPjesama"("sifLista", "redniBroj");
+CREATE UNIQUE INDEX "ListaStavka_sifLista_redniBroj_key" ON "ListaStavka"("sifLista", "redniBroj");
+
+-- CreateIndex
+CREATE INDEX "Ocjena_sifStavka_idx" ON "Ocjena"("sifStavka");
+
+-- CreateIndex
+CREATE INDEX "Svidja_sifStavka_idx" ON "Svidja"("sifStavka");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Koncert_sifStavka_key" ON "Koncert"("sifStavka");
 
 -- CreateIndex
 CREATE INDEX "Koncert_sifMjestoKoncerta_idx" ON "Koncert"("sifMjestoKoncerta");
@@ -430,6 +430,12 @@ CREATE INDEX "ZahtjevZaUlogu_stanje_idx" ON "ZahtjevZaUlogu"("stanje");
 CREATE INDEX "Obavijest_sifKorisnik_procitano_idx" ON "Obavijest"("sifKorisnik", "procitano");
 
 -- CreateIndex
+CREATE INDEX "Preporuka_sifKorisnik_idx" ON "Preporuka"("sifKorisnik");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Preporuka_sifKorisnik_sifStavka_key" ON "Preporuka"("sifKorisnik", "sifStavka");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "_OdabraoPriRegOznaku_AB_unique" ON "_OdabraoPriRegOznaku"("A", "B");
 
 -- CreateIndex
@@ -466,7 +472,16 @@ ALTER TABLE "Korisnik" ADD CONSTRAINT "Korisnik_upravljaSifMjestoKoncerta_fkey" 
 ALTER TABLE "Zapis" ADD CONSTRAINT "Zapis_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Izvodjac" ADD CONSTRAINT "Izvodjac_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Album" ADD CONSTRAINT "Album_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "Album" ADD CONSTRAINT "Album_izvodjacMbid_fkey" FOREIGN KEY ("izvodjacMbid") REFERENCES "Izvodjac"("mbid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Pjesma" ADD CONSTRAINT "Pjesma_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Pjesma" ADD CONSTRAINT "Pjesma_sifAlbum_fkey" FOREIGN KEY ("sifAlbum") REFERENCES "Album"("sifAlbum") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -487,28 +502,43 @@ ALTER TABLE "MjestoKoncerta" ADD CONSTRAINT "MjestoKoncerta_sifMjesto_fkey" FORE
 ALTER TABLE "Recenzija" ADD CONSTRAINT "Recenzija_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Recenzija" ADD CONSTRAINT "Recenzija_izvodjacMbid_fkey" FOREIGN KEY ("izvodjacMbid") REFERENCES "Izvodjac"("mbid") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Recenzija" ADD CONSTRAINT "Recenzija_sifAlbum_fkey" FOREIGN KEY ("sifAlbum") REFERENCES "Album"("sifAlbum") ON DELETE SET NULL ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "Recenzija" ADD CONSTRAINT "Recenzija_sifPjesma_fkey" FOREIGN KEY ("sifPjesma") REFERENCES "Pjesma"("sifPjesma") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "Recenzija" ADD CONSTRAINT "Recenzija_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Lista" ADD CONSTRAINT "Lista_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ListaPjesama" ADD CONSTRAINT "ListaPjesama_sifLista_fkey" FOREIGN KEY ("sifLista") REFERENCES "Lista"("sifLista") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ListaStavka" ADD CONSTRAINT "ListaStavka_sifLista_fkey" FOREIGN KEY ("sifLista") REFERENCES "Lista"("sifLista") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "ListaPjesama" ADD CONSTRAINT "ListaPjesama_sifPjesma_fkey" FOREIGN KEY ("sifPjesma") REFERENCES "Pjesma"("sifPjesma") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "ListaStavka" ADD CONSTRAINT "ListaStavka_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Ocjena" ADD CONSTRAINT "Ocjena_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Ocjena" ADD CONSTRAINT "Ocjena_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Svidja" ADD CONSTRAINT "Svidja_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Svidja" ADD CONSTRAINT "Svidja_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Koncert" ADD CONSTRAINT "Koncert_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Koncert" ADD CONSTRAINT "Koncert_sifMjestoKoncerta_fkey" FOREIGN KEY ("sifMjestoKoncerta") REFERENCES "MjestoKoncerta"("sifMjestoKoncerta") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Koncert" ADD CONSTRAINT "Koncert_predlozioMbid_fkey" FOREIGN KEY ("predlozioMbid") REFERENCES "Izvodjac"("mbid") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PrijavaNaKoncert" ADD CONSTRAINT "PrijavaNaKoncert_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PrijavaNaKoncert" ADD CONSTRAINT "PrijavaNaKoncert_sifKoncert_fkey" FOREIGN KEY ("sifKoncert") REFERENCES "Koncert"("sifKoncert") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PracenjeIzvodjaca" ADD CONSTRAINT "PracenjeIzvodjaca_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -521,42 +551,6 @@ ALTER TABLE "PracenjeKorisnika" ADD CONSTRAINT "PracenjeKorisnika_sifPratitelj_f
 
 -- AddForeignKey
 ALTER TABLE "PracenjeKorisnika" ADD CONSTRAINT "PracenjeKorisnika_sifPraceni_fkey" FOREIGN KEY ("sifPraceni") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OcjenaIzvodjaca" ADD CONSTRAINT "OcjenaIzvodjaca_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OcjenaIzvodjaca" ADD CONSTRAINT "OcjenaIzvodjaca_mbid_fkey" FOREIGN KEY ("mbid") REFERENCES "Izvodjac"("mbid") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OcjenaAlbuma" ADD CONSTRAINT "OcjenaAlbuma_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OcjenaAlbuma" ADD CONSTRAINT "OcjenaAlbuma_sifAlbum_fkey" FOREIGN KEY ("sifAlbum") REFERENCES "Album"("sifAlbum") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OcjenaPjesme" ADD CONSTRAINT "OcjenaPjesme_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "OcjenaPjesme" ADD CONSTRAINT "OcjenaPjesme_sifPjesma_fkey" FOREIGN KEY ("sifPjesma") REFERENCES "Pjesma"("sifPjesma") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PrijavaNaKoncert" ADD CONSTRAINT "PrijavaNaKoncert_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PrijavaNaKoncert" ADD CONSTRAINT "PrijavaNaKoncert_sifKoncert_fkey" FOREIGN KEY ("sifKoncert") REFERENCES "Koncert"("sifKoncert") ON DELETE RESTRICT ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PreporukaIzvodjaca" ADD CONSTRAINT "PreporukaIzvodjaca_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PreporukaIzvodjaca" ADD CONSTRAINT "PreporukaIzvodjaca_mbid_fkey" FOREIGN KEY ("mbid") REFERENCES "Izvodjac"("mbid") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PreporukaKoncerta" ADD CONSTRAINT "PreporukaKoncerta_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE "PreporukaKoncerta" ADD CONSTRAINT "PreporukaKoncerta_sifKoncert_fkey" FOREIGN KEY ("sifKoncert") REFERENCES "Koncert"("sifKoncert") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "PrijavaSadrzaja" ADD CONSTRAINT "PrijavaSadrzaja_sifPodnositelj_fkey" FOREIGN KEY ("sifPodnositelj") REFERENCES "Korisnik"("sifKorisnik") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -578,6 +572,12 @@ ALTER TABLE "ZahtjevZaUlogu" ADD CONSTRAINT "ZahtjevZaUlogu_sifMjestoKoncerta_fk
 
 -- AddForeignKey
 ALTER TABLE "Obavijest" ADD CONSTRAINT "Obavijest_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Preporuka" ADD CONSTRAINT "Preporuka_sifKorisnik_fkey" FOREIGN KEY ("sifKorisnik") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "Preporuka" ADD CONSTRAINT "Preporuka_sifStavka_fkey" FOREIGN KEY ("sifStavka") REFERENCES "Stavka"("sifStavka") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "_OdabraoPriRegOznaku" ADD CONSTRAINT "_OdabraoPriRegOznaku_A_fkey" FOREIGN KEY ("A") REFERENCES "Korisnik"("sifKorisnik") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -602,3 +602,37 @@ ALTER TABLE "_Nastupa" ADD CONSTRAINT "_Nastupa_A_fkey" FOREIGN KEY ("A") REFERE
 
 -- AddForeignKey
 ALTER TABLE "_Nastupa" ADD CONSTRAINT "_Nastupa_B_fkey" FOREIGN KEY ("B") REFERENCES "Koncert"("sifKoncert") ON DELETE CASCADE ON UPDATE CASCADE;
+
+--Ocjena je od 1 do 5
+ALTER TABLE "Ocjena" ADD CONSTRAINT chk_ocjena_1_5 CHECK ("ocjena" BETWEEN 1 AND 5);
+
+--Korisnik ne moze pratiti sam sebe
+ALTER TABLE "PracenjeKorisnika" ADD CONSTRAINT chk_ne_prati_sam_sebe CHECK("sifPratitelj" <> "sifPraceni");
+
+--Jedna aktivna prijava po koncertu i korisniku (otkazane su izuzete)
+CREATE UNIQUE INDEX uq_aktivna_prijava ON "PrijavaNaKoncert" ("sifKorisnik", "sifKoncert") WHERE "stanje" <> 'otkazan';
+
+--Ocjene, svidja mi se i recenzije nisu dostupne za koncerte
+CREATE OR REPLACE FUNCTION provjeri_tip_stavke_nije_koncert() RETURNS trigger AS $$
+DECLARE
+       t "StavkaTip";
+BEGIN
+    SELECT "tip" INTO t FROM "Stavka" WHERE "sifStavka" = NEW."sifStavka";
+    IF t = 'koncert' THEN
+       RAISE EXCEPTION 'Ocjene, oznake svidja mi se i recenzije nisu dostupne za koncerte';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_ocjena_tip_stavke
+    BEFORE INSERT OR UPDATE ON "Ocjena"
+    FOR EACH ROW EXECUTE FUNCTION provjeri_tip_stavke_nije_koncert();
+
+CREATE TRIGGER trg_svidja_tip_stavke
+    BEFORE INSERT OR UPDATE ON "Svidja"
+    FOR EACH ROW EXECUTE FUNCTION provjeri_tip_stavke_nije_koncert();
+
+CREATE TRIGGER trg_recenzija_tip_stavke
+    BEFORE INSERT OR UPDATE ON "Recenzija"
+    FOR EACH ROW EXECUTE FUNCTION provjeri_tip_stavke_nije_koncert();
