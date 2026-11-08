@@ -7,6 +7,7 @@ import { RequestPasswordResetPage } from "./src/auth/email/RequestPasswordResetP
 import { SignupPage } from "./src/auth/email/SignupPage" with { type: "ref" };
 import { userSignupFields } from "./src/auth/email/userSignupFields" with { type: "ref" };
 import { LandingPage } from "./src/pages/LandingPage" with { type: "ref" };
+import { ConcertDetailPage } from "./src/pages/ConcertDetailPage" with { type: "ref" };
 
 export default app({
   name: "sonar",
@@ -40,6 +41,7 @@ export default app({
     rootComponent: App,
   },
   spec: [
+    route("ConcertDetailRoute", "/concerts/:id", page(ConcertDetailPage)),
     route("HomeRoute", "/", page(LandingPage)),
     route("LoginRoute", "/login", page(LoginPage)),
     route("SignupRoute", "/signup", page(SignupPage)),
