@@ -1,22 +1,6 @@
 import type { DbSeedFn } from "wasp/server";
 import { katalog } from "./data/katalog.js";
 
-export const seedProba: DbSeedFn = async (prisma) => {
-  const mjesto =
-    (await prisma.mjesto.findFirst({ where: { nazMjesto: "Zagreb" } })) ??
-    (await prisma.mjesto.create({
-      data: { nazMjesto: "Zagreb", koordinate: "45.8150,15.9819" },
-    }));
-
-  await prisma.izvodjac.upsert({
-    where: { mbid: "test-izvodjac-0001" },
-    update: {},
-    create: { mbid: "test-izvodjac-0001", nazIzvodjaca: "Probni izvođač" },
-  });
-
-  console.log(`Seed OK, sifMjesto=${mjesto.sifMjesto}`);
-};
-
 export const pregledBaze: DbSeedFn = async (prisma) => {
   console.log("Mjesto:", await prisma.mjesto.findMany());
   console.log(
@@ -32,15 +16,6 @@ export const pregledBaze: DbSeedFn = async (prisma) => {
     koncert: await prisma.koncert.count(),
     mjesto: await prisma.mjesto.count(),
   });
-};
-
-export const seedKatalogProba: DbSeedFn = async () => {
-  console.log(
-    "izvođača:",
-    katalog.izvodjaci.length,
-    "| mjesta:",
-    katalog.mjestaKoncerta.length,
-  );
 };
 
 export const seedKatalog: DbSeedFn = async (prisma) => {
@@ -65,12 +40,21 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     skipDuplicates: true,
   });
 
-  const i = await prisma.izvodjac.createMany({
-    data: katalog.izvodjaci.map((el) => {
-      return { mbid: el.mbid, nazIzvodjaca: el.naziv, popularnost: el.popularnost, stanjeDohvata: "DOHVACEN" as const };
-    }),
-    skipDuplicates: true,
-  });
+  const postojeciIzv = new Set(
+    (await prisma.izvodjac.findMany({ select: { mbid: true } })).map((x) => x.mbid),
+  );
+  for (const el of katalog.izvodjaci) {
+    if (postojeciIzv.has(el.mbid)) continue;
+    await prisma.izvodjac.create({
+      data: {
+        mbid: el.mbid,
+        nazIzvodjaca: el.naziv,
+        popularnost: el.popularnost,
+        stanjeDohvata: "DOHVACEN",
+        stavka: { create: { tip: "IZVODJAC" } },
+      },
+    });
+  }
 
   const oz = await prisma.oznaka.findMany();
   let nazToSifOzn = new Map<string, number>();
@@ -116,19 +100,23 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     skipDuplicates: true,
   });
 
-  let albm = [];
-  for (const albm1 of katalog.albumi) {
-    albm.push({
-      mbid: albm1.mbid,
-      nazAlbum: albm1.naziv,
-      godinaIzdanja: albm1.godina,
-      izvodjacMbid: albm1.izvodjacMbid,
+  const postojeciAlb = new Set(
+    (await prisma.album.findMany({ select: { mbid: true } })).map(
+      (x) => x.mbid,
+    ),
+  );
+  for (const a of katalog.albumi) {
+    if (postojeciAlb.has(a.mbid)) continue;
+    await prisma.album.create({
+      data: {
+        mbid: a.mbid,
+        nazAlbum: a.naziv,
+        godinaIzdanja: a.godina,
+        izvodjac: { connect: { mbid: a.izvodjacMbid } },
+        stavka: { create: { tip: "ALBUM" } },
+      },
     });
   }
-  const Albumi = await prisma.album.createMany({
-    data: albm,
-    skipDuplicates: true,
-  });
 
   const al = await prisma.album.findMany();
   let mbidToSifAlbum = new Map<string, number>();
@@ -136,24 +124,28 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     mbidToSifAlbum.set(ali.mbid, ali.sifAlbum);
   }
 
-  let pjsm = [];
-  for (const pjsm1 of katalog.pjesme) {
-    const sifAlbum = mbidToSifAlbum.get(pjsm1.albumMbid);
+  const postojecePj = new Set(
+    (await prisma.pjesma.findMany({ select: { mbid: true } })).map(
+      (x) => x.mbid,
+    ),
+  );
+  for (const p of katalog.pjesme) {
+    if (postojecePj.has(p.mbid)) continue;
+    const sifAlbum = mbidToSifAlbum.get(p.albumMbid);
     if (sifAlbum === undefined) {
-      throw new Error(`Pjesma: ${pjsm1.naziv} | Album: ${pjsm1.albumMbid}`);
+      throw new Error(`Pjesma: ${p.naziv} | Album: ${p.albumMbid}`);
     }
-    pjsm.push({
-      mbid: pjsm1.mbid,
-      nazPjesma: pjsm1.naziv,
-      trajanje: pjsm1.trajanje,
-      sifAlbum,
-      izvodjacMbid: pjsm1.izvodjacMbid,
+    await prisma.pjesma.create({
+      data: {
+        mbid: p.mbid,
+        nazPjesma: p.naziv,
+        trajanje: p.trajanje,
+        album: { connect: { sifAlbum } },
+        izvodjac: { connect: { mbid: p.izvodjacMbid } },
+        stavka: { create: { tip: "PJESMA" } },
+      },
     });
   }
-  const Pjesme = await prisma.pjesma.createMany({
-    data: pjsm,
-    skipDuplicates: true,
-  });
 
   console.log(
     "Mjesto:",
@@ -172,4 +164,10 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
   console.log("MjestoKoncerta:", await prisma.mjestoKoncerta.count());
   console.log("Albumi:", await prisma.album.count());
   console.log("Pjesme:", await prisma.pjesma.count());
+  console.log(
+    "Stavka:",
+    await prisma.stavka.count(),
+    "| očekivano:",
+    katalog.izvodjaci.length + katalog.albumi.length + katalog.pjesme.length,
+  );
 };

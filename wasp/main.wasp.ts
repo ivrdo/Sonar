@@ -7,9 +7,7 @@ import { RequestPasswordResetPage } from "./src/auth/email/RequestPasswordResetP
 import { SignupPage } from "./src/auth/email/SignupPage" with { type: "ref" };
 import { userSignupFields } from "./src/auth/email/userSignupFields" with { type: "ref" };
 import {
-  seedProba,
   pregledBaze,
-  seedKatalogProba,
   seedKatalog,
 } from "./src/seed/index" with { type: "ref" };
 import { tagsSpec } from "./src/tags/tags.wasp";
@@ -44,7 +42,7 @@ export default app({
     provider: "Dummy",
   },
   db: {
-    seeds: [seedProba, pregledBaze, seedKatalogProba, seedKatalog],
+    seeds: [pregledBaze, seedKatalog],
   },
   client: {
     rootComponent: App,
