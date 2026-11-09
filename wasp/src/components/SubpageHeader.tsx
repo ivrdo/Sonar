@@ -24,6 +24,8 @@
         - hover:bg-pozadinska: blaga siva pozadina kad se pređe mišem
         - focus-visible:ring-2 focus-visible:ring-akcent: okvir pri navigaciji tipkovnicom
         - h-5 w-5: veličina ikone strelice (20px)
+        - flex-1: naslov zauzima preostali prostor pa desni sadržaj ide skroz udesno
+        - text-[17px] font-semibold: naslov, desktop:text-sm manji na desktopu
 
     Strelica natrag koristi window.history.back(), što vraća korisnika na
     prethodnu stranicu. Ikona je /dizajn/ikone/back.svg (iz mape public).
@@ -49,7 +51,11 @@ export function SubpageHeader({ title, children }: SubpageHeaderProps) {
                 <img src="/dizajn/ikone/back.svg" alt="" className="h-5 w-5" />
             </button>
 
-            {title}
+            {/* Naslov */}
+            <h1 className="flex-1 text-[17px] font-semibold text-tekst-prva desktop:text-sm">
+                {title}
+            </h1>
+
             {children}
         </header>
     );
