@@ -2130,7 +2130,7 @@ export const katalog = {
     {
       "mbid": "0383dadf-2a4e-4d10-a46a-e9e041da8eb3",
       "naziv": "Queen",
-      "popularnost": 0.9860448665307242,
+      "popularnost": 0.986742623204188,
       "oznake": [
         {
           "naziv": "classic rock",
@@ -2177,7 +2177,7 @@ export const katalog = {
     {
       "mbid": "0878a633-a331-41c1-b9cf-955a973412a5",
       "naziv": "Davor Tosovic",
-      "popularnost": 0.22133048417864085,
+      "popularnost": 0.2602639599697088,
       "oznake": [
         {
           "naziv": "dub techno",
@@ -2188,7 +2188,7 @@ export const katalog = {
     {
       "mbid": "0e75969d-e1ae-47ff-a481-2ada02702c15",
       "naziv": "Neon Lies",
-      "popularnost": 0.2762979489403758,
+      "popularnost": 0.312483051493357,
       "oznake": [
         {
           "naziv": "ambient",
@@ -2235,7 +2235,7 @@ export const katalog = {
     {
       "mbid": "122d63fc-8671-43e4-9752-34e846d62a9c",
       "naziv": "Katy Perry",
-      "popularnost": 0.9863478598622862,
+      "popularnost": 0.987030466869172,
       "oznake": [
         {
           "naziv": "pop",
@@ -2282,7 +2282,7 @@ export const katalog = {
     {
       "mbid": "13d4e57b-1c0a-4bf1-9fd2-b2e0017727c4",
       "naziv": "Sleepyheads",
-      "popularnost": 0.043003171032657585,
+      "popularnost": 0.0908530124810247,
       "oznake": [
         {
           "naziv": "indie",
@@ -2329,7 +2329,7 @@ export const katalog = {
     {
       "mbid": "1852ddd2-6b0d-4332-beee-fb9ac77d5bfa",
       "naziv": "Šank?!",
-      "popularnost": 0.15453229366427815,
+      "popularnost": 0.1968056789810642,
       "oznake": [
         {
           "naziv": "punk",
@@ -2376,7 +2376,7 @@ export const katalog = {
     {
       "mbid": "1882fe91-cdd9-49c9-9956-8e06a3810bd4",
       "naziv": "Sabrina Carpenter",
-      "popularnost": 0.9113367103097221,
+      "popularnost": 0.915769874794236,
       "oznake": [
         {
           "naziv": "pop",
@@ -2423,7 +2423,7 @@ export const katalog = {
     {
       "mbid": "1d440002-82cb-476f-9ecf-0356b925c51f",
       "naziv": "Sara Renar",
-      "popularnost": 0.19998684732011715,
+      "popularnost": 0.2399875049541113,
       "oznake": [
         {
           "naziv": "croatian",
@@ -2470,7 +2470,7 @@ export const katalog = {
     {
       "mbid": "1fb0cd12-91a4-4ff6-8ed8-18ed625b3dc6",
       "naziv": "Storms",
-      "popularnost": 0.2218793341497867,
+      "popularnost": 0.26078536744229736,
       "oznake": [
         {
           "naziv": "post-rock",
@@ -2517,7 +2517,7 @@ export const katalog = {
     {
       "mbid": "20244d07-534f-4eff-b4d4-930878889970",
       "naziv": "Taylor Swift",
-      "popularnost": 0.9679013919049508,
+      "popularnost": 0.9695063223097034,
       "oznake": [
         {
           "naziv": "country",
@@ -2564,7 +2564,7 @@ export const katalog = {
     {
       "mbid": "25b7b584-d952-4662-a8b9-dd8cdfbfeb64",
       "naziv": "A$AP Rocky",
-      "popularnost": 0.9167224444677462,
+      "popularnost": 0.9208863222443588,
       "oznake": [
         {
           "naziv": "hip-hop",
@@ -2611,7 +2611,7 @@ export const katalog = {
     {
       "mbid": "260b6184-8828-48eb-945c-bc4cb6fc34ca",
       "naziv": "Charli xcx",
-      "popularnost": 0.9252011649708969,
+      "popularnost": 0.9289411067223521,
       "oznake": [
         {
           "naziv": "pop",
@@ -2658,7 +2658,7 @@ export const katalog = {
     {
       "mbid": "26f4466f-5152-44f3-b85a-a23d330234fa",
       "naziv": "Umor",
-      "popularnost": 0.18328743061715,
+      "popularnost": 0.2241230590862925,
       "oznake": [
         {
           "naziv": "stoner",
@@ -2705,7 +2705,7 @@ export const katalog = {
     {
       "mbid": "272989c8-5535-492d-a25c-9f58803e027f",
       "naziv": "SZA",
-      "popularnost": 0.9178950965904671,
+      "popularnost": 0.9220003417609437,
       "oznake": [
         {
           "naziv": "rnb",
@@ -2752,7 +2752,7 @@ export const katalog = {
     {
       "mbid": "2ba2150e-0396-473f-8c59-792424c7b34e",
       "naziv": "Trophy Jump",
-      "popularnost": 0.10198380052811061,
+      "popularnost": 0.1468846105017051,
       "oznake": [
         {
           "naziv": "skate punk",
@@ -2783,7 +2783,7 @@ export const katalog = {
     {
       "mbid": "2bfef901-2d70-4ec6-b646-61ed2619a116",
       "naziv": "Omnivox",
-      "popularnost": 0.13470962668551506,
+      "popularnost": 0.1779741453512393,
       "oznake": [
         {
           "naziv": "goa",
@@ -2830,7 +2830,7 @@ export const katalog = {
     {
       "mbid": "31530a19-d5a9-445b-9559-867f96950dcf",
       "naziv": "Miach",
-      "popularnost": 0.37252708604562246,
+      "popularnost": 0.4039007317433413,
       "oznake": [
         {
           "naziv": "songwriter",
@@ -2861,7 +2861,7 @@ export const katalog = {
     {
       "mbid": "360833a2-a0d9-4a3f-b64b-277d7079f821",
       "naziv": "Bamwise",
-      "popularnost": 0.0863256861801369,
+      "popularnost": 0.13200940187113006,
       "oznake": [
         {
           "naziv": "dub",
@@ -2880,7 +2880,7 @@ export const katalog = {
     {
       "mbid": "381086ea-f511-4aba-bdf9-71c753dc5077",
       "naziv": "Kendrick Lamar",
-      "popularnost": 0.9538013167039865,
+      "popularnost": 0.9561112508687871,
       "oznake": [
         {
           "naziv": "hip-hop",
@@ -2927,7 +2927,7 @@ export const katalog = {
     {
       "mbid": "38f0c7ac-46eb-49ca-b3ab-c785ccd05a60",
       "naziv": "TV Girl",
-      "popularnost": 0.9005007825496375,
+      "popularnost": 0.9054757434221556,
       "oznake": [
         {
           "naziv": "indie pop",
@@ -2974,7 +2974,7 @@ export const katalog = {
     {
       "mbid": "3e99af54-5e16-40d0-98d1-c9a24ed7ee43",
       "naziv": "Heihaizi",
-      "popularnost": 0.0715857829294758,
+      "popularnost": 0.11800649378300201,
       "oznake": [
         {
           "naziv": "hardcore",
@@ -3013,7 +3013,7 @@ export const katalog = {
     {
       "mbid": "3ff3fb81-f60c-4cc2-9a6c-c5e6306e3f8f",
       "naziv": "Dejan-Josip",
-      "popularnost": 0.01776157814523362,
+      "popularnost": 0.06687349923797194,
       "oznake": [
         {
           "naziv": "classical",
@@ -3060,7 +3060,7 @@ export const katalog = {
     {
       "mbid": "40f5d9e4-2de7-4f2d-ad41-e31a9a9fea27",
       "naziv": "The Smiths",
-      "popularnost": 0.953294686175288,
+      "popularnost": 0.9556299518665237,
       "oznake": [
         {
           "naziv": "post-punk",
@@ -3107,7 +3107,7 @@ export const katalog = {
     {
       "mbid": "4124ad3d-13c3-4290-ac02-bc7ddf154110",
       "naziv": "High5",
-      "popularnost": 0.2252741426065369,
+      "popularnost": 0.26401043547621006,
       "oznake": [
         {
           "naziv": "rap",
@@ -3154,7 +3154,7 @@ export const katalog = {
     {
       "mbid": "44cf61b8-5197-448a-b82b-cef6ee89fac5",
       "naziv": "Paramore",
-      "popularnost": 0.9635816614847581,
+      "popularnost": 0.9654025784105202,
       "oznake": [
         {
           "naziv": "rock",
@@ -3201,7 +3201,7 @@ export const katalog = {
     {
       "mbid": "45710ad2-447f-4966-9803-061a3aed7293",
       "naziv": "Subscale",
-      "popularnost": 0.15861970268756287,
+      "popularnost": 0.20068871755318474,
       "oznake": [
         {
           "naziv": "djent",
@@ -3248,7 +3248,7 @@ export const katalog = {
     {
       "mbid": "45a663b5-b1cb-4a91-bff6-2bef7bbfdd76",
       "naziv": "Britney Spears",
-      "popularnost": 0.975884756156777,
+      "popularnost": 0.9770905183489381,
       "oznake": [
         {
           "naziv": "pop",
@@ -3295,7 +3295,7 @@ export const katalog = {
     {
       "mbid": "4b18383c-2582-4fac-91b9-cab21de81e65",
       "naziv": "Benchwarmers",
-      "popularnost": 0.01915089916978602,
+      "popularnost": 0.06819335421129671,
       "oznake": [
         {
           "naziv": "indie rock",
@@ -3318,7 +3318,7 @@ export const katalog = {
     {
       "mbid": "4d5e142a-8616-495f-abc5-a79d2748f875",
       "naziv": "Picksiebner",
-      "popularnost": 0.10303619728070207,
+      "popularnost": 0.14788438741666696,
       "oznake": [
         {
           "naziv": "country",
@@ -3353,7 +3353,7 @@ export const katalog = {
     {
       "mbid": "53b06622-ec51-4924-a554-58b0affde6b5",
       "naziv": "The Neighbourhood",
-      "popularnost": 0.9307631596380036,
+      "popularnost": 0.9342250016561034,
       "oznake": [
         {
           "naziv": "indie",
@@ -3400,7 +3400,7 @@ export const katalog = {
     {
       "mbid": "5441c29d-3602-4898-b1a1-b77fa23b8e50",
       "naziv": "David Bowie",
-      "popularnost": 0.9612765523342821,
+      "popularnost": 0.963212724717568,
       "oznake": [
         {
           "naziv": "glam rock",
@@ -3447,7 +3447,7 @@ export const katalog = {
     {
       "mbid": "56a55378-f155-48de-80a5-d80104221267",
       "naziv": "Chappell Roan",
-      "popularnost": 0.8891601646523194,
+      "popularnost": 0.8947021564197034,
       "oznake": [
         {
           "naziv": "pop",
@@ -3494,7 +3494,7 @@ export const katalog = {
     {
       "mbid": "5b11f4ce-a62d-471e-81fc-a69a8278c7da",
       "naziv": "Nirvana",
-      "popularnost": 0.9902592858280773,
+      "popularnost": 0.9907463215366734,
       "oznake": [
         {
           "naziv": "grunge",
@@ -3541,7 +3541,7 @@ export const katalog = {
     {
       "mbid": "5b4e4464-54df-48cf-b03a-91d23453434b",
       "naziv": "ABOP",
-      "popularnost": 0.10499346805784165,
+      "popularnost": 0.14974379465494958,
       "oznake": [
         {
           "naziv": "croatian",
@@ -3576,7 +3576,7 @@ export const katalog = {
     {
       "mbid": "5df62a88-cac9-490a-b62c-c7c88f4020f4",
       "naziv": "Doja Cat",
-      "popularnost": 0.9223274561417392,
+      "popularnost": 0.9262110833346522,
       "oznake": [
         {
           "naziv": "pop",
@@ -3623,7 +3623,7 @@ export const katalog = {
     {
       "mbid": "63aa26c3-d59b-4da4-84ac-716b54f1ef4d",
       "naziv": "Tame Impala",
-      "popularnost": 0.9416323134568133,
+      "popularnost": 0.9445506977839726,
       "oznake": [
         {
           "naziv": "psychedelic rock",
@@ -3670,7 +3670,7 @@ export const katalog = {
     {
       "mbid": "650e7db6-b795-4eb5-a702-5ea2fc46c848",
       "naziv": "Lady Gaga",
-      "popularnost": 0.9931494546703098,
+      "popularnost": 0.9934919819367943,
       "oznake": [
         {
           "naziv": "pop",
@@ -3717,7 +3717,7 @@ export const katalog = {
     {
       "mbid": "65f4f0c5-ef9e-490c-aee3-909e7ae6b2ab",
       "naziv": "Metallica",
-      "popularnost": 0.9540675649485757,
+      "popularnost": 0.9563641867011469,
       "oznake": [
         {
           "naziv": "thrash metal",
@@ -3764,7 +3764,7 @@ export const katalog = {
     {
       "mbid": "6925db17-f35e-42f3-a4eb-84ee6bf5d4b0",
       "naziv": "Olivia Rodrigo",
-      "popularnost": 0.910826784046919,
+      "popularnost": 0.915285444844573,
       "oznake": [
         {
           "naziv": "pop",
@@ -3811,7 +3811,7 @@ export const katalog = {
     {
       "mbid": "69ee3720-a7cb-4402-b48d-a02c366f2bcf",
       "naziv": "The Cure",
-      "popularnost": 0.961095771583242,
+      "popularnost": 0.9630409830040799,
       "oznake": [
         {
           "naziv": "post-punk",
@@ -3858,7 +3858,7 @@ export const katalog = {
     {
       "mbid": "6c2a79b8-2b5c-4c2d-b495-6a446811bf9d",
       "naziv": "Malcolm Todd",
-      "popularnost": 0.8489013604220876,
+      "popularnost": 0.8564562924009833,
       "oznake": [
         {
           "naziv": "alternative rnb",
@@ -3905,7 +3905,7 @@ export const katalog = {
     {
       "mbid": "6e82556f-6676-4821-97c5-71337bc94aa2",
       "naziv": "The Monk by the Sea",
-      "popularnost": 0.34268841816910145,
+      "popularnost": 0.37555399726064637,
       "oznake": [
         {
           "naziv": "ambient",
@@ -3999,7 +3999,7 @@ export const katalog = {
     {
       "mbid": "7441014f-f8f5-494f-81db-ff166fbc078d",
       "naziv": "PinkPantheress",
-      "popularnost": 0.9083728479092201,
+      "popularnost": 0.9129542055137592,
       "oznake": [
         {
           "naziv": "pop",
@@ -4046,7 +4046,7 @@ export const katalog = {
     {
       "mbid": "7527f6c2-d762-4b88-b5e2-9244f1e34c46",
       "naziv": "Deftones",
-      "popularnost": 0.9362458640510445,
+      "popularnost": 0.9394335708484922,
       "oznake": [
         {
           "naziv": "nu metal",
@@ -4093,7 +4093,7 @@ export const katalog = {
     {
       "mbid": "78d727cd-2c17-405e-9ff6-6f6a761130ce",
       "naziv": "Tkivo",
-      "popularnost": 0.16082541142209028,
+      "popularnost": 0.20278414085098578,
       "oznake": [
         {
           "naziv": "all",
@@ -4112,7 +4112,7 @@ export const katalog = {
     {
       "mbid": "79239441-bfd5-4981-a70c-55c3f15c1287",
       "naziv": "Madonna",
-      "popularnost": 0.9639846193488335,
+      "popularnost": 0.9657853883813918,
       "oznake": [
         {
           "naziv": "pop",
@@ -4159,7 +4159,7 @@ export const katalog = {
     {
       "mbid": "7a3970c9-ecd8-4eee-a267-4d8c77d97ff3",
       "naziv": "The Marías",
-      "popularnost": 0.8885964202770484,
+      "popularnost": 0.894166599263196,
       "oznake": [
         {
           "naziv": "dream pop",
@@ -4206,7 +4206,7 @@ export const katalog = {
     {
       "mbid": "7a683b8b-0c84-4bbe-a9d9-89bb5b4cfb4a",
       "naziv": "ADÉLA",
-      "popularnost": 0.7669114642651348,
+      "popularnost": 0.778565891051878,
       "oznake": [
         {
           "naziv": "pop",
@@ -4253,7 +4253,7 @@ export const katalog = {
     {
       "mbid": "7c6a5c94-fc44-4076-92b8-f32c78af8679",
       "naziv": "Porto Morto",
-      "popularnost": 0.28526562366324226,
+      "popularnost": 0.32100234248008014,
       "oznake": [
         {
           "naziv": "croatian",
@@ -4300,7 +4300,7 @@ export const katalog = {
     {
       "mbid": "7dc8f5bd-9d0b-4087-9f73-dc164950bbd8",
       "naziv": "Queens of the Stone Age",
-      "popularnost": 0.9225599217373422,
+      "popularnost": 0.9264319256504752,
       "oznake": [
         {
           "naziv": "stoner rock",
@@ -4347,7 +4347,7 @@ export const katalog = {
     {
       "mbid": "7fb57fba-a6ef-44c2-abab-2fa3bdee607e",
       "naziv": "Childish Gambino",
-      "popularnost": 0.9268424286763565,
+      "popularnost": 0.9305003072425386,
       "oznake": [
         {
           "naziv": "hip-hop",
@@ -4394,7 +4394,7 @@ export const katalog = {
     {
       "mbid": "83d91898-7763-47d7-b03b-b92132375c47",
       "naziv": "Pink Floyd",
-      "popularnost": 0.96055577260949,
+      "popularnost": 0.9625279839790155,
       "oznake": [
         {
           "naziv": "progressive rock",
@@ -4441,7 +4441,7 @@ export const katalog = {
     {
       "mbid": "8538e728-ca0b-4321-b7e5-cff6565dd4c0",
       "naziv": "Depeche Mode",
-      "popularnost": 0.9394497019368728,
+      "popularnost": 0.9424772168400292,
       "oznake": [
         {
           "naziv": "electronic",
@@ -4488,7 +4488,7 @@ export const katalog = {
     {
       "mbid": "85881db2-be8a-4f6a-a704-f673e4ef5afe",
       "naziv": "Karlowy Vary",
-      "popularnost": 0.09273980564712035,
+      "popularnost": 0.13810281536476432,
       "oznake": [
         {
           "naziv": "new wave",
@@ -4535,7 +4535,7 @@ export const katalog = {
     {
       "mbid": "859d0860-d480-4efd-970c-c05d5f1776b8",
       "naziv": "Beyoncé",
-      "popularnost": 0.9745162142010348,
+      "popularnost": 0.9757904034909831,
       "oznake": [
         {
           "naziv": "rnb",
@@ -4582,7 +4582,7 @@ export const katalog = {
     {
       "mbid": "88ca6f73-7808-41a8-8832-e2f7ab7772a3",
       "naziv": "Klaada",
-      "popularnost": 0.20820069103361788,
+      "popularnost": 0.247790656481937,
       "oznake": [
         {
           "naziv": "downtempo",
@@ -4593,7 +4593,7 @@ export const katalog = {
     {
       "mbid": "88d17133-abbc-42db-9526-4e2c1db60336",
       "naziv": "beabadoobee",
-      "popularnost": 0.8932951469187935,
+      "popularnost": 0.8986303895728539,
       "oznake": [
         {
           "naziv": "indie pop",
@@ -4640,7 +4640,7 @@ export const katalog = {
     {
       "mbid": "8bfac288-ccc5-448d-9573-c33ea2aa5c30",
       "naziv": "Red Hot Chili Peppers",
-      "popularnost": 0.9862946103077617,
+      "popularnost": 0.9869798797923736,
       "oznake": [
         {
           "naziv": "rock",
@@ -4687,7 +4687,7 @@ export const katalog = {
     {
       "mbid": "8c02c752-0aaf-4cde-9ec6-69602bd6f829",
       "naziv": "Fortadelis",
-      "popularnost": 0.1752254858468219,
+      "popularnost": 0.2164642115544808,
       "oznake": [
         {
           "naziv": "ambient",
@@ -4734,7 +4734,7 @@ export const katalog = {
     {
       "mbid": "8f1e95c5-2782-4f6b-bba2-663010ec971a",
       "naziv": "Seine",
-      "popularnost": 0.26062566400695075,
+      "popularnost": 0.2975943808066032,
       "oznake": [
         {
           "naziv": "indie",
@@ -4781,7 +4781,7 @@ export const katalog = {
     {
       "mbid": "9058d01e-8afc-47a4-8664-621fb5f159c0",
       "naziv": "Slayyyter",
-      "popularnost": 0.8065710771147002,
+      "popularnost": 0.8162425232589652,
       "oznake": [
         {
           "naziv": "hyperpop",
@@ -4828,7 +4828,7 @@ export const katalog = {
     {
       "mbid": "92ef127b-763c-4326-a893-f6ca28a6a916",
       "naziv": "Pogavranjen",
-      "popularnost": 0.15055088217880208,
+      "popularnost": 0.193023338069862,
       "oznake": [
         {
           "naziv": "black metal",
@@ -4875,7 +4875,7 @@ export const katalog = {
     {
       "mbid": "95053f11-4440-4641-b094-b51b68e5d8b8",
       "naziv": "Cry Babies",
-      "popularnost": 0.1279316287994217,
+      "popularnost": 0.1715350473594506,
       "oznake": [
         {
           "naziv": "brazil",
@@ -4890,7 +4890,7 @@ export const katalog = {
     {
       "mbid": "957eadd6-df19-41a4-9b5a-d07bf4298576",
       "naziv": "Deimos",
-      "popularnost": 0.2720459428582753,
+      "popularnost": 0.30844364571536154,
       "oznake": [
         {
           "naziv": "psychedelic trance",
@@ -4937,7 +4937,7 @@ export const katalog = {
     {
       "mbid": "95e1ead9-4d31-4808-a7ac-32c3614c116b",
       "naziv": "The Killers",
-      "popularnost": 0.9824304212628754,
+      "popularnost": 0.9833089001997316,
       "oznake": [
         {
           "naziv": "indie",
@@ -4984,7 +4984,7 @@ export const katalog = {
     {
       "mbid": "9c268f56-0b34-4835-954f-e580e20bfe3e",
       "naziv": "Mass Hypnosis",
-      "popularnost": 0.14159413429853096,
+      "popularnost": 0.18451442758360442,
       "oznake": [
         {
           "naziv": "melodic death metal",
@@ -5031,7 +5031,7 @@ export const katalog = {
     {
       "mbid": "9c4934c7-5205-4ee4-94c7-eacf223d9f11",
       "naziv": "Synthetic Scar",
-      "popularnost": 0.05439333511238465,
+      "popularnost": 0.10167366835676542,
       "oznake": [
         {
           "naziv": "nu metal",
@@ -5078,7 +5078,7 @@ export const katalog = {
     {
       "mbid": "9d096e39-e6fc-430c-b2c8-ac60408b433b",
       "naziv": "K. Markov",
-      "popularnost": 0.04278712670935045,
+      "popularnost": 0.09064777037388293,
       "oznake": [
         {
           "naziv": "berlin school",
@@ -5097,13 +5097,13 @@ export const katalog = {
     {
       "mbid": "9dc79b7c-a52d-45b6-8983-613a077eb7a4",
       "naziv": "Neon Mitsumi",
-      "popularnost": 0.043218735789924974,
+      "popularnost": 0.09105779900042874,
       "oznake": []
     },
     {
       "mbid": "9e75bc8c-90a6-42f9-8174-5ab64d0f17e2",
       "naziv": "Flare",
-      "popularnost": 0.49192906711395556,
+      "popularnost": 0.5173326137582578,
       "oznake": [
         {
           "naziv": "japanese",
@@ -5150,7 +5150,7 @@ export const katalog = {
     {
       "mbid": "9fff2f8a-21e6-47de-a2b8-7f449929d43f",
       "naziv": "Drake",
-      "popularnost": 0.9798780851457803,
+      "popularnost": 0.9808841808884913,
       "oznake": [
         {
           "naziv": "hip-hop",
@@ -5197,7 +5197,7 @@ export const katalog = {
     {
       "mbid": "a56b38bb-eb3d-4793-a05d-f03bf56d3fa9",
       "naziv": "KUKU$",
-      "popularnost": 0.3747492588685651,
+      "popularnost": 0.4060117959251368,
       "oznake": [
         {
           "naziv": "rap",
@@ -5244,7 +5244,7 @@ export const katalog = {
     {
       "mbid": "a74b1b7f-71a5-4011-9441-d0b5e4122711",
       "naziv": "Radiohead",
-      "popularnost": 0.9992325032400832,
+      "popularnost": 0.999270878078079,
       "oznake": [
         {
           "naziv": "rock",
@@ -5291,7 +5291,7 @@ export const katalog = {
     {
       "mbid": "a93f8659-1670-4035-b9cb-0f2b6a19e191",
       "naziv": "Killed a Fox",
-      "popularnost": 0.06424049119000423,
+      "popularnost": 0.11102846663050402,
       "oznake": [
         {
           "naziv": "stoner rock",
@@ -5306,7 +5306,7 @@ export const katalog = {
     {
       "mbid": "ada7a83c-e3e1-40f1-93f9-3e73dbc9298a",
       "naziv": "Arctic Monkeys",
-      "popularnost": 0.9852412636765546,
+      "popularnost": 0.9859792004927269,
       "oznake": [
         {
           "naziv": "indie rock",
@@ -5353,7 +5353,7 @@ export const katalog = {
     {
       "mbid": "b071f9fa-14b0-4217-8e97-eb41da73f598",
       "naziv": "The Rolling Stones",
-      "popularnost": 0.9647978793505096,
+      "popularnost": 0.9665579853829842,
       "oznake": [
         {
           "naziv": "classic rock",
@@ -5400,7 +5400,7 @@ export const katalog = {
     {
       "mbid": "b10bbbfc-cf9e-42e0-be17-e2c3e1d2600d",
       "naziv": "The Beatles",
-      "popularnost": 0.9761658433784435,
+      "popularnost": 0.9773575512095213,
       "oznake": [
         {
           "naziv": "classic rock",
@@ -5447,7 +5447,7 @@ export const katalog = {
     {
       "mbid": "b4dfc6b2-df67-4bfa-ab96-7058b20d00dd",
       "naziv": "Abergaz",
-      "popularnost": 0.13571164984835035,
+      "popularnost": 0.1789260673559328,
       "oznake": [
         {
           "naziv": "punk",
@@ -5494,7 +5494,7 @@ export const katalog = {
     {
       "mbid": "b6707b4a-e94e-4c19-aff2-1fcd378b8ba1",
       "naziv": "Zagreb Festival Orchestra",
-      "popularnost": 0.2316653882061412,
+      "popularnost": 0.2700821187958341,
       "oznake": [
         {
           "naziv": "all",
@@ -5513,7 +5513,7 @@ export const katalog = {
     {
       "mbid": "b7539c32-53e7-4908-bda3-81449c367da6",
       "naziv": "Lana Del Rey",
-      "popularnost": 0.9568119944454371,
+      "popularnost": 0.9589713947231652,
       "oznake": [
         {
           "naziv": "indie",
@@ -5560,7 +5560,7 @@ export const katalog = {
     {
       "mbid": "b83cc375-fd60-49ad-a26f-0c02bec189a5",
       "naziv": "Jala Brat",
-      "popularnost": 0.507539894940083,
+      "popularnost": 0.5321629001930789,
       "oznake": [
         {
           "naziv": "bosnia and herzegovina",
@@ -5575,7 +5575,7 @@ export const katalog = {
     {
       "mbid": "b932c0f7-68a4-4344-8b2d-ad0c5388f6e7",
       "naziv": "Brkovi",
-      "popularnost": 0.368295946847352,
+      "popularnost": 0.3998811495049844,
       "oznake": [
         {
           "naziv": "folk punk",
@@ -5622,7 +5622,7 @@ export const katalog = {
     {
       "mbid": "ba0d6274-db14-4ef5-b28d-657ebde1a396",
       "naziv": "The Smashing Pumpkins",
-      "popularnost": 0.9421386569268011,
+      "popularnost": 0.9450317240804611,
       "oznake": [
         {
           "naziv": "alternative rock",
@@ -5669,7 +5669,7 @@ export const katalog = {
     {
       "mbid": "bb73b64d-809c-4947-b70b-de5978dce79e",
       "naziv": "Exterior Palnet",
-      "popularnost": 0.1166845620159015,
+      "popularnost": 0.16085033391510642,
       "oznake": [
         {
           "naziv": "black metal",
@@ -5712,7 +5712,7 @@ export const katalog = {
     {
       "mbid": "bbb75f6b-28e7-4fa3-97d4-8882f02b297b",
       "naziv": "TeHÔM",
-      "popularnost": 0.17058135056124168,
+      "popularnost": 0.21205228303317958,
       "oznake": [
         {
           "naziv": "dark ambient",
@@ -5759,7 +5759,7 @@ export const katalog = {
     {
       "mbid": "bc0d3a13-0253-4366-941b-1273921133f2",
       "naziv": "Sufosia",
-      "popularnost": 0.09478703578665713,
+      "popularnost": 0.14004768399732426,
       "oznake": [
         {
           "naziv": "thrash metal",
@@ -5806,7 +5806,7 @@ export const katalog = {
     {
       "mbid": "bd13909f-1c29-4c27-a874-d4aaf27c5b1a",
       "naziv": "Fleetwood Mac",
-      "popularnost": 0.9495511793559698,
+      "popularnost": 0.9520736203881713,
       "oznake": [
         {
           "naziv": "classic rock",
@@ -5853,7 +5853,7 @@ export const katalog = {
     {
       "mbid": "c07a0b9c-ae4a-4536-96d6-5fd6d8bd4491",
       "naziv": "Kozmodrum",
-      "popularnost": 0.07781303662406637,
+      "popularnost": 0.12392238479286305,
       "oznake": [
         {
           "naziv": "jazz",
@@ -5900,7 +5900,7 @@ export const katalog = {
     {
       "mbid": "c07f0676-9143-4217-8a9f-4c26bd636f13",
       "naziv": "My Chemical Romance",
-      "popularnost": 0.9480440289219382,
+      "popularnost": 0.9506418274758413,
       "oznake": [
         {
           "naziv": "rock",
@@ -5947,7 +5947,7 @@ export const katalog = {
     {
       "mbid": "c198969e-487f-45a5-a91d-a63d4360ff51",
       "naziv": "Antenat",
-      "popularnost": 0.28281289976513135,
+      "popularnost": 0.3186722547768748,
       "oznake": [
         {
           "naziv": "reggae",
@@ -5994,7 +5994,7 @@ export const katalog = {
     {
       "mbid": "c49cd246-ddd6-4b12-8c78-fc6653366e12",
       "naziv": "Vivaldi Metal Project",
-      "popularnost": 0.2223230019334534,
+      "popularnost": 0.2612068518367807,
       "oznake": [
         {
           "naziv": "symphonic metal",
@@ -6041,7 +6041,7 @@ export const katalog = {
     {
       "mbid": "c738ffd2-7b76-4ffc-b292-9aa301a8e7d4",
       "naziv": "Plastika",
-      "popularnost": 0.3282364166924126,
+      "popularnost": 0.3618245958577919,
       "oznake": [
         {
           "naziv": "grunge",
@@ -6088,7 +6088,7 @@ export const katalog = {
     {
       "mbid": "c852dbbd-6e01-4bed-a5f7-76b56221bd46",
       "naziv": "Chui",
-      "popularnost": 0.1513320423074767,
+      "popularnost": 0.19376544019210284,
       "oznake": [
         {
           "naziv": "jazz",
@@ -6135,7 +6135,7 @@ export const katalog = {
     {
       "mbid": "c8b03190-306c-4120-bb0b-6f2ebfc06ea9",
       "naziv": "The Weeknd",
-      "popularnost": 0.9584294810463693,
+      "popularnost": 0.9605080069940508,
       "oznake": [
         {
           "naziv": "rnb",
@@ -6182,7 +6182,7 @@ export const katalog = {
     {
       "mbid": "ca9766a0-1c30-43e6-a213-bac1334efc4a",
       "naziv": "Steve Lacy",
-      "popularnost": 0.9096047214027742,
+      "popularnost": 0.9141244853326355,
       "oznake": [
         {
           "naziv": "free jazz",
@@ -6229,7 +6229,7 @@ export const katalog = {
     {
       "mbid": "cc0b7089-c08d-4c10-b6b0-873582c17fd6",
       "naziv": "System of a Down",
-      "popularnost": 0.9652117542117604,
+      "popularnost": 0.9669511665011724,
       "oznake": [
         {
           "naziv": "alternative metal",
@@ -6276,7 +6276,7 @@ export const katalog = {
     {
       "mbid": "cdeee6dc-c1f0-4020-b77c-436211b095db",
       "naziv": "PsiloCybian",
-      "popularnost": 0.3293059666983801,
+      "popularnost": 0.36284066836346107,
       "oznake": [
         {
           "naziv": "psytrance",
@@ -6323,7 +6323,7 @@ export const katalog = {
     {
       "mbid": "d1ead493-92bb-4704-a7b0-896a608033fd",
       "naziv": "Klinika Denisa Kataneca",
-      "popularnost": 0.2196650734463159,
+      "popularnost": 0.25868181977400007,
       "oznake": [
         {
           "naziv": "psychedelic rock",
@@ -6370,7 +6370,7 @@ export const katalog = {
     {
       "mbid": "d4255afe-dd38-49fd-952d-37cc838c041d",
       "naziv": "Eclipse of the Sun",
-      "popularnost": 0.08701393770214226,
+      "popularnost": 0.13266324081703515,
       "oznake": [
         {
           "naziv": "doom metal",
@@ -6417,7 +6417,7 @@ export const katalog = {
     {
       "mbid": "d786f59b-1836-4ddb-8393-ab753edbe984",
       "naziv": "Clairo",
-      "popularnost": 0.9021957610083875,
+      "popularnost": 0.9070859729579681,
       "oznake": [
         {
           "naziv": "bedroom pop",
@@ -6464,7 +6464,7 @@ export const katalog = {
     {
       "mbid": "e0140a67-e4d1-4f13-8a01-364355bee46e",
       "naziv": "Justin Bieber",
-      "popularnost": 0.9495310801030887,
+      "popularnost": 0.9520545260979343,
       "oznake": [
         {
           "naziv": "pop",
@@ -6511,7 +6511,7 @@ export const katalog = {
     {
       "mbid": "e21857d5-3256-4547-afb3-4b6ded592596",
       "naziv": "Gorillaz",
-      "popularnost": 0.9813725714655948,
+      "popularnost": 0.982303942892315,
       "oznake": [
         {
           "naziv": "electronic",
@@ -6558,13 +6558,13 @@ export const katalog = {
     {
       "mbid": "e4a51f17-a57b-47b1-b37b-f552d0f8e9e6",
       "naziv": "Travis Scott",
-      "popularnost": 0.9133335147979088,
+      "popularnost": 0.9176668390580134,
       "oznake": []
     },
     {
       "mbid": "e520459c-dff4-491d-a6e4-c97be35e0044",
       "naziv": "Frank Ocean",
-      "popularnost": 0.9365452912162603,
+      "popularnost": 0.9397180266554472,
       "oznake": [
         {
           "naziv": "rnb",
@@ -6611,7 +6611,7 @@ export const katalog = {
     {
       "mbid": "e7bab76f-f19b-4d19-9abb-613c2dc5856f",
       "naziv": "She Loves Pablo",
-      "popularnost": 0.3024861960201655,
+      "popularnost": 0.33736188621915725,
       "oznake": [
         {
           "naziv": "stoner rock",
@@ -6658,7 +6658,7 @@ export const katalog = {
     {
       "mbid": "e8340eab-61df-4825-8eb1-a7bf71aac171",
       "naziv": "Muscle Tribe of Danger and Excellence",
-      "popularnost": 0.14882440322636947,
+      "popularnost": 0.19138318306505098,
       "oznake": [
         {
           "naziv": "hard rock",
@@ -6705,7 +6705,7 @@ export const katalog = {
     {
       "mbid": "e87b8798-a634-4cc6-b927-dc7fed3953cd",
       "naziv": "A Gram Trip",
-      "popularnost": 0.01317727529487371,
+      "popularnost": 0.06251841153013002,
       "oznake": [
         {
           "naziv": "stoner metal",
@@ -6740,7 +6740,7 @@ export const katalog = {
     {
       "mbid": "ee5bf7fd-46d5-49ec-89b2-c25bcd2705d3",
       "naziv": "Moonsouls",
-      "popularnost": 0.3060445568000236,
+      "popularnost": 0.34074232896002243,
       "oznake": [
         {
           "naziv": "trance",
@@ -6755,7 +6755,7 @@ export const katalog = {
     {
       "mbid": "eff10e4f-1150-4e41-b0dd-d70ec75fe7ad",
       "naziv": "Felon",
-      "popularnost": 0.5411811270108726,
+      "popularnost": 0.564122070660329,
       "oznake": [
         {
           "naziv": "singer-songwriter",
@@ -6802,7 +6802,7 @@ export const katalog = {
     {
       "mbid": "f181961b-20f7-459e-89de-920ef03c7ed0",
       "naziv": "The Strokes",
-      "popularnost": 0.9636450490784786,
+      "popularnost": 0.9654627966245547,
       "oznake": [
         {
           "naziv": "indie rock",
@@ -6849,7 +6849,7 @@ export const katalog = {
     {
       "mbid": "f27ec8db-af05-4f36-916e-3d57f91ecf5e",
       "naziv": "Michael Jackson",
-      "popularnost": 0.9838865634454345,
+      "popularnost": 0.9846922352731627,
       "oznake": [
         {
           "naziv": "pop",
@@ -6896,7 +6896,7 @@ export const katalog = {
     {
       "mbid": "f3563e3d-37a5-42d3-8815-b01e1e887507",
       "naziv": "Frozen Forest",
-      "popularnost": 0.04082078967832251,
+      "popularnost": 0.08877975019440638,
       "oznake": [
         {
           "naziv": "black metal",
@@ -6943,7 +6943,7 @@ export const katalog = {
     {
       "mbid": "f4abc0b5-3f7a-4eff-8f78-ac078dbce533",
       "naziv": "Billie Eilish",
-      "popularnost": 0.9362917530633218,
+      "popularnost": 0.9394771654101557,
       "oznake": [
         {
           "naziv": "pop",
@@ -6990,7 +6990,7 @@ export const katalog = {
     {
       "mbid": "f4fdbb4c-e4b7-47a0-b83b-d91bbfcfa387",
       "naziv": "Ariana Grande",
-      "popularnost": 0.9425825274524829,
+      "popularnost": 0.9454534010798588,
       "oznake": [
         {
           "naziv": "pop",
@@ -7037,7 +7037,7 @@ export const katalog = {
     {
       "mbid": "f59c5520-5f46-4d2c-b2c4-822eabf53419",
       "naziv": "Linkin Park",
-      "popularnost": 0.9826050566802392,
+      "popularnost": 0.9834748038462273,
       "oznake": [
         {
           "naziv": "nu metal",
@@ -7084,7 +7084,7 @@ export const katalog = {
     {
       "mbid": "f5f3539f-a06e-4860-a6bd-bf12824ecf6a",
       "naziv": "Radikal Dub Kolektiv",
-      "popularnost": 0.37809275083162636,
+      "popularnost": 0.409188113290045,
       "oznake": [
         {
           "naziv": "dub",
@@ -7131,7 +7131,7 @@ export const katalog = {
     {
       "mbid": "f6182d07-5871-483e-9019-8284dac9f61d",
       "naziv": "Black Sails",
-      "popularnost": 0.17621587057735758,
+      "popularnost": 0.21740507704848971,
       "oznake": [
         {
           "naziv": "hardcore",
@@ -7178,7 +7178,7 @@ export const katalog = {
     {
       "mbid": "f6beac20-5dfe-4d1f-ae02-0b0a740aafd6",
       "naziv": "Tyler, The Creator",
-      "popularnost": 0.9385351783974836,
+      "popularnost": 0.9416084194776094,
       "oznake": [
         {
           "naziv": "hip-hop",
@@ -7225,7 +7225,7 @@ export const katalog = {
     {
       "mbid": "f712487b-0233-4791-a7a6-bcb69027c128",
       "naziv": "Parnepar",
-      "popularnost": 0.06764827534344144,
+      "popularnost": 0.11426586157626936,
       "oznake": [
         {
           "naziv": "croatian",
@@ -7244,13 +7244,13 @@ export const katalog = {
     {
       "mbid": "f768f82a-9258-4ad1-829d-032d87bb8cfb",
       "naziv": "Triestri",
-      "popularnost": 0.17478205181938586,
+      "popularnost": 0.21604294922841655,
       "oznake": []
     },
     {
       "mbid": "f9133869-f87c-459c-9aa7-2f176cda7e06",
       "naziv": "Tate McRae",
-      "popularnost": 0.8772476807709951,
+      "popularnost": 0.8833852967324454,
       "oznake": [
         {
           "naziv": "pop",
@@ -7297,7 +7297,7 @@ export const katalog = {
     {
       "mbid": "f932f54e-53e5-4bb5-b900-f24e076c038b",
       "naziv": "Verbalni Delikt",
-      "popularnost": 0,
+      "popularnost": 0.05,
       "oznake": [
         {
           "naziv": "anarcho-punk",
@@ -7344,7 +7344,7 @@ export const katalog = {
     {
       "mbid": "fa58cf24-0e44-421d-8519-8bf461dcfaa5",
       "naziv": "Mitski",
-      "popularnost": 0.9122749727835683,
+      "popularnost": 0.9166612241443899,
       "oznake": [
         {
           "naziv": "indie rock",
@@ -7391,7 +7391,7 @@ export const katalog = {
     {
       "mbid": "fd87acc7-e0a0-4a45-bc2a-d2ab5c10be68",
       "naziv": "Fontaines D.C.",
-      "popularnost": 0.8179551886939029,
+      "popularnost": 0.8270574292592078,
       "oznake": [
         {
           "naziv": "post-punk",

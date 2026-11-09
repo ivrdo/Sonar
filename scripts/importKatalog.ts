@@ -10,7 +10,7 @@ const LIMIT_ZAGREB = 60;
 const LIMIT_ALBUMI = 3;
 const MAX_STRANICA = 5;
 
-const POP_DNO = 0;
+const POP_DNO = 0.05;
 const POP_VRH = 1;
 
 const GODINA_MIN = 1800;
