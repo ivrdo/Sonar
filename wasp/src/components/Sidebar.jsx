@@ -19,25 +19,30 @@
     - border border-akcent: tanak obrub u našoj akcent tirkiznoj boji za gumb prijave
 */
 
+import { NavLink } from "react-router";
+
+function klaseStavke({ isActive }) {
+  const zajednicke =
+    "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition";
+  return isActive
+    ? `${zajednicke} bg-akcent-mekani text-akcent`
+    : `${zajednicke} text-tekst-druga hover:bg-pozadinska hover:text-tekst-prva`;
+}
+
 export function Sidebar() {
   return (
-    <aside className="sticky top-0 flex h-screen w-64 flex-col justify-between border-r border-rubovi-2 bg-bijela px-6 py-6">
-
+    <aside className="border-rubovi-2 bg-bijela sticky top-0 flex h-screen w-64 flex-col justify-between border-r px-6 py-6">
       {/* Gornji dio: Naslov aplikacije i navigacija */}
       <div>
         {/* Naziv brenda / aplikacije */}
-        <h1 className="text-xl font-bold tracking-tight text-akcent mb-8">
+        <h1 className="text-akcent mb-8 text-xl font-bold tracking-tight">
           Sonar
         </h1>
 
         {/* Glavna navigacijska lista */}
         <nav className="flex flex-col gap-1">
-
           {/* Aktivna stavka: Home */}
-          <a
-            href="#"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-akcent bg-akcent-mekani transition"
-          >
+          <NavLink to="/" end className={klaseStavke}>
             {/* Home ikona */}
             <svg
               className="h-5 w-5"
@@ -53,13 +58,10 @@ export function Sidebar() {
               />
             </svg>
             Home
-          </a>
+          </NavLink>
 
           {/* Neaktivna stavka: Map */}
-          <a
-            href="#"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-tekst-druga hover:bg-pozadinska hover:text-tekst-prva transition"
-          >
+          <NavLink to="/map" className={klaseStavke}>
             {/* Map ikona */}
             <svg
               className="h-5 w-5"
@@ -75,8 +77,7 @@ export function Sidebar() {
               />
             </svg>
             Map
-          </a>
-
+          </NavLink>
         </nav>
       </div>
 
@@ -84,7 +85,7 @@ export function Sidebar() {
       <div>
         <button
           type="button"
-          className="flex w-full items-center justify-center gap-2 rounded-lg border border-akcent px-4 py-2.5 text-sm font-medium text-akcent hover:bg-akcent-blijedi transition"
+          className="border-akcent text-akcent hover:bg-akcent-blijedi flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition"
         >
           {/* Google logotip ikona */}
           <svg className="h-4 w-4" viewBox="0 0 24 24">
@@ -108,7 +109,6 @@ export function Sidebar() {
           Sign in with Google
         </button>
       </div>
-
     </aside>
   );
 }

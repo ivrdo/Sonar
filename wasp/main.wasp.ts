@@ -2,6 +2,7 @@ import { app, page, route } from "@wasp.sh/spec";
 import { App } from "./src/App" with { type: "ref" };
 import { EmailVerificationPage } from "./src/auth/email/EmailVerificationPage" with { type: "ref" };
 import { LoginPage } from "./src/auth/email/LoginPage" with { type: "ref" };
+import { MapPage } from "./src/pages/MapPage" with { type: "ref" };
 import { PasswordResetPage } from "./src/auth/email/PasswordResetPage" with { type: "ref" };
 import { RequestPasswordResetPage } from "./src/auth/email/RequestPasswordResetPage" with { type: "ref" };
 import { SignupPage } from "./src/auth/email/SignupPage" with { type: "ref" };
@@ -56,5 +57,6 @@ export default app({
       "/email-verification",
       page(EmailVerificationPage),
     ),
+    route("MapRoute", "/map", page(MapPage)),
   ],
 });

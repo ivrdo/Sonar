@@ -5,7 +5,7 @@
     Navbar nudi korisniku mogućnost pretraživanja.
 */
 
-export function Navbar() {
+export function Navbar({title="Discover"}) {
   return (
     /*
         Glavni element navigacije.
@@ -37,7 +37,7 @@ export function Navbar() {
     <header className="border-rubovi-2 bg-bijela sticky top-0 z-10 flex items-center justify-between border-b px-8 py-4">
       {/* Naslov stranice */}
       <h2 className="text-tekst-prva text-xl font-bold tracking-tight">
-        Discover
+        {title}
       </h2>
 
       {/* Polje za pretragu s ikonom */}
