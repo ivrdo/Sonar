@@ -16,6 +16,7 @@
         - date: datum (npr. "Fri 20 Nov")
         - time: vrijeme (npr. "20:00")
         - venue: mjesto održavanja (npr. "Dom kulture, Zagreb")
+        - image: putanja do slike izvođača (npr. "/dizajn/izvodjaci/orbita.svg").
 
     Responzivnost (mobile-first):
         Klase bez prefiksa vrijede za mobitel, a prefiks desktop: vrijedi od 64rem
@@ -41,47 +42,52 @@
         - h-12 w-12: slika je 48px na mobitelu, desktop:h-10 desktop:w-10 smanjuje je na 40px
         - shrink-0: sprječava stiskanje slike (i strelice) kad je tekst dug
         - rounded-lg: zaobljenje slike (8px)
-        - bg-akcent-mekani: svijetla tirkizna boja kao placeholder dok nemamo prave slike
+        - object-cover: slika popunjava cijeli kvadrat bez izobličenja
+        - bg-akcent-mekani: svijetla tirkizna boja placeholdera kad nema slike
         - min-w-0 flex-1: tekst zauzima preostali prostor. min-w-0 je NUŽAN da truncate
           radi unutar flex kontejnera, bez njega dugi tekst razvuče karticu
         - truncate: predugi tekst završava s tri točkice (...) umjesto da se prelomi u novi red
         - text-[15px] / text-sm / text-xs: veličine teksta (15px / 14px / 12px)
         - font-semibold: poluboldan naslov
-        - text-xl leading-none: veličina i centriranje znaka › (strelice)
+        - h-5 w-5 opacity-60: strelica (ikona chev iz dizajna), posvijetljena da bude siva
 
-
-        VAŽNO: POTREBNO JE DODATI SLIKU TE UREDITI PRAVU STRANICU ConcertDetailPage.jsx
-               SAMO SAM JE POSTAVILA RADI RUTE
 
 */
 
 import { Link } from "wasp/client/router";
 
-export function ConcertCard({ id, title, date, time, venue }) {
+export function ConcertCard({ id, image, title, date, time, venue }) {
     return (
-        <Link
-            to="/concerts/:id"
-            params={{ id }}
-            className="flex w-full items-center gap-3 rounded-xl border border-rubovi-1 bg-bijela p-2.5 transition hover:bg-akcent-blijedi focus-visible:ring-2 focus-visible:ring-akcent focus-visible:outline-none"
-        >
-            {/* Slika koncerta (zasad prazan placeholder) */}
-            <div className="h-12 w-12 shrink-0 rounded-lg bg-akcent-mekani desktop:h-10 desktop:w-10" />
+      <Link
+        to="/concerts/:id"
+        params={{ id }}
+        className="border-rubovi-1 bg-bijela hover:bg-akcent-blijedi focus-visible:ring-akcent flex w-full items-center gap-3 rounded-xl border p-2.5 transition focus-visible:ring-2 focus-visible:outline-none"
+      >
+        {/* Slika izvođača. naslov je odmah pored */}
+        {image ? (
+          <img
+            src={image}
+            className="desktop:h-10 desktop:w-10 h-12 w-12 shrink-0 rounded-lg object-cover"
+          />
+        ) : (
+          <div className="bg-akcent-mekani desktop:h-10 desktop:w-10 h-12 w-12 shrink-0 rounded-lg" />
+        )}
 
+        <div className="min-w-0 flex-1">
+          <p className="text-tekst-prva desktop:text-sm truncate text-[15px] font-semibold">
+            {title}
+          </p>
+          <p className="text-tekst-druga desktop:text-xs truncate text-sm">
+            {date} · {time} · {venue}
+          </p>
+        </div>
 
-            <div className="min-w-0 flex-1">
-                <p className="truncate text-[15px] font-semibold text-tekst-prva desktop:text-sm">
-                    {title}
-                </p>
-                <p className="truncate text-sm text-tekst-druga desktop:text-xs">
-                    {date} · {time} · {venue}
-                </p>
-            </div>
-
-            {/* Strelica udesno: oznaka da kartica vodi na pojedinosti koncerta */}
-            <span aria-hidden="true" className="shrink-0 text-xl leading-none text-tekst-treća">
-        ›
-      </span>
-        </Link>
+        {/* Strelica udesno (ikona chev iz dizajna): oznaka da kartica vodi na pojedinosti */}
+        <img
+          src="/dizajn/ikone/chev.svg"
+          className="h-5 w-5 shrink-0 opacity-60"
+        />
+      </Link>
     );
 }
 
