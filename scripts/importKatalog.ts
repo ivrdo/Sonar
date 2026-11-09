@@ -1,9 +1,7 @@
 import { readFile, writeFile, mkdir } from "node:fs/promises";
 import { join, dirname } from "node:path";
 
-// ---------------------------------------------------------------------------
 // KONSTANTE
-// ---------------------------------------------------------------------------
 
 const LIMIT_IZVODJACA = 50;
 const LIMIT_ZAGREB = 60;
@@ -38,9 +36,7 @@ const GRADOVI = [
 const DOZVOLJENI_TIPOVI = new Set(["Venue", "Club", "Indoor arena", "Stadium", "Festival stage", "Amphitheatre"]);
 const DODATNO_UKLJUCI = new Set(["Zagrebački hipodrom"]);
 
-// ---------------------------------------------------------------------------
 // TIPOVI
-// ---------------------------------------------------------------------------
 
 type MjestoKoncerta = {
     mbid: string;
@@ -89,9 +85,7 @@ type Pjesma = {
     izvodjacMbid: string;
 };
 
-// ---------------------------------------------------------------------------
 // STANJE
-// ---------------------------------------------------------------------------
 
 const svaMjesta: MjestoKoncerta[] = [];
 const izvodjaci = new Map<string, Izvodjac>();
@@ -99,9 +93,7 @@ const albumi = new Map<string, Album>();
 const pjesme = new Map<string, Pjesma>();
 let preskoceno = 0;
 
-// ---------------------------------------------------------------------------
 // POMOĆNE FUNKCIJE
-// ---------------------------------------------------------------------------
 
 const pauza = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
@@ -143,9 +135,7 @@ async function cached<T>(kljuc: string, poziv: () => Promise<T>): Promise<T> {
     return rez;
 }
 
-// ---------------------------------------------------------------------------
 // FAZE
-// ---------------------------------------------------------------------------
 
 async function dohvatiMjesta(grad: string): Promise<{ ukupno: number; mjesta: MjestoKoncerta[] }> {
     const upit = `place?query=${encodeURIComponent(`area:${grad}`)}&limit=100&fmt=json`;
@@ -446,9 +436,7 @@ async function zapisiKatalog(): Promise<void> {
     console.log(`katalog.json: ${katalog.gradovi.length} gradova, ${katalog.mjestaKoncerta.length} mjesta, ${katalog.oznake.length} oznaka, ${katalog.izvodjaci.length} izvođača, ${katalog.albumi.length} albuma, ${katalog.pjesme.length} pjesama`);
 }
 
-// ---------------------------------------------------------------------------
 // MAIN
-// ---------------------------------------------------------------------------
 
 async function main() {
     await dohvatiSvaMjesta();
