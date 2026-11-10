@@ -9,6 +9,7 @@ import { userSignupFields } from "./src/auth/email/userSignupFields" with { type
 import {
   pregledBaze,
   seedKatalog,
+  seedSve,
 } from "./src/seed/index" with { type: "ref" };
 import { tagsSpec } from "./src/tags/tags.wasp";
 import { tasksSpec } from "./src/tasks/task.wasp";
@@ -42,7 +43,7 @@ export default app({
     provider: "Dummy",
   },
   db: {
-    seeds: [pregledBaze, seedKatalog],
+    seeds: [pregledBaze, seedKatalog, seedSve],
   },
   client: {
     rootComponent: App,
