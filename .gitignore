@@ -36,3 +36,6 @@ klijent/*
 
 # npm
 node_modules/
+
+# uvoz podataka
+scripts/cache
