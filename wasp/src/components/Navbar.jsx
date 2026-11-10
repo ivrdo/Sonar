@@ -4,6 +4,8 @@
     Ova komponenta predstavlja gornju navigacijsku traku aplikacije.
     Navbar nudi korisniku mogućnost pretraživanja.
 */
+import { NavLink } from "react-router";
+import { Ikona } from "./navigacija";
 
 export function Navbar({title="Discover"}) {
   return (
@@ -34,15 +36,16 @@ export function Navbar({title="Discover"}) {
             - border: postavlja širinu ruba na 1px
             - transition: glatka animacija (npr. kada se mijenja boja pozadine na focus)
       */
-    <header className="border-rubovi-2 bg-bijela sticky top-0 z-10 flex items-center justify-between border-b px-8 py-4">
+    <header className="border-rubovi-2 bg-bijela desktop:px-8 desktop:py-4 sticky top-0 z-10 flex items-center gap-3 border-b px-4 py-3">
       {/* Naslov stranice */}
-      <h2 className="text-tekst-prva text-xl font-bold tracking-tight">
+      <h2 className="text-tekst-prva desktop:text-xl min-w-0 flex-1 truncate text-[17px] font-bold tracking-tight">
         {title}
       </h2>
 
       {/* Polje za pretragu s ikonom */}
       {/* Vanjski kontejner mora biti 'relative' kako bi se ikona pozicionirala pomoću 'absolute' */}
-      <div className="relative w-80">
+      {/* Polje za pretragu: SAMO desktop */}
+      <div className="desktop:block relative hidden w-80">
         {/* Pozicioniranje SVG ikone unutar lijeve strane input polja za pretragu */}
         <span className="text-tekst-treća pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <svg
@@ -65,6 +68,28 @@ export function Navbar({title="Discover"}) {
           placeholder="Search artists, releases, songs, venues"
           className="border-rubovi-1 bg-pozadinska text-tekst-prva placeholder-tekst-treća focus:bg-bijela focus:ring-akcent w-full rounded-lg border py-1.5 pr-4 pl-9 text-xs transition focus:ring-2 focus:outline-none"
         />
+      </div>
+
+      {/* Ikone: SAMO mobitel */}
+      <div className="desktop:hidden flex items-center gap-1">
+        <NavLink
+          to="/search"
+          aria-label="Search"
+          className="flex h-11 w-11 items-center justify-center rounded-lg"
+        >
+          <Ikona ime="search" />
+        </NavLink>
+        <NavLink
+          to="/notifications"
+          aria-label="Notifications"
+          className="relative flex h-11 w-11 items-center justify-center rounded-lg"
+        >
+          <Ikona ime="bell" />
+          {/* crveni brojač kao u dizajnu */}
+          <span className="bg-status-crveni absolute top-1 right-1 min-w-[17px] rounded-full px-1 text-center text-[10.5px] leading-[17px] font-bold text-white">
+            2
+          </span>
+        </NavLink>
       </div>
     </header>
   );

@@ -12,6 +12,7 @@
 // Koristi se relativna putanja.
 import { Navbar } from "../components/Navbar";
 import { Sidebar } from "../components/Sidebar";
+import { BottomTabs } from "../components/BottomTabs";
 
 /*
     Definicija i uvoz glavne funkcionalne komponente LandingPage.
@@ -19,18 +20,27 @@ import { Sidebar } from "../components/Sidebar";
 */
 export function LandingPage() {
   return (
-      /*
+    /*
         Ovo je glavni wrapper cijele stranice.
 
         Koriste se Tailwind klase:
             - min-h-screen: visina elemenata je jednaka visini cijelog prozora preglednika (100vh)
             - bg-pozadinska: koristi se unaprijed definirana boja pozadine iz App.tsx datoteke
       */
-    <div className="flex min-h-screen bg-pozadinska"> {/* div blok u kojem se prikazuje navbar i sidebar */}
-      <Sidebar /> {/* Ovdje se stavlja i prikazuje sidebar uz lijevi rub stranice. */}
-      <div className="flex flex-1 flex-col"> {/* div blok za cijeli prostor desno od sidebara */}
+    <div className="bg-pozadinska flex min-h-screen">
+      {" "}
+      {/* div blok u kojem se prikazuje navbar i sidebar */}
+      <Sidebar />{" "}
+      {/* Ovdje se stavlja i prikazuje sidebar uz lijevi rub stranice. */}
+      <div className="flex flex-1 flex-col">
+        {" "}
+        {/* div blok za cijeli prostor desno od sidebara */}
         <Navbar /> {/* Ovdje se stavlja i prikazuje navbar na vrhu stranice. */}
+        <div className="desktop:px-8 desktop:py-6 flex flex-col gap-5 p-4">
+          {/* Ovdje dolaze sekcije: Upcoming concerts, Popular on Sonar, Venues… */}
+        </div>
       </div>
+      <BottomTabs />
     </div>
   );
 }

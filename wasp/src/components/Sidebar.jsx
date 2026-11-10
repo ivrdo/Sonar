@@ -31,7 +31,7 @@ function klaseStavke({ isActive }) {
 
 export function Sidebar() {
   return (
-    <aside className="border-rubovi-2 bg-bijela sticky top-0 flex h-screen w-64 flex-col justify-between border-r px-6 py-6">
+    <aside className="sticky top-0 hidden h-screen w-64 flex-none flex-col justify-between border-r border-rubovi-2 bg-bijela px-6 py-6 desktop:flex">
       {/* Gornji dio: Naslov aplikacije i navigacija */}
       <div>
         {/* Naziv brenda / aplikacije */}
