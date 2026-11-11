@@ -1,4 +1,4 @@
-// isti seed daje isti niz brojeva
+// isti seed daje isti niz brojeva (mulberry32)
 export function napraviRandom(seed: number): () => number {
   let a = seed >>> 0;
   return () => {
@@ -10,7 +10,7 @@ export function napraviRandom(seed: number): () => number {
   };
 }
 
-// slučajan cijeli broj od min do max
+// slučajan cijeli broj od min do max (uključeni)
 export function cijeli(r: () => number, min: number, max: number): number {
   return Math.floor(r() * (max - min + 1)) + min;
 }
