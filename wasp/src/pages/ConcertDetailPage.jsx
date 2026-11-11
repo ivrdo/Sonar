@@ -6,7 +6,7 @@
     pomoću useParams.
 
     Stranica se slaže od vrha prema dolje: SubpageHeader (traka sa strelicom natrag),
-    slika koncerta i ConcertInfo (datum, naslov, mjesto).
+    slika koncerta, ConcertInfo (datum, naslov, mjesto) i ApplyBox (gumb za prijavu).
 
     Podaci su zasad PROBNI: objekt "koncert" na vrhu datoteke. Komponente primaju
     podatke samo kroz propse, pa se kasnije mijenja samo taj objekt.
@@ -25,18 +25,22 @@
 import { SubpageHeader } from "../components/SubpageHeader";
 import { useParams } from "react-router";
 import { ConcertInfo } from "../components/ConcertInfo";
+import { ApplyBox } from "../components/ApplyBox";
 
 // PRIVREMENO: probni podaci dok query dohvatiKoncert nije gotov.
 // Kad stigne, ovaj objekt se zamjenjuje podacima iz useQuery(dohvatiKoncert, ...).
 // Komponente ispod primaju podatke samo kroz propse, pa se one ne mijenjaju.
+
 const koncert = {
-    date: "Fri 20 Nov 2026",
-    time: "20:00",
-    doors: "19:00",
-    title: "Orbita + Kiša u Svibnju",
-    venue: "Dom kulture, Zagreb",
-    address: "Ilica 211",
-    distance: "3 km",
+  date: "Fri 20 Nov 2026",
+  time: "20:00",
+  doors: "19:00",
+  title: "Orbita + Kiša u Svibnju",
+  venue: "Dom kulture, Zagreb",
+  address: "Ilica 211",
+  distance: "3 km",
+  price: "free",
+  cancelUntil: "19:00",
 };
 
 export function ConcertDetailPage() {
@@ -65,6 +69,10 @@ export function ConcertDetailPage() {
           <div className="mt-4">
             <ConcertInfo {...koncert} />
           </div>
+
+            <div className="mt-4">
+                <ApplyBox price={koncert.price} cancelUntil={koncert.cancelUntil} />
+            </div>
         </main>
       </div>
     );
