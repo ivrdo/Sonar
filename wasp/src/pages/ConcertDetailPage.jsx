@@ -7,7 +7,7 @@
 
     Stranica se slaže od vrha prema dolje: SubpageHeader (traka sa strelicom natrag),
     slika koncerta, ConcertInfo (datum, naslov, mjesto), ApplyBox (gumb za prijavu), Lineup (popis izvođača),
-    AboutConcert (opis koncerta) i VenueFacts (podaci o mjestu).
+    AboutConcert (opis koncerta), VenueFacts (podaci o mjestu), BottomTabs (donja navigacija, samo mobitel).
 
     Podaci su zasad PROBNI: objekt "koncert" na vrhu datoteke. Komponente primaju
     podatke samo kroz propse, pa se kasnije mijenja samo taj objekt.
@@ -28,6 +28,7 @@
         - order-1, order-2...: redoslijed na mobitelu (info, Apply, a kasnije lineup, opis,
           mapa, podaci o mjestu). Lijevi stupac na desktopu: info, lineup, opis.
           Desni stupac: Apply, mapa, podaci o mjestu
+        - pb-20: donji razmak na mobitelu da zadnja kartica ne ostane iza fiksne donje navigacije
 */
 
 import { SubpageHeader } from "../components/SubpageHeader";
@@ -37,6 +38,7 @@ import { ApplyBox } from "../components/ApplyBox";
 import { Lineup } from "../components/Lineup";
 import { AboutConcert } from "../components/AboutConcert";
 import { VenueFacts } from "../components/VenueFacts";
+import { BottomTabs } from "../components/BottomTabs";
 
 // PRIVREMENO: probni podaci dok query dohvatiKoncert nije gotov.
 // Kad stigne, ovaj objekt se zamjenjuje podacima iz useQuery(dohvatiKoncert, ...).
@@ -96,7 +98,7 @@ export function ConcertDetailPage() {
         </button>
       </SubpageHeader>
 
-      <main className="desktop:p-6 p-4">
+      <main className="desktop:p-6 p-4 pb-20">
         {/* Slika koncerta.*/}
         <img
           src="/dizajn/izvodjaci/orbita-160.svg"
@@ -136,6 +138,9 @@ export function ConcertDetailPage() {
           </div>
         </div>
       </main>
+
+      {/* Donja navigacija: samo mobitel (sama komponenta ima desktop:hidden) */}
+      <BottomTabs />
     </div>
   );
 }
