@@ -7,7 +7,7 @@
 
     Stranica se slaže od vrha prema dolje: SubpageHeader (traka sa strelicom natrag),
     slika koncerta, ConcertInfo (datum, naslov, mjesto), ApplyBox (gumb za prijavu), Lineup (popis izvođača),
-    AboutConcert (opis koncerta).
+    AboutConcert (opis koncerta) i VenueFacts (podaci o mjestu).
 
     Podaci su zasad PROBNI: objekt "koncert" na vrhu datoteke. Komponente primaju
     podatke samo kroz propse, pa se kasnije mijenja samo taj objekt.
@@ -30,14 +30,13 @@
           Desni stupac: Apply, mapa, podaci o mjestu
 */
 
-
-
 import { SubpageHeader } from "../components/SubpageHeader";
 import { useParams } from "react-router";
 import { ConcertInfo } from "../components/ConcertInfo";
 import { ApplyBox } from "../components/ApplyBox";
 import { Lineup } from "../components/Lineup";
 import { AboutConcert } from "../components/AboutConcert";
+import { VenueFacts } from "../components/VenueFacts";
 
 // PRIVREMENO: probni podaci dok query dohvatiKoncert nije gotov.
 // Kad stigne, ovaj objekt se zamjenjuje podacima iz useQuery(dohvatiKoncert, ...).
@@ -76,59 +75,69 @@ const koncert = {
   ],
   description:
     "Orbita close their autumn tour at home, playing Valovi front to back for the first time, followed by older songs picked by the audience. Kiša u Svibnju open with their first Zagreb show since Magla came out.\nStanding on the ground floor, seats on the balcony first come first served. No re-entry after 22:00.",
+  venueName: "Dom kulture",
+  city: "Zagreb",
+  capacity: 350,
 };
 
 export function ConcertDetailPage() {
-    const { id } = useParams();
+  const { id } = useParams();
 
-    return (
-      <div className="bg-pozadinska min-h-screen">
-        <SubpageHeader title="Concert">
-          {/* Ikona dijeljenja (samo mobitel). Funkcija se dodaje kasnije */}
-          <button
-            type="button"
-            aria-label="Share"
-            className="hover:bg-pozadinska focus-visible:ring-akcent desktop:hidden flex h-9 w-9 items-center justify-center rounded-lg transition focus-visible:ring-2 focus-visible:outline-none"
-          >
-            <img src="/dizajn/ikone/share.svg" alt="" className="h-5 w-5" />
-          </button>
-        </SubpageHeader>
+  return (
+    <div className="bg-pozadinska min-h-screen">
+      <SubpageHeader title="Concert">
+        {/* Ikona dijeljenja (samo mobitel). Funkcija se dodaje kasnije */}
+        <button
+          type="button"
+          aria-label="Share"
+          className="hover:bg-pozadinska focus-visible:ring-akcent desktop:hidden flex h-9 w-9 items-center justify-center rounded-lg transition focus-visible:ring-2 focus-visible:outline-none"
+        >
+          <img src="/dizajn/ikone/share.svg" alt="" className="h-5 w-5" />
+        </button>
+      </SubpageHeader>
 
-        <main className="desktop:p-6 p-4">
-          {/* Slika koncerta.*/}
-          <img
-            src="/dizajn/izvodjaci/orbita-160.svg"
-            className="desktop:aspect-[4/1] aspect-video w-full rounded-xl object-cover"
-          />
+      <main className="desktop:p-6 p-4">
+        {/* Slika koncerta.*/}
+        <img
+          src="/dizajn/izvodjaci/orbita-160.svg"
+          className="desktop:aspect-[4/1] aspect-video w-full rounded-xl object-cover"
+        />
 
-          {/* Mobitel: jedan stupac. Desktop: dva stupca (lijevi širi, desni fiksne širine 20rem) */}
-          <div className="desktop:grid desktop:grid-cols-[1fr_20rem] desktop:items-start mt-4 flex flex-col gap-6">
-            {/* Lijevi stupac. contents: na mobitelu omotač "ne postoji", a na desktopu je stupac */}
-            <div className="desktop:flex desktop:flex-col desktop:gap-6 contents">
-              <div className="order-1">
-                <ConcertInfo {...koncert} />
-              </div>
-              <div className="order-3">
-                <Lineup artists={koncert.lineup} />
-              </div>
-              <div className="order-4">
-                <AboutConcert description={koncert.description} />
-              </div>
+        {/* Mobitel: jedan stupac. Desktop: dva stupca (lijevi širi, desni fiksne širine 20rem) */}
+        <div className="desktop:grid desktop:grid-cols-[1fr_20rem] desktop:items-start mt-4 flex flex-col gap-6">
+          {/* Lijevi stupac. contents: na mobitelu omotač "ne postoji", a na desktopu je stupac */}
+          <div className="desktop:flex desktop:flex-col desktop:gap-6 contents">
+            <div className="order-1">
+              <ConcertInfo {...koncert} />
             </div>
-
-            {/* Desni stupac */}
-            <div className="desktop:flex desktop:flex-col desktop:gap-6 contents">
-              <div className="order-2">
-                <ApplyBox
-                  price={koncert.price}
-                  cancelUntil={koncert.cancelUntil}
-                />
-              </div>
+            <div className="order-3">
+              <Lineup artists={koncert.lineup} />
+            </div>
+            <div className="order-4">
+              <AboutConcert description={koncert.description} />
             </div>
           </div>
-        </main>
-      </div>
-    );
+
+          {/* Desni stupac */}
+          <div className="desktop:flex desktop:flex-col desktop:gap-6 contents">
+            <div className="order-2">
+              <ApplyBox
+                price={koncert.price}
+                cancelUntil={koncert.cancelUntil}
+              />
+            </div>
+            <div className="order-6">
+              <VenueFacts
+                venue={koncert.venueName}
+                address={`${koncert.address}, ${koncert.city}`}
+                capacity={koncert.capacity}
+              />
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  );
 }
 
 export default ConcertDetailPage;
