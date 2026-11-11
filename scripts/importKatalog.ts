@@ -158,7 +158,7 @@ async function dohvatiMjesta(grad: string): Promise<{ ukupno: number; mjesta: Mj
     return { ukupno, mjesta };
 }
 
-function dodaj(niz: any[]) {
+function dodajIzvodjaceUMapu(niz: any[]) {
     for (const element of niz) {
         if (!element.mbid) {
             preskoceno++;
@@ -181,8 +181,8 @@ async function dohvatiTopIzvodjace(): Promise<void> {
     let chartIzvodjaci = await cached(`chart-artists-${LIMIT_IZVODJACA}`, () => lfm({ method: "chart.gettopartists", limit: String(LIMIT_IZVODJACA) }));
     geoIzvodjaci = geoIzvodjaci.topartists.artist;
     chartIzvodjaci = chartIzvodjaci.artists.artist;
-    dodaj(geoIzvodjaci);
-    dodaj(chartIzvodjaci);
+    dodajIzvodjaceUMapu(geoIzvodjaci);
+    dodajIzvodjaceUMapu(chartIzvodjaci);
 }
 
 async function dohvatiOznake(): Promise<void> {
@@ -194,7 +194,7 @@ async function dohvatiOznake(): Promise<void> {
             izv.slusatelji = Number(info.artist.stats.listeners);
             izv.oznake = tags.toptags.tag.map((element: any) => ({
                 naziv: element.name.toLowerCase().trim(),
-                tezina: Number(element.count) / 100,
+                tezina: Number(element.count) / 100, // Last.fm "count" oznake je od 0 do 100; težinu skaliramo na 0 do 1
             }));
         } catch (e) {
             console.log(e.message);

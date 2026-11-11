@@ -1,5 +1,6 @@
 import type { DbSeedFn } from "wasp/server";
 import { katalog } from "./data/katalog.js";
+import { seedGenerirano } from "./generirano.js";
 
 export const pregledBaze: DbSeedFn = async (prisma) => {
   console.log("Mjesto:", await prisma.mjesto.findMany());
@@ -170,4 +171,9 @@ export const seedKatalog: DbSeedFn = async (prisma) => {
     "| očekivano:",
     katalog.izvodjaci.length + katalog.albumi.length + katalog.pjesme.length,
   );
+};
+
+export const seedSve: DbSeedFn = async (prisma) => {
+  await seedKatalog(prisma);
+  await seedGenerirano(prisma);
 };
