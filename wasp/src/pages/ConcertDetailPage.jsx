@@ -16,8 +16,17 @@
         - aspect-video: slika je omjera 16:9 na mobitelu, desktop:aspect-[4/1] je široka i niska na desktopu
         - w-full rounded-xl object-cover: puna širina, zaobljeni rubovi, slika popunjava okvir bez izobličenja
         - p-4 desktop:p-6: unutarnji razmak sadržaja
-        - mt-4: razmak između slike i podataka o koncertu
+        - mt-4: razmak između slike i sadržaja ispod nje
         - desktop:hidden: ikona dijeljenja vidi se samo na mobitelu
+        - flex flex-col gap-6: na mobitelu je sve u jednom stupcu s razmakom između dijelova
+        - desktop:grid desktop:grid-cols-[1fr_20rem]: na desktopu su dva stupca, desni je širok 20rem
+        - desktop:items-start: stupci se ne razvlače do iste visine
+        - contents: na mobitelu omotač stupca nestaje iz rasporeda, pa se dijelovi slažu
+          jedan ispod drugog prema order broju. Na desktopu (desktop:flex desktop:flex-col)
+          omotač postaje pravi stupac
+        - order-1, order-2...: redoslijed na mobitelu (info, Apply, a kasnije lineup, opis,
+          mapa, podaci o mjestu). Lijevi stupac na desktopu: info, lineup, opis.
+          Desni stupac: Apply, mapa, podaci o mjestu
 */
 
 
@@ -66,13 +75,25 @@ export function ConcertDetailPage() {
             className="desktop:aspect-[4/1] aspect-video w-full rounded-xl object-cover"
           />
 
-          <div className="mt-4">
-            <ConcertInfo {...koncert} />
-          </div>
-
-            <div className="mt-4">
-                <ApplyBox price={koncert.price} cancelUntil={koncert.cancelUntil} />
+          {/* Mobitel: jedan stupac. Desktop: dva stupca (lijevi širi, desni fiksne širine 20rem) */}
+          <div className="desktop:grid desktop:grid-cols-[1fr_20rem] desktop:items-start mt-4 flex flex-col gap-6">
+            {/* Lijevi stupac. contents: na mobitelu omotač "ne postoji", a na desktopu je stupac */}
+            <div className="desktop:flex desktop:flex-col desktop:gap-6 contents">
+              <div className="order-1">
+                <ConcertInfo {...koncert} />
+              </div>
             </div>
+
+            {/* Desni stupac */}
+            <div className="desktop:flex desktop:flex-col desktop:gap-6 contents">
+              <div className="order-2">
+                <ApplyBox
+                  price={koncert.price}
+                  cancelUntil={koncert.cancelUntil}
+                />
+              </div>
+            </div>
+          </div>
         </main>
       </div>
     );
