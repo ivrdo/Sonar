@@ -6,7 +6,8 @@
     pomoću useParams.
 
     Stranica se slaže od vrha prema dolje: SubpageHeader (traka sa strelicom natrag),
-    slika koncerta, ConcertInfo (datum, naslov, mjesto), ApplyBox (gumb za prijavu) i Lineup (popis izvođača).
+    slika koncerta, ConcertInfo (datum, naslov, mjesto), ApplyBox (gumb za prijavu), Lineup (popis izvođača),
+    AboutConcert (opis koncerta).
 
     Podaci su zasad PROBNI: objekt "koncert" na vrhu datoteke. Komponente primaju
     podatke samo kroz propse, pa se kasnije mijenja samo taj objekt.
@@ -36,6 +37,7 @@ import { useParams } from "react-router";
 import { ConcertInfo } from "../components/ConcertInfo";
 import { ApplyBox } from "../components/ApplyBox";
 import { Lineup } from "../components/Lineup";
+import { AboutConcert } from "../components/AboutConcert";
 
 // PRIVREMENO: probni podaci dok query dohvatiKoncert nije gotov.
 // Kad stigne, ovaj objekt se zamjenjuje podacima iz useQuery(dohvatiKoncert, ...).
@@ -51,7 +53,7 @@ const koncert = {
   distance: "3 km",
   price: "free",
   cancelUntil: "19:00",
-    //testni podatci!
+  //testni podatci!
   lineup: [
     {
       id: 1,
@@ -72,6 +74,8 @@ const koncert = {
       following: false,
     },
   ],
+  description:
+    "Orbita close their autumn tour at home, playing Valovi front to back for the first time, followed by older songs picked by the audience. Kiša u Svibnju open with their first Zagreb show since Magla came out.\nStanding on the ground floor, seats on the balcony first come first served. No re-entry after 22:00.",
 };
 
 export function ConcertDetailPage() {
@@ -104,9 +108,12 @@ export function ConcertDetailPage() {
               <div className="order-1">
                 <ConcertInfo {...koncert} />
               </div>
-                <div className="order-3">
-                    <Lineup artists={koncert.lineup} />
-                </div>
+              <div className="order-3">
+                <Lineup artists={koncert.lineup} />
+              </div>
+              <div className="order-4">
+                <AboutConcert description={koncert.description} />
+              </div>
             </div>
 
             {/* Desni stupac */}
