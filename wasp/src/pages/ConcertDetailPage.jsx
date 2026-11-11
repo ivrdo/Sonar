@@ -6,7 +6,7 @@
     pomoću useParams.
 
     Stranica se slaže od vrha prema dolje: SubpageHeader (traka sa strelicom natrag),
-    slika koncerta, ConcertInfo (datum, naslov, mjesto) i ApplyBox (gumb za prijavu).
+    slika koncerta, ConcertInfo (datum, naslov, mjesto), ApplyBox (gumb za prijavu) i Lineup (popis izvođača).
 
     Podaci su zasad PROBNI: objekt "koncert" na vrhu datoteke. Komponente primaju
     podatke samo kroz propse, pa se kasnije mijenja samo taj objekt.
@@ -35,6 +35,7 @@ import { SubpageHeader } from "../components/SubpageHeader";
 import { useParams } from "react-router";
 import { ConcertInfo } from "../components/ConcertInfo";
 import { ApplyBox } from "../components/ApplyBox";
+import { Lineup } from "../components/Lineup";
 
 // PRIVREMENO: probni podaci dok query dohvatiKoncert nije gotov.
 // Kad stigne, ovaj objekt se zamjenjuje podacima iz useQuery(dohvatiKoncert, ...).
@@ -50,6 +51,27 @@ const koncert = {
   distance: "3 km",
   price: "free",
   cancelUntil: "19:00",
+    //testni podatci!
+  lineup: [
+    {
+      id: 1,
+      name: "Orbita",
+      image: "/dizajn/izvodjaci/orbita.svg",
+      genre: "indie rock",
+      role: "headliner",
+      time: "21:15",
+      following: true,
+    },
+    {
+      id: 2,
+      name: "Kiša u Svibnju",
+      image: "/dizajn/izvodjaci/kisa-u-svibnju.svg",
+      genre: "shoegaze",
+      role: "support",
+      time: "20:15",
+      following: false,
+    },
+  ],
 };
 
 export function ConcertDetailPage() {
@@ -82,6 +104,9 @@ export function ConcertDetailPage() {
               <div className="order-1">
                 <ConcertInfo {...koncert} />
               </div>
+                <div className="order-3">
+                    <Lineup artists={koncert.lineup} />
+                </div>
             </div>
 
             {/* Desni stupac */}
