@@ -131,7 +131,7 @@ enum ZapisVrstaRadnje {
 
 // cjelina: KORISNICI I ADMINISTRACIJA
 model Korisnik {
-  sifKorisnik        Int            @id @default(autoincrement())
+  id                 Int            @id @default(autoincrement()) @map("sifKorisnik")
   nazKorisnik        String
   email              String?        @unique
   opis               String?
@@ -195,7 +195,7 @@ model Zapis {
   vrstaRadnje       ZapisVrstaRadnje
   opis              String?
 
-  korisnik Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Restrict)
+  korisnik Korisnik @relation(fields: [sifKorisnik], references: [id], onDelete: Restrict)
 
   @@id([sifKorisnik, datumVrijemeZapis])
 }
@@ -355,7 +355,7 @@ model Recenzija {
 
   // Napisao
   sifKorisnik Int
-  autor       Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik])
+  autor       Korisnik @relation(fields: [sifKorisnik], references: [id])
 
   // odnosiSeNa
   sifStavka Int
@@ -375,7 +375,7 @@ model Lista {
 
   // Izradio
   sifKorisnik Int
-  autor       Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Cascade)
+  autor       Korisnik @relation(fields: [sifKorisnik], references: [id], onDelete: Cascade)
 
   stavke ListaStavka[]
 
@@ -402,7 +402,7 @@ model Ocjena {
   ocjena      Int // 1 do 5 (CHECK u migraciji)
   datum       DateTime @default(now())
 
-  korisnik Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik])
+  korisnik Korisnik @relation(fields: [sifKorisnik], references: [id])
   stavka   Stavka   @relation(fields: [sifStavka], references: [sifStavka])
 
   @@id([sifKorisnik, sifStavka])
@@ -415,7 +415,7 @@ model Svidja {
   sifStavka   Int
   datum       DateTime @default(now())
 
-  korisnik Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Cascade)
+  korisnik Korisnik @relation(fields: [sifKorisnik], references: [id], onDelete: Cascade)
   stavka   Stavka   @relation(fields: [sifStavka], references: [sifStavka])
 
   @@id([sifKorisnik, sifStavka])
@@ -464,7 +464,7 @@ model PrijavaNaKoncert {
   datumPrijave      DateTime               @default(now())
   vrijemeSkeniranja DateTime?
 
-  korisnik Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik])
+  korisnik Korisnik @relation(fields: [sifKorisnik], references: [id])
   koncert  Koncert  @relation(fields: [sifKoncert], references: [sifKoncert])
 
   @@index([sifKorisnik])
@@ -477,7 +477,7 @@ model PracenjeIzvodjaca {
   mbid        String
   datum       DateTime @default(now())
 
-  korisnik Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Cascade)
+  korisnik Korisnik @relation(fields: [sifKorisnik], references: [id], onDelete: Cascade)
   izvodjac Izvodjac @relation(fields: [mbid], references: [mbid], onDelete: Cascade)
 
   @@id([sifKorisnik, mbid])
@@ -489,8 +489,8 @@ model PracenjeKorisnika {
   sifPraceni   Int
   datum        DateTime @default(now())
 
-  pratitelj Korisnik @relation("Pratitelj", fields: [sifPratitelj], references: [sifKorisnik], onDelete: Cascade)
-  praceni   Korisnik @relation("Praceni", fields: [sifPraceni], references: [sifKorisnik], onDelete: Cascade)
+  pratitelj Korisnik @relation("Pratitelj", fields: [sifPratitelj], references: [id], onDelete: Cascade)
+  praceni   Korisnik @relation("Praceni", fields: [sifPraceni], references: [id], onDelete: Cascade)
 
   @@id([sifPratitelj, sifPraceni])
 }
@@ -505,7 +505,7 @@ model PrijavaSadrzaja {
 
   // podnioPrijavu
   sifPodnositelj Int
-  podnositelj    Korisnik @relation("PodnioPrijavu", fields: [sifPodnositelj], references: [sifKorisnik])
+  podnositelj    Korisnik @relation("PodnioPrijavu", fields: [sifPodnositelj], references: [id])
 
   // PrijavljenaRecenzija
   sifRecenzija Int?
@@ -513,7 +513,7 @@ model PrijavaSadrzaja {
 
   // PrijavljenKorisnik
   sifPrijavljeni Int?
-  prijavljeni    Korisnik? @relation("PrijavljenKorisnik", fields: [sifPrijavljeni], references: [sifKorisnik])
+  prijavljeni    Korisnik? @relation("PrijavljenKorisnik", fields: [sifPrijavljeni], references: [id])
 
   @@index([sifPodnositelj])
   @@index([stanje])
@@ -530,7 +530,7 @@ model ZahtjevZaUlogu {
 
   // podnioZahtjev
   sifKorisnik Int
-  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik])
+  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [id])
 
   // ZahtjevIzvodjac
   izvodjacMbid String?
@@ -554,7 +554,7 @@ model Obavijest {
 
   // Prima
   sifKorisnik Int
-  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Cascade)
+  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [id], onDelete: Cascade)
 
   @@index([sifKorisnik, procitano])
 }
@@ -568,7 +568,7 @@ model Preporuka {
 
   // PreporucenoKorisniku
   sifKorisnik Int
-  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [sifKorisnik], onDelete: Cascade)
+  korisnik    Korisnik @relation(fields: [sifKorisnik], references: [id], onDelete: Cascade)
 
   // PreporucenaStavka
   sifStavka Int
