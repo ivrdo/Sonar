@@ -350,8 +350,8 @@ export const seedGenerirano: DbSeedFn = async (prisma) => {
         odabraniIzvodjaci: { connect: iz.map((mbid) => ({ mbid })) }, // poveži s već postojećim izvođačem
       },
     });
-    sluSif.push(k.sifKorisnik); // šifre svih korisnika
-    registracija.set(k.sifKorisnik, iz); // mapiranje izbora izvođača po šiframa korisnika
+    sluSif.push(k.id); // šifre svih korisnika
+    registracija.set(k.id, iz); // mapiranje izbora izvođača po šiframa korisnika
   }
   const testSif = sluSif[0];
 
@@ -360,7 +360,7 @@ export const seedGenerirano: DbSeedFn = async (prisma) => {
     data: {
       brojUklonjenihDoSuspenzije: 3,
       trajanjeSuspenzijeDana: 7,
-      administratori: { connect: { sifKorisnik: admin.sifKorisnik } },
+      administratori: { connect: { id: admin.id } },
     },
   });
 
