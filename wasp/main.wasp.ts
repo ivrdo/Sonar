@@ -7,6 +7,11 @@ import { PasswordResetPage } from "./src/auth/email/PasswordResetPage" with { ty
 import { RequestPasswordResetPage } from "./src/auth/email/RequestPasswordResetPage" with { type: "ref" };
 import { SignupPage } from "./src/auth/email/SignupPage" with { type: "ref" };
 import { userSignupFields } from "./src/auth/email/userSignupFields" with { type: "ref" };
+import {
+  pregledBaze,
+  seedKatalog,
+  seedSve,
+} from "./src/seed/index" with { type: "ref" };
 import { LandingPage } from "./src/pages/LandingPage" with { type: "ref" };
 import { ConcertDetailPage } from "./src/pages/ConcertDetailPage" with { type: "ref" };
 
@@ -37,6 +42,9 @@ export default app({
   },
   emailSender: {
     provider: "Dummy",
+  },
+  db: {
+    seeds: [pregledBaze, seedKatalog, seedSve],
   },
   client: {
     rootComponent: App,
