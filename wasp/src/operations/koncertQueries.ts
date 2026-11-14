@@ -17,6 +17,25 @@ export const dohvatiKoncert: DohvatiKoncert<DohvatiKoncertArgs> = async (
 
   const koncert = await context.entites.Koncert.findUnique({
     where: {sifKoncert},
+    select: {
+      sifKoncert: true,
+      sifStavka: true,
+      datumVrijeme: true,
+      brojMjesta: true,
+      stanje: true,
+      //Mjesto odrzavanja i grad u kojem se nalazi
+      mjesto: {
+        select: {
+          sifMjestoKoncerta: true,
+          mbid: true,
+          nazMjestoKoncerta: true,
+          adresaMjestoKoncerta: true,
+          koordinate: true,
+          kapacitet: true,
+          mjesto: { select: {sifMjesto: true, nazMjesto: true } },
+        },
+      },
+    },
   });
 
   if(!koncert) {
