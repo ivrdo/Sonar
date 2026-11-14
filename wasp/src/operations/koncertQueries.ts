@@ -53,5 +53,15 @@ export const dohvatiKoncert: DohvatiKoncert<DohvatiKoncertArgs> = async (
   });
   const slobodnaMjesta = Math.max(0, koncert.brojMjesta - zauzeto);
 
-  return { ...koncert, slobodnaMjesta};
+  //prijava trenutnog korisnika (ako je prijavljen i ima aktivnu prijavu)
+  //context.user je undefined za neprijavljene jer je query registriran sa auth: false
+  const mojaPrijava = context.user
+    ? await context.entities.PrijavaNaKoncert.findFirst({
+        where: {sifKorisnik: context.user.id, ...zauzetoWhere(sifKoncert)},
+        //QR kod vracamo samo vlasniku prijave, nikad tuđe
+        select: { sifPrijavaNa: true, stanje: true, qrKod: true },
+    })
+    : null;
+
+  return { ...koncert, slobodnaMjesta, mojaPrijava };
 };
