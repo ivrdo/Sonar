@@ -1,6 +1,6 @@
 import { HttpError } from "wasp/server";
 import type { DohvatiKoncert } from "wasp/server/operations";
-import { zauzetoWhere } from "./pomocno";
+import { izracunajStanjeButton, zauzetoWhere } from "./pomocno";
 
 //id iz URL (/concerts/:id), pa ga klijent moze poslati kao string
 type DohvatiKoncertArgs = {id: number | string};
@@ -63,5 +63,12 @@ export const dohvatiKoncert: DohvatiKoncert<DohvatiKoncertArgs> = async (
     })
     : null;
 
-  return { ...koncert, slobodnaMjesta, mojaPrijava };
+  const stanjeGumba = izracunajStanjeButton({
+    koncertStanje: koncert.stanje,
+    datumVrijeme: koncert.datumVrijeme,
+    slobodnaMjesta,
+    imaPrijavu: mojaPrijava !== null,
+  });
+  
+  return { ...koncert, slobodnaMjesta, mojaPrijava, stanjeGumba };
 };
