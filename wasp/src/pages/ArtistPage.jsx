@@ -2,8 +2,9 @@
 /*
 Stranica izvođača (dizajn 3.3). Slaže se od vrha prema dolje. Zasad su gotovi
 SubpageHeader (traka sa strelicom natrag, dijeljenjem i tri točkice),
-ArtistProfileCard (kartica izvođača s gumbima Follow i Like) i raspored
-u dva stupca. Dijelovi stranice dodaju se jedan po jedan.
+ArtistProfileCard (kartica izvođača s gumbima Follow i Like), Discography
+(diskografija s filterima) i raspored u dva stupca. Dijelovi stranice dodaju
+se jedan po jedan.
 
     Okvir je isti kao na stranici koncerta: omotač, SubpageHeader, sadržaj i BottomTabs.
 
@@ -26,6 +27,7 @@ u dva stupca. Dijelovi stranice dodaju se jedan po jedan.
 import { SubpageHeader } from "../components/SubpageHeader";
 import { BottomTabs } from "../components/BottomTabs";
 import { ArtistProfileCard } from "../components/ArtistProfileCard";
+import Discography from "../components/Discography";
 
 // PRIVREMENO: probni podaci dok query dohvatiIzvodjaca nije gotov.
 const izvodjac = {
@@ -38,6 +40,64 @@ const izvodjac = {
   followers: 2341,
   following: false,
   liked: false,
+  releases: [
+    {
+      id: 1,
+      title: "Valovi",
+      type: "Album",
+      year: 2024,
+      cover: "/dizajn/naslovnice/valovi.svg",
+    },
+    {
+      id: 2,
+      title: "Prvi val",
+      type: "Album",
+      year: 2021,
+      cover: "/dizajn/naslovnice/prvi-val.svg",
+    },
+    {
+      id: 3,
+      title: "Plima",
+      type: "EP",
+      year: 2023,
+      cover: "/dizajn/naslovnice/plima.svg",
+    },
+    {
+      id: 4,
+      title: "Kratki spoj",
+      type: "EP",
+      year: 2022,
+      cover: "/dizajn/naslovnice/kratki-spoj.svg",
+    },
+    {
+      id: 5,
+      title: "Bez mjeseca",
+      type: "Single",
+      year: 2024,
+      cover: "/dizajn/naslovnice/bez-mjeseca.svg",
+    },
+    {
+      id: 6,
+      title: "Sidrište",
+      type: "Single",
+      year: 2023,
+      cover: "/dizajn/naslovnice/sidriste.svg",
+    },
+    {
+      id: 7,
+      title: "Demo 2019",
+      type: "Single",
+      year: 2019,
+      cover: "/dizajn/naslovnice/demo-2019.svg",
+    },
+    {
+      id: 8,
+      title: "Uživo u Tvornici",
+      type: "Live",
+      year: 2025,
+      cover: "/dizajn/naslovnice/uzivo-u-tvornici.svg",
+    },
+  ],
 };
 
 export function ArtistPage() {
@@ -80,6 +140,7 @@ export function ArtistPage() {
           {/* Lijevi stupac */}
           <div className="min-w-0 space-y-6">
             {/* Next near you, Discography, Popular songs, Ratings & reviews */}
+            <Discography releases={izvodjac.releases} />
           </div>
 
           {/* Desni stupac */}
