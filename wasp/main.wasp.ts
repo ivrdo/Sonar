@@ -14,6 +14,7 @@ import {
   userSignupFields,
 } from "./src/auth/google" with { type: "ref" };
 import { dohvatiIzvodjaca } from "./src/operations/izvodjacQueries" with { type: "ref" };
+import { dohvatiKoncert } from "./src/operations/koncertQueries" with { type: "ref" };
 
 export default app({
   name: "sonar",
@@ -40,6 +41,10 @@ export default app({
   spec: [
     query(dohvatiIzvodjaca, {
       entities: ["Izvodjac", "Album", "Pjesma"],
+    }),
+    query(dohvatiKoncert, {
+      entities: ["Koncert", "MjestoKoncerta", "Izvodjac"],
+      auth: false, //koncerte vidi i neprijavljen korisnik
     }),
     route("ConcertDetailRoute", "/concerts/:id", page(ConcertDetailPage)),
     route("HomeRoute", "/", page(LandingPage)),
