@@ -3,8 +3,8 @@
 Stranica izvođača (dizajn 3.3). Slaže se od vrha prema dolje. Zasad su gotovi
 SubpageHeader (traka sa strelicom natrag, dijeljenjem i tri točkice),
 ArtistProfileCard (kartica izvođača s gumbima Follow i Like), Discography
-(diskografija s filterima) i raspored u dva stupca. Dijelovi stranice dodaju
-se jedan po jedan.
+(diskografija s filterima), PopularSongs (popis pjesama) i raspored u dva
+stupca. Dijelovi stranice dodaju se jedan po jedan.
 
     Okvir je isti kao na stranici koncerta: omotač, SubpageHeader, sadržaj i BottomTabs.
 
@@ -27,7 +27,8 @@ se jedan po jedan.
 import { SubpageHeader } from "../components/SubpageHeader";
 import { BottomTabs } from "../components/BottomTabs";
 import { ArtistProfileCard } from "../components/ArtistProfileCard";
-import Discography from "../components/Discography";
+import { Discography } from "../components/Discography";
+import PopularSongs from "../components/PopularSongs";
 
 // PRIVREMENO: probni podaci dok query dohvatiIzvodjaca nije gotov.
 const izvodjac = {
@@ -98,6 +99,59 @@ const izvodjac = {
       cover: "/dizajn/naslovnice/uzivo-u-tvornici.svg",
     },
   ],
+
+  songs: [
+    {
+      id: 1,
+      title: "Plima",
+      album: "Plima",
+      type: "EP",
+      cover: "/dizajn/naslovnice/plima.svg",
+      rating: 4.4,
+      duration: "4:12",
+      liked: false,
+    },
+    {
+      id: 2,
+      title: "Bez mjeseca",
+      album: "Bez mjeseca",
+      type: "Single",
+      cover: "/dizajn/naslovnice/bez-mjeseca.svg",
+      rating: 4.8,
+      duration: "3:38",
+      liked: true,
+    },
+    {
+      id: 3,
+      title: "Valovi",
+      album: "Valovi",
+      type: "Album",
+      cover: "/dizajn/naslovnice/valovi.svg",
+      rating: 4.6,
+      duration: "5:21",
+      liked: false,
+    },
+    {
+      id: 4,
+      title: "Sidro",
+      album: "Valovi",
+      type: "Album",
+      cover: "/dizajn/naslovnice/valovi.svg",
+      rating: 4.1,
+      duration: "3:05",
+      liked: false,
+    },
+    {
+      id: 5,
+      title: "Svjetionik",
+      album: "Valovi",
+      type: "Album",
+      cover: "/dizajn/naslovnice/valovi.svg",
+      rating: 4.5,
+      duration: "4:47",
+      liked: false,
+    },
+  ],
 };
 
 export function ArtistPage() {
@@ -139,8 +193,9 @@ export function ArtistPage() {
         <div className="desktop:grid desktop:grid-cols-[1fr_20rem] desktop:items-start mt-6 flex flex-col gap-6">
           {/* Lijevi stupac */}
           <div className="min-w-0 space-y-6">
-            {/* Next near you, Discography, Popular songs, Ratings & reviews */}
+            {/* Next near you, Ratings & reviews */}
             <Discography releases={izvodjac.releases} />
+            <PopularSongs songs={izvodjac.songs} />
           </div>
 
           {/* Desni stupac */}
