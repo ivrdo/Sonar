@@ -3,8 +3,9 @@
 Stranica izvođača (dizajn 3.3). Slaže se od vrha prema dolje. Zasad su gotovi
 SubpageHeader (traka sa strelicom natrag, dijeljenjem i tri točkice),
 ArtistProfileCard (kartica izvođača s gumbima Follow i Like), Discography
-(diskografija s filterima), PopularSongs (popis pjesama) i raspored u dva
-stupca. Dijelovi stranice dodaju se jedan po jedan.
+(diskografija s filterima), PopularSongs (popis pjesama), UpcomingConcerts
+(nadolazeći koncerti) i raspored u dva stupca. Dijelovi stranice dodaju
+se jedan po jedan.
 
     Okvir je isti kao na stranici koncerta: omotač, SubpageHeader, sadržaj i BottomTabs.
 
@@ -29,6 +30,7 @@ import { BottomTabs } from "../components/BottomTabs";
 import { ArtistProfileCard } from "../components/ArtistProfileCard";
 import { Discography } from "../components/Discography";
 import PopularSongs from "../components/PopularSongs";
+import { UpcomingConcerts } from "../components/UpcomingConcerts";
 
 // PRIVREMENO: probni podaci dok query dohvatiIzvodjaca nije gotov.
 const izvodjac = {
@@ -152,6 +154,32 @@ const izvodjac = {
       liked: false,
     },
   ],
+  concerts: [
+    {
+      id: 1,
+      title: "Orbita + Kiša u Svibnju",
+      date: "Fri 20 Nov",
+      time: "20:00",
+      venue: "Dom kulture, Zagreb",
+      image: "/dizajn/izvodjaci/orbita.svg",
+    },
+    {
+      id: 2,
+      title: "Plavi Sat + Orbita",
+      date: "Sat 14 Nov",
+      time: "21:00",
+      venue: "Klub Obala, Rijeka",
+      image: "/dizajn/izvodjaci/orbita.svg",
+    },
+    {
+      id: 3,
+      title: "Orbita",
+      date: "Sat 9 Jan",
+      time: "21:00",
+      venue: "Klub Tunel, Split",
+      image: "/dizajn/izvodjaci/orbita.svg",
+    },
+  ],
 };
 
 export function ArtistPage() {
@@ -200,7 +228,8 @@ export function ArtistPage() {
 
           {/* Desni stupac */}
           <div className="space-y-6">
-            {/* Upcoming concerts, About, Fans also like */}
+            <UpcomingConcerts concerts={izvodjac.concerts} />
+            {/* About, Fans also like */}
           </div>
         </div>
       </main>
