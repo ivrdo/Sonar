@@ -31,6 +31,7 @@ import { ArtistProfileCard } from "../components/ArtistProfileCard";
 import { Discography } from "../components/Discography";
 import PopularSongs from "../components/PopularSongs";
 import { UpcomingConcerts } from "../components/UpcomingConcerts";
+import { AboutArtist } from "../components/AboutArtist";
 
 // PRIVREMENO: probni podaci dok query dohvatiIzvodjaca nije gotov.
 const izvodjac = {
@@ -180,6 +181,12 @@ const izvodjac = {
       image: "/dizajn/izvodjaci/orbita.svg",
     },
   ],
+  about:
+    "Four-piece from Zagreb. Started in a basement in Trešnjevka in 2018, two albums since. Long songs, loud endings.",
+  links: [
+    { label: "orbita.example", url: "https://orbita.example" },
+    { label: "Bandcamp", url: "https://orbita.bandcamp.com" },
+  ],
 };
 
 export function ArtistPage() {
@@ -229,7 +236,9 @@ export function ArtistPage() {
           {/* Desni stupac */}
           <div className="space-y-6">
             <UpcomingConcerts concerts={izvodjac.concerts} />
-            {/* About, Fans also like */}
+            <UpcomingConcerts concerts={izvodjac.concerts} />
+            <AboutArtist description={izvodjac.about} links={izvodjac.links} />
+            {/* Fans also like */}
           </div>
         </div>
       </main>
