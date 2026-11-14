@@ -35,6 +35,10 @@ export const dohvatiKoncert: DohvatiKoncert<DohvatiKoncertArgs> = async (
           mjesto: { select: {sifMjesto: true, nazMjesto: true } },
         },
       },
+      izvodjaci: {
+        select: {mbid: true, nazIzvodjaca: true, popularnost: true},
+        orderBy: {popularnost: "desc"},
+      },
     },
   });
 
