@@ -1,6 +1,6 @@
 //AKCIJE: prijava na koncert
 
-import { HttpError } from "wasp/server";
+import { HttpError,prisma } from "wasp/server";
 import type { PrijaviNaKoncert } from "wasp/server/operations";
 
 type PrijaviNaKoncertArgs = { sifKoncert:number };
@@ -24,5 +24,14 @@ export const prijaviNaKoncert: PrijaviNaKoncert<PrijaviNaKoncertArgs> = async (
     throw new HttpError(400, "Neispravan id koncerta.");
   }
 
-  return { sifKorisnik, sifKoncert };
+  return prisma.$transaction(async (tx) => {
+    //zaključavamo redak koncerta do kraja transakcije
+    await tx.$queryRaw`
+      SELECT "sifKoncert" FROM "Koncert"
+      WHERE "sifKoncert" = ${sifKoncert}
+      FOR UPDATE 
+    `;
+
+    return { sifKorisnik, sifKoncert };
+  });
 };
