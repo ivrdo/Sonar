@@ -7,7 +7,10 @@
   "runServices": ["db", "workspace"],
   "workspaceFolder": "/workspace",
   "remoteUser": "node",
-  "postCreateCommand": "npm i -g @wasp.sh/wasp-cli@0.26.1 --allow-scripts=@wasp.sh/wasp-cli",
+  // Verzije Nodea i Waspa su zadane u setup.sh. Bez terminala (< /dev/null)
+  // skripta preskače migracije i probne podatke, da ne zapne na pitanju za ime
+  // migracije.
+  "postCreateCommand": "bash setup.sh < /dev/null",
   // Portove 3000 i 3001 već objavljuje .devcontainer/compose.yaml
   "otherPortsAttributes": { "onAutoForward": "ignore" }
 }
