@@ -1,4 +1,4 @@
-import { app, page, route } from "@wasp.sh/spec";
+import { app, page, query, route } from "@wasp.sh/spec";
 import { App } from "./src/App" with { type: "ref" };
 import { LoginPage } from "./src/auth/email/LoginPage" with { type: "ref" };
 import { MapPage } from "./src/pages/MapPage" with { type: "ref" };
@@ -13,6 +13,7 @@ import {
   getConfig,
   userSignupFields,
 } from "./src/auth/google" with { type: "ref" };
+import { dohvatiIzvodjaca } from "./src/operations/izvodjacQueries" with { type: "ref" };
 
 export default app({
   name: "sonar",
@@ -37,6 +38,9 @@ export default app({
     rootComponent: App,
   },
   spec: [
+    query(dohvatiIzvodjaca, {
+      entities: ["Izvodjac", "Album", "Pjesma"],
+    }),
     route("ConcertDetailRoute", "/concerts/:id", page(ConcertDetailPage)),
     route("HomeRoute", "/", page(LandingPage)),
     route("LoginRoute", "/login", page(LoginPage)),
