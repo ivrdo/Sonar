@@ -31,8 +31,6 @@
         - text-[15px] font-semibold / text-[13px]: naslov izdanja i podnaslov
           (vrsta i godina), desktop:text-[11px] / desktop:text-[10px] manji na desktopu
 
-    Pristupačnost: naslovnice imaju prazan alt="" jer je naslov izdanja odmah ispod.
-
     Izdanja još ne vode nigdje (stranica izdanja ne postoji). Dizajn ima i poveznicu
     "See all 14" uz prikaz najviše 8 izdanja; to se dodaje kad query donese puni popis.
     Vrijednosti u "type" treba uskladiti s onima iz baze kad query stigne.
