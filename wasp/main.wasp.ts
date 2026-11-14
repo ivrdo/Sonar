@@ -13,6 +13,7 @@ import {
   getConfig,
   userSignupFields,
 } from "./src/auth/google" with { type: "ref" };
+import { ArtistPage } from "./src/pages/ArtistPage" with { type: "ref" };
 
 export default app({
   name: "sonar",
@@ -41,5 +42,6 @@ export default app({
     route("HomeRoute", "/", page(LandingPage)),
     route("LoginRoute", "/login", page(LoginPage)),
     route("MapRoute", "/map", page(MapPage)),
+    route("ArtistRoute", "/artists/:id", page(ArtistPage)),
   ],
 });
