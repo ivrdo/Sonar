@@ -1,5 +1,6 @@
 import { HttpError } from "wasp/server";
 import type { DohvatiKoncert } from "wasp/server/operations";
+import { zauzetoWhere } from "./pomocno";
 
 //id iz URL (/concerts/:id), pa ga klijent moze poslati kao string
 type DohvatiKoncertArgs = {id: number | string};
@@ -46,5 +47,11 @@ export const dohvatiKoncert: DohvatiKoncert<DohvatiKoncertArgs> = async (
     throw new HttpError(404, "Koncert nije pronađen");
   }
 
-  return koncert;
+  //slobodna mjesta = ukupan broj mjesta - aktivne prijave (ne ide ispod 0)
+  const zauzeto = await context.entities.PrijavaNaKoncert.count({
+    where: zauzetoWhere(sifKoncert),
+  });
+  const slobodnaMjesta = Math.max(0, koncert.brojMjesta - zauzeto);
+
+  return { ...koncert, slobodnaMjesta};
 };
