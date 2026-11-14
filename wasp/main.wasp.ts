@@ -43,7 +43,7 @@ export default app({
       entities: ["Izvodjac", "Album", "Pjesma"],
     }),
     query(dohvatiKoncert, {
-      entities: ["Koncert", "MjestoKoncerta", "Izvodjac"],
+      entities: ["Koncert", "MjestoKoncerta", "Izvodjac", "PrijavaNaKoncert"],
       auth: false, //koncerte vidi i neprijavljen korisnik
     }),
     route("ConcertDetailRoute", "/concerts/:id", page(ConcertDetailPage)),
