@@ -49,6 +49,14 @@ export const prijaviNaKoncert: PrijaviNaKoncert<PrijaviNaKoncertArgs> = async (
       throw new HttpError(409, "Koncert je već počeo.");
     }
 
+    //brojimo tek nakon zaključavanja pa vidimo prijave svih transakcija koje su zavrsile prije nas
+    const zauzeto = await tx.prijavaNaKoncert.count({
+      where: zauzetoWhere(sifKoncert),
+    });
+    if( zauzeto >= koncert.brojMjesta) {
+      throw new HttpError(409, "Nema slobodnih mjesta, koncert je popunjen.");
+    }
+
     return { sifKorisnik, sifKoncert };
   });
 };
