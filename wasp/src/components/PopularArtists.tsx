@@ -1,12 +1,6 @@
 import { Section } from "./Section";
 import { Tile } from "./Tile";
-
-export type PopularArtist = {
-  id: string; // kod nas će to biti mbid
-  name: string;
-  genre: string;
-  image?: string; // neobavezno
-};
+import type { PopularArtist } from "../landing/types";
 
 type PopularArtistsProps = {
   artists?: PopularArtist[]; // neobavezno, ako ga nema, koriste se probni podaci
