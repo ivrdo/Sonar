@@ -107,6 +107,8 @@
 | Datum | ID zahtjeva | Promjena i razlog | Dogovoreno s / dokaz |
 | --- | --- | --- | --- |
 | 14.10.2026. | F-014, F-021 – F-028, F-039, F-042, NF-08, NF-09 | Prijedlog teme dorađen prema povratnoj informaciji asistenta: dodan središnji proces u domeni (koncerti i prijave na koncert sa stanjima), razrađena uloga izvođača (službeni odgovor, statistika ocjena), preporuke ostaju jednostavne, dodani statistika administratora, rad u stvarnom vremenu i prilagodba mobilnim uređajima. | Asistent (e-pošta), 14.10.2026. |
+| 21.10.2026. | Opseg (1. poglavlje, „Izvan opsega ili odgođeno”) | Kupnja albuma i pjesama izričito je stavljena izvan opsega. Aplikacija ne prodaje glazbu jer bi to zahtijevalo ugovore s izdavačkim kućama i nositeljima prava, što projekt ne može ostvariti. Postojeći servisi za kupnju glazbe navedeni su u 1.4 kao srodna rješenja. | Tim; commit `ad41463` ([PR #9](https://github.com/ivrdo/Sonar/pull/9)) |
+| 29.10.2026. | UC-001 – UC-018 → UC-001 – UC-013 | Srodni obrasci uporabe su spojeni, pa ih je 13 umjesto 18: javni pregled karte i popularnih izvođača ušao je u UC-001, preuzimanje podataka i brisanje računa u UC-002, liste u UC-004, a pregled preporuka te obavijesti i podsjetnici u UC-005. Funkcijski i nefunkcijski zahtjevi ostaju isti; mijenja se samo njihovo pridruživanje obrascima uporabe, što je ažurirano u 2.6. | Tim; commit `495f014` ([PR #11](https://github.com/ivrdo/Sonar/pull/11), [#10](https://github.com/ivrdo/Sonar/issues/10)) |
 
 ---
 
