@@ -1,14 +1,7 @@
 import { Link } from "wasp/client/router";
 import { Section } from "./Section";
 import { Tile } from "./Tile";
-
-export type VenueSummary = {
-  id: number;
-  name: string;
-  city: string;
-  upcoming: number; // broj nadolazećih koncerata
-  image?: string;
-};
+import type { VenueSummary } from "../landing/types";
 
 type VenuesSectionProps = {
   venues?: VenueSummary[];
