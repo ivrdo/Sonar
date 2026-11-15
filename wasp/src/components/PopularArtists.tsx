@@ -2,6 +2,7 @@ import { Section } from "./Section";
 import { Tile } from "./Tile";
 import type { PopularArtist } from "../landing/types";
 import { dohvatiPopularneIzvodjace, useQuery } from "wasp/client/operations";
+import { Link } from "wasp/client/router";
 
 type PopularArtistsViewProps = {
   artists?: PopularArtist[]; // neobavezno, ako ga nema, koriste se probni podaci
@@ -52,13 +53,14 @@ export function PopularArtistsView({ artists = PROBNI_IZVODJACI } : PopularArtis
     <Section title="Popular on Sonar">
       <div className="desktop:grid-cols-6 desktop:gap-x-4 desktop:gap-y-5 grid grid-cols-3 gap-x-2 gap-y-3">
         {artists.map((a) => (
-          <Tile
-            key={a.id}
-            variant="round"
-            image={a.image}
-            title={a.name}
-            subtitle={a.genre}
-          />
+          <Link key={a.id} to="/artists/:id" params={{ id: a.id }} className="min-w-0">
+            <Tile
+              variant="round"
+              image={a.image}
+              title={a.name}
+              subtitle={a.genre}
+            />
+          </Link>
         ))}
       </div>
     </Section>
