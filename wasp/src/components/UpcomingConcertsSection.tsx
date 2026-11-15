@@ -54,14 +54,14 @@ export function UpcomingConcertsSection() {
 
   if (isLoading) {
     return (
-      <Section title="Popular on Sonar">
+      <Section title="Upcoming Concerts On Sonar">
         <p className="text-tekst-druga text-sm">Loading…</p>
       </Section>
     );
   }
   if (error || !data) {
     return (
-      <Section title="Popular on Sonar">
+      <Section title="Upcoming Concerts On Sonar">
         <p className="text-tekst-druga text-sm">
           Could not load upcoming concerts...
         </p>
@@ -70,8 +70,8 @@ export function UpcomingConcertsSection() {
   }
   if (data.length === 0) {
     return (
-      <Section title="Popular on Sonar">
-        <p className="text-tekst-druga text-sm">No artists yet...</p>
+      <Section title="Upcoming Concerts On Sonar">
+        <p className="text-tekst-druga text-sm">No upcoming concerts yet...</p>
       </Section>
     );
   }
