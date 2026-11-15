@@ -12,3 +12,11 @@ export type VenueSummary = {
   upcoming: number;
   image?: string;
 };
+
+export type ConcertSummary = {
+  id: number;
+  title: string;
+  startsAt: Date;
+  venue: string;
+  image?: string;
+};

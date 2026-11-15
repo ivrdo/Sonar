@@ -1,8 +1,9 @@
 import {
   type DohvatiMjesta,
   type DohvatiPopularneIzvodjace,
+  type DohvatiNadolazeceKoncerte,
 } from "wasp/server/operations";
-import type { PopularArtist, VenueSummary } from "./types";
+import type { PopularArtist, VenueSummary, ConcertSummary } from "./types";
 import { slikaIzvodjaca, slikaMjesta } from "./slike";
 
 // Oznake koje nisu žanr (nacionalnosti i sl.); preskačemo ih pri odabiru žanra
@@ -29,7 +30,11 @@ export const dohvatiPopularneIzvodjace: DohvatiPopularneIzvodjace<
     orderBy: [{ popularnost: "desc" }, { mbid: "asc" }],
     take: 6,
     include: {
-      oznake: { orderBy: { tezina: "desc" }, take: 8, include: { oznaka: true } },
+      oznake: {
+        orderBy: { tezina: "desc" },
+        take: 8,
+        include: { oznaka: true },
+      },
     },
   });
   return izv.map((i, indeks) => ({
@@ -46,7 +51,21 @@ export const dohvatiMjesta: DohvatiMjesta<void, VenueSummary[]> = async (
   _args,
   context,
 ) => {
-  const mj = await context.entities.MjestoKoncerta.findMany({include: { mjesto: true, _count: { select: { koncerti: { where: { stanje: "OTVORENE_PRIJAVE", datumVrijeme: { gte: new Date() } } } } } } });
+  const mj = await context.entities.MjestoKoncerta.findMany({
+    include: {
+      mjesto: true,
+      _count: {
+        select: {
+          koncerti: {
+            where: {
+              stanje: "OTVORENE_PRIJAVE",
+              datumVrijeme: { gte: new Date() },
+            },
+          },
+        },
+      },
+    },
+  });
   return mj
     .map((m) => ({
       id: m.sifMjestoKoncerta,
@@ -60,4 +79,33 @@ export const dohvatiMjesta: DohvatiMjesta<void, VenueSummary[]> = async (
       ...m,
       image: slikaMjesta(indeks),
     }));
+};
+
+export const dohvatiNadolazeceKoncerte: DohvatiNadolazeceKoncerte<
+  void,
+  ConcertSummary[]
+> = async (_args, context) => {
+  const koncerti = await context.entities.Koncert.findMany({
+    include: {
+      mjesto: {
+        include: {
+          mjesto: true,
+        },
+      },
+      izvodjaci: true,
+    },
+    where: {
+      stanje: { in: ["POTVRDEN", "OTVORENE_PRIJAVE"] },
+      datumVrijeme: { gte: new Date() },
+    },
+    orderBy: { datumVrijeme: "asc" },
+    take: 4,
+  });
+  return koncerti.map((k, ix) => ({
+    id: k.sifKoncert,
+    title: k.izvodjaci.map((i) => i.nazIzvodjaca).join(" + "),
+    startsAt: k.datumVrijeme,
+    venue: k.mjesto.nazMjestoKoncerta + ", " + k.mjesto.mjesto.nazMjesto,
+    image: slikaIzvodjaca(ix),
+  }));
 };
