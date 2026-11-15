@@ -3,6 +3,7 @@ import {
   type DohvatiPopularneIzvodjace,
 } from "wasp/server/operations";
 import type { PopularArtist, VenueSummary } from "./types";
+import { slikaIzvodjaca, slikaMjesta } from "./slike";
 
 // Oznake koje nisu žanr (nacionalnosti i sl.); preskačemo ih pri odabiru žanra
 const NIJE_ZANR = new Set([
@@ -31,10 +32,13 @@ export const dohvatiPopularneIzvodjace: DohvatiPopularneIzvodjace<
       oznake: { orderBy: { tezina: "desc" }, take: 8, include: { oznaka: true } },
     },
   });
-  return izv.map((i) => ({
+  return izv.map((i, indeks) => ({
     id: i.mbid,
     name: i.nazIzvodjaca,
-    genre: i.oznake.find((o) => !NIJE_ZANR.has(o.oznaka.nazOznaka))?.oznaka.nazOznaka ?? "",
+    genre:
+      i.oznake.find((o) => !NIJE_ZANR.has(o.oznaka.nazOznaka))?.oznaka
+        .nazOznaka ?? "",
+    image: slikaIzvodjaca(indeks),
   }));
 };
 
@@ -51,5 +55,9 @@ export const dohvatiMjesta: DohvatiMjesta<void, VenueSummary[]> = async (
       upcoming: m._count.koncerti,
     }))
     .sort((a, b) => b.upcoming - a.upcoming || a.name.localeCompare(b.name))
-    .slice(0, 8);
+    .slice(0, 8)
+    .map((m, indeks) => ({
+      ...m,
+      image: slikaMjesta(indeks),
+    }));
 };
