@@ -17,7 +17,7 @@ import { HeroBanner } from "../components/HeroBanner.jsx";
 import { LandingPageFilterButtons } from "../components/LandingPageFilterButtons.jsx";
 import { ConcertCard } from "../components/ConcertCard.jsx";
 import { PopularArtists } from "../components/PopularArtists.jsx";
-
+import { DataSourcesFooter } from "../components/DataSourcesFooter";
 /*
     Definicija i uvoz glavne funkcionalne komponente LandingPage.
     U Reactu, komponente su JavaScript funkcije koje vraćaju JSX strukturu, koja se kasnije pretvara u DOM elemente.
@@ -99,6 +99,7 @@ export function LandingPage() {
             <PopularArtists />
           </div>
         </div>
+        <DataSourcesFooter/>
       </div>
       <BottomTabs />
     </div>
