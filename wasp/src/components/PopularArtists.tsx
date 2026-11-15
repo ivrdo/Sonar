@@ -1,8 +1,9 @@
 import { Section } from "./Section";
 import { Tile } from "./Tile";
 import type { PopularArtist } from "../landing/types";
+import { dohvatiPopularneIzvodjace, useQuery } from "wasp/client/operations";
 
-type PopularArtistsProps = {
+type PopularArtistsViewProps = {
   artists?: PopularArtist[]; // neobavezno, ako ga nema, koriste se probni podaci
 };
 
@@ -46,7 +47,7 @@ export const PROBNI_IZVODJACI: PopularArtist[] = [
   },
 ];
 
-export function PopularArtists({ artists = PROBNI_IZVODJACI } : PopularArtistsProps) {
+export function PopularArtistsView({ artists = PROBNI_IZVODJACI } : PopularArtistsViewProps) {
   return (
     <Section title="Popular on Sonar">
       <div className="desktop:grid-cols-6 desktop:gap-x-4 desktop:gap-y-5 grid grid-cols-3 gap-x-2 gap-y-3">
@@ -62,6 +63,33 @@ export function PopularArtists({ artists = PROBNI_IZVODJACI } : PopularArtistsPr
       </div>
     </Section>
   );
+}
+
+export function PopularArtists() {
+  const { data, isLoading, error } = useQuery(dohvatiPopularneIzvodjace);
+
+  if (isLoading) {
+    return (
+      <Section title="Popular on Sonar">
+        <p className="text-tekst-druga text-sm">Loading…</p>
+      </Section>
+    );
+  }
+  if (error || !data) {
+    return (
+      <Section title="Popular on Sonar">
+        <p className="text-tekst-druga text-sm">Could not load artists.</p>
+      </Section>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <Section title="Popular on Sonar">
+        <p className="text-tekst-druga text-sm">No artists yet.</p>
+      </Section>
+    );
+  }
+  return <PopularArtistsView artists={data} />;
 }
 
 export default PopularArtists;
