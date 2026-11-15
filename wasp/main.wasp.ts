@@ -1,4 +1,4 @@
-import { app, page, query, route } from "@wasp.sh/spec";
+import { app, page, query, route, action } from "@wasp.sh/spec";
 import { App } from "./src/App" with { type: "ref" };
 import { LoginPage } from "./src/auth/email/LoginPage" with { type: "ref" };
 import { MapPage } from "./src/pages/MapPage" with { type: "ref" };
@@ -16,6 +16,7 @@ import {
 import { ArtistPage } from "./src/pages/ArtistPage" with { type: "ref" };
 import { dohvatiIzvodjaca } from "./src/operations/izvodjacQueries" with { type: "ref" };
 import { dohvatiKoncert } from "./src/operations/koncertQueries" with { type: "ref" };
+import { prijaviNaKoncert } from "./src/operations/prijave" with { type: "ref" };
 
 export default app({
   name: "sonar",
@@ -46,6 +47,9 @@ export default app({
     query(dohvatiKoncert, {
       entities: ["Koncert", "MjestoKoncerta", "Izvodjac", "PrijavaNaKoncert"],
       auth: false, //koncerte vidi i neprijavljen korisnik
+    }),
+    action(prijaviNaKoncert, {
+      entities: ["Koncert", "PrijavaNaKoncert", "Korisnik"],
     }),
     route("ConcertDetailRoute", "/concerts/:id", page(ConcertDetailPage)),
     route("HomeRoute", "/", page(LandingPage)),
