@@ -3,8 +3,14 @@
 import { HttpError,prisma } from "wasp/server";
 import type { PrijaviNaKoncert } from "wasp/server/operations";
 import { zauzetoWhere } from "./pomocno";
+import { randomBytes } from "node:crypto";
 
 type PrijaviNaKoncertArgs = { sifKoncert:number };
+
+//isti oblik kao u seedu (SONAR-koncert-korisnik-hex), ali nasumicni iz crypto jer kod je "tajna" ulaznice, a Math.random je predvidljiv
+function napraviQrKod(sifKoncert: number, sifKorisnik: number): string {
+  return `SONAR-${sifKoncert}-${sifKorisnik}-${randomBytes(8).toString("hex")}`;
+}
 
 export const prijaviNaKoncert: PrijaviNaKoncert<PrijaviNaKoncertArgs> = async (
   args,
@@ -57,6 +63,13 @@ export const prijaviNaKoncert: PrijaviNaKoncert<PrijaviNaKoncertArgs> = async (
       throw new HttpError(409, "Nema slobodnih mjesta, koncert je popunjen.");
     }
 
-    return { sifKorisnik, sifKoncert };
+    //pravilo 8:jedna aktivna prijava po korisniku i koncertu
+    const prijava = await tx.prijavaNaKoncert.create({
+      data: { sifKorisnik, sifKoncert, qrKod: napraviQrKod(sifKoncert, sifKorisnik)},
+      select: { sifPrijavaNa: true, stanje: true, qrKod: true},
+    });
+
+
+    return { ...prijava, slobodnaMjesta: koncert.brojMjesta - zauzeto - 1};  //-1 jer smo upravo zauzeli jedno
   });
 };
