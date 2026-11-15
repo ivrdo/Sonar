@@ -7,7 +7,7 @@
   "runServices": ["db", "workspace"],
   "workspaceFolder": "/workspace",
   "remoteUser": "node",
-  "postCreateCommand": "npm i -g @wasp.sh/wasp-cli@0.26",
+  "postCreateCommand": "npm i -g @wasp.sh/wasp-cli@0.26.1 --allow-scripts=@wasp.sh/wasp-cli",
   // Portove 3000 i 3001 već objavljuje .devcontainer/compose.yaml
   "otherPortsAttributes": { "onAutoForward": "ignore" }
 }
