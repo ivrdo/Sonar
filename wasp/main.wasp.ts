@@ -7,6 +7,7 @@ import {
   seedKatalog,
   seedSve,
 } from "./src/seed/index" with { type: "ref" };
+import { landingSpec } from "./src/landing/landing.wasp";
 import { LandingPage } from "./src/pages/LandingPage" with { type: "ref" };
 import { ConcertDetailPage } from "./src/pages/ConcertDetailPage" with { type: "ref" };
 import {
@@ -52,5 +53,6 @@ export default app({
     route("LoginRoute", "/login", page(LoginPage)),
     route("MapRoute", "/map", page(MapPage)),
     route("ArtistRoute", "/artists/:id", page(ArtistPage)),
+    landingSpec,
   ],
 });
