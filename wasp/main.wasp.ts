@@ -47,7 +47,7 @@ export default app({
     }),
     query(dohvatiKoncert, {
       entities: ["Koncert", "MjestoKoncerta", "Izvodjac", "PrijavaNaKoncert"],
-      auth: false, //koncerte vidi i neprijavljen korisnik
+      // auth: false, //koncerte vidi i neprijavljen korisnik
     }),
     action(prijaviNaKoncert, {
       entities: ["Koncert", "PrijavaNaKoncert", "Korisnik"],

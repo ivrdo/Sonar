@@ -16,7 +16,7 @@ export const dohvatiKoncert: DohvatiKoncert<DohvatiKoncertArgs> = async (
     throw new HttpError(400, "Neispravan id koncerta.");
   }
 
-  const koncert = await context.entites.Koncert.findUnique({
+  const koncert = await context.entities.Koncert.findUnique({
     where: {sifKoncert},
     select: {
       sifKoncert: true,
