@@ -12,7 +12,7 @@ BEGIN
     END IF;
 
     IF NEW."brojMjesta" > kap THEN
-       RAISE.EXCEPTION 'Broj mjesta koncerta (%) ne smije prelaziti kapacitet mjesta', NEW."brojMjesta", kap;
+       RAISE EXCEPTION 'Broj mjesta koncerta (%) ne smije prelaziti kapacitet mjesta (%)', NEW."brojMjesta", kap;
     END IF;
 
     RETURN NEW;
@@ -20,12 +20,12 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- radi pri unosu koncerta te kad se promijeni broj mjesta ili mjesto odrzavanja
-CREATE TRIGGER trg_koncert_mjesta
+CREATE TRIGGER trg_koncert_broj_mjesta
     BEFORE INSERT OR UPDATE OF "brojMjesta", "sifMjestoKoncerta" ON "Koncert"
     FOR EACH ROW EXECUTE FUNCTION provjeri_broj_mjesta_koncerta();
 
 --smanjivanje kapaciteta ne smije pasti ispod broja mjesta koncerta koji jos traju
-CREATE OR REPLACE FUNCTION provjeri_kapacitet_mjesta() RETURN TRIGGER AS $$
+CREATE OR REPLACE FUNCTION provjeri_kapacitet_mjesta() RETURNS TRIGGER AS $$
 DECLARE
     max_mjesta INTEGER;
 BEGIN
