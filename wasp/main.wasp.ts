@@ -18,6 +18,7 @@ import { ArtistPage } from "./src/pages/ArtistPage" with { type: "ref" };
 import { dohvatiIzvodjaca } from "./src/operations/izvodjacQueries" with { type: "ref" };
 import { dohvatiKoncert } from "./src/operations/koncertQueries" with { type: "ref" };
 import { prijaviNaKoncert } from "./src/operations/prijave" with { type: "ref" };
+import { NotFoundPage } from "./src/pages/NotFoundPage" with { type: "ref" };
 
 export default app({
   name: "sonar",
@@ -58,5 +59,7 @@ export default app({
     route("MapRoute", "/map", page(MapPage)),
     route("ArtistRoute", "/artists/:id", page(ArtistPage)),
     landingSpec,
+    // Mora biti zadnja: hvata sve adrese koje nijedna ruta iznad nije pogodila
+    route("NotFoundRoute", "*", page(NotFoundPage)),
   ],
 });
