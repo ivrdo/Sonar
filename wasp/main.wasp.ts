@@ -8,6 +8,7 @@ import {
   seedSve,
 } from "./src/seed/index" with { type: "ref" };
 import { landingSpec } from "./src/landing/landing.wasp";
+import { searchSpec } from "./src/search/search.wasp";
 import { LandingPage } from "./src/pages/LandingPage" with { type: "ref" };
 import { ConcertDetailPage } from "./src/pages/ConcertDetailPage" with { type: "ref" };
 import {
@@ -19,6 +20,7 @@ import { dohvatiIzvodjaca } from "./src/operations/izvodjacQueries" with { type:
 import { dohvatiKoncert } from "./src/operations/koncertQueries" with { type: "ref" };
 import { prijaviNaKoncert } from "./src/operations/prijave" with { type: "ref" };
 import { NotFoundPage } from "./src/pages/NotFoundPage" with { type: "ref" };
+
 
 export default app({
   name: "sonar",
@@ -59,6 +61,7 @@ export default app({
     route("MapRoute", "/map", page(MapPage)),
     route("ArtistRoute", "/artists/:id", page(ArtistPage)),
     landingSpec,
+    searchSpec,
     // Mora biti zadnja: hvata sve adrese koje nijedna ruta iznad nije pogodila
     route("NotFoundRoute", "*", page(NotFoundPage)),
   ],
