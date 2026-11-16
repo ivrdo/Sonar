@@ -1,0 +1,63 @@
+services:
+  - type: web
+    name: sonar-server
+    runtime: node
+    plan: free
+    region: frankfurt
+    branch: deploy-test
+    rootDir: wasp
+    buildCommand: >-
+      npm install -g @wasp.sh/wasp-cli@0.26.1 --allow-scripts=@wasp.sh/wasp-cli &&
+      export PATH="$(npm prefix -g)/bin:$PATH" &&
+      wasp install &&
+      wasp build &&
+      cd .wasp/out/server &&
+      npm install &&
+      npx prisma generate --schema=../db/schema.prisma &&
+      npm run bundle
+    startCommand: cd .wasp/out/server && npm run start-production
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: sonar-db
+          property: connectionString
+      - key: JWT_SECRET
+        generateValue: true
+      - key: WASP_SERVER_URL
+        sync: false
+      - key: WASP_WEB_CLIENT_URL
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: NODE_VERSION
+        value: "24.22.3"
+
+  - type: web
+    name: sonar-client
+    runtime: static
+    branch: deploy-test
+    rootDir: wasp
+    buildCommand: >-
+      npm install -g @wasp.sh/wasp-cli@0.26.1 --allow-scripts=@wasp.sh/wasp-cli &&
+      export PATH="$(npm prefix -g)/bin:$PATH" &&
+      wasp install &&
+      wasp build &&
+      npx vite build
+    staticPublishPath: .wasp/out/web-app/build
+    envVars:
+      - key: REACT_APP_API_URL
+        sync: false
+      - key: NODE_VERSION
+        value: "24.22.3"
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /200.html
+
+databases:
+  - name: sonar-db
+    plan: free
+    region: frankfurt
+    postgresMajorVersion: "18"

@@ -1,0 +1,97 @@
+import { Section } from "./Section";
+import { Tile } from "./Tile";
+import type { PopularArtist } from "../landing/types";
+import { dohvatiPopularneIzvodjace, useQuery } from "wasp/client/operations";
+import { Link } from "wasp/client/router";
+
+type PopularArtistsViewProps = {
+  artists?: PopularArtist[]; // neobavezno, ako ga nema, koriste se probni podaci
+};
+
+// Probni podaci, dok ne stigne query dohvatiPopularneIzvodjace
+export const PROBNI_IZVODJACI: PopularArtist[] = [
+  {
+    id: "1",
+    name: "Orbita",
+    genre: "indie rock",
+    image: "/dizajn/izvodjaci/orbita.svg",
+  },
+  {
+    id: "2",
+    name: "Mali Mjesec",
+    genre: "folk",
+    image: "/dizajn/izvodjaci/mali-mjesec.svg",
+  },
+  {
+    id: "3",
+    name: "Sidro",
+    genre: "ambient",
+    image: "/dizajn/izvodjaci/sidro.svg",
+  },
+  {
+    id: "4",
+    name: "Mjesečeva strana",
+    genre: "electronic",
+    image: "/dizajn/izvodjaci/mjeseceva-strana.svg",
+  },
+  {
+    id: "5",
+    name: "Plavi sat",
+    genre: "acoustic",
+    image: "/dizajn/izvodjaci/plavi-sat.svg",
+  },
+  {
+    id: "6",
+    name: "Noćni autobus",
+    genre: "post punk",
+    image: "/dizajn/izvodjaci/nocni-autobus.svg",
+  },
+];
+
+export function PopularArtistsView({ artists = PROBNI_IZVODJACI } : PopularArtistsViewProps) {
+  return (
+    <Section title="Popular on Sonar">
+      <div className="desktop:grid-cols-6 desktop:gap-x-4 desktop:gap-y-5 grid grid-cols-3 gap-x-2 gap-y-3">
+        {artists.map((a) => (
+          <Link key={a.id} to="/artists/:id" params={{ id: a.id }} className="min-w-0">
+            <Tile
+              variant="round"
+              image={a.image}
+              title={a.name}
+              subtitle={a.genre}
+            />
+          </Link>
+        ))}
+      </div>
+    </Section>
+  );
+}
+
+export function PopularArtists() {
+  const { data, isLoading, error } = useQuery(dohvatiPopularneIzvodjace);
+
+  if (isLoading) {
+    return (
+      <Section title="Popular on Sonar">
+        <p className="text-tekst-druga text-sm">Loading…</p>
+      </Section>
+    );
+  }
+  if (error || !data) {
+    return (
+      <Section title="Popular on Sonar">
+        <p className="text-tekst-druga text-sm">Could not load artists.</p>
+      </Section>
+    );
+  }
+  if (data.length === 0) {
+    return (
+      <Section title="Popular on Sonar">
+        <p className="text-tekst-druga text-sm">No artists yet.</p>
+      </Section>
+    );
+  }
+  return <PopularArtistsView artists={data} />;
+}
+
+export default PopularArtists;

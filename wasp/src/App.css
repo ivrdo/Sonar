@@ -1,32 +1,116 @@
+/*
+    TailwindCSS dolazi s unaprijed napravljenim stilskim komponentama
+    koje možemo odmah primjenjivati na elemente DOMa, no isto tako da
+    mijenjamo postavke unaprijed zadanih komponenata, da generiramo komponente
+    time da zadamo vrijednosti/imena tim komponentama, itd.
+
+    Važno je razumjeti da se se TailwindCSS koristi u stilu inline-stylinga,
+    a nama je poznato da smo prije zapravo pisali puno toga u .css. No,
+    znamo da na kraju uvijek upisujemo barem klase u HTML element.
+
+    TailwindCSS komponente su moćne, tako ćemo puno manje CSS-a u datotekama
+    morat pisati, a puno više njih mogu biti tamo gdje će biti i elementi stranice,
+    ... u .jsx React datotekama.
+
+    E sad, ovaj import statement postoji i u normalnom CSS-u. Sve što radi je
+    importira sve unaprijed definirane Tailwind stilove.
+*/
 @import "tailwindcss";
 
 @theme {
-  --text-tiny: 0.625rem; /* Font size is 10px */
-  --text-tiny--line-height: 1rem;
+    /*
+        Ovdje definiramo boje koje ćemo koristiti kroz projekt.
 
-  /* Created using https://www.tints.dev */
-  /* Defaults settings, #f5c842 locked at 500 */
-  --color-primary-50: #fef9ef;
-  --color-primary-100: #fef2df;
-  --color-primary-200: #fde9c3;
-  --color-primary-300: #fcdc97;
-  --color-primary-400: #fcd26a;
-  --color-primary-500: #f5c842;
-  --color-primary-600: #c09c32;
-  --color-primary-700: #8c7122;
-  --color-primary-800: #5e4b13;
-  --color-primary-900: #322706;
-  --color-primary-950: #1e1703;
+        TailwindCSS razumije ove zapise u navedenom obliku.
+
+        --color-<ime> je način definiranja.
+
+        Tailwind odmah generira klase kao:
+        bg-<ime>, text-<ime>, border-<ime>
+    */
+    --color-tekst-prva: #14232E;
+    --color-tekst-druga: #475866;
+    --color-tekst-treća: #6B7A87;
+
+    /* Akcent je naziv za boju koja upotpunjuje projekt da ne bude dosadan */
+    --color-akcent: #0B6E70;
+    --color-akcent-jaki: #074B4D;
+    --color-akcent-blijedi: #F0F8F8;
+    --color-akcent-mekani: #D6ECEC;
+
+    /* Za pozadine */
+    --color-pozadinska: #F4F6F8;
+    --color-bijela: #FFFFFF;
+
+    /* Za bordere */
+    --color-rubovi-1: #D5DCE3;
+    --color-rubovi-2: #E4E9EE;
+    --color-input-polja: #8796A3;
+
+    /* Za statuse (pilule) */
+    --color-status-zeleni: #14532D;
+    --color-status-zeleni-pozadina: #DDF1E4;
+    --color-status-smedjkasti: #7A3E00;
+    --color-status-smedjkasti-pozadina: #FCEBCB;
+    --color-status-crveni: #8E1B1B;
+    --color-status-crveni-pozadina: #FBE0E0;
+    --color-status-plavi: #17407A;
+    --color-status-plavi-pozadina: #DEEAFA;
+    --color-status-sivi: #33424F;
+    --color-status-sivi-pozadina: #E4E9EE;
+
+    /*
+        Ok, ovo je sad bitno za responzivnost.
+
+        Znači, definicija:
+        --breakpoint-(sm|md|lg|xl)
+
+        Svaka pojedina breakpoint definicija, koja već ima unaprijed zadane postavke,
+        ali koje se mogu mijenjati, generiraju prefiks istog oblika kao oni nastavci, znači
+        sm:, md:, lg:, xl:
+
+        Ti prefiksi se mogu dodati nekoj klasi koju dodajemo nekom HTML elementu.
+
+        Tipa negdje ćemo napisati lg:flex-row
+
+        Sve što to radi je zadaje da ako je onaj media width, ono što smo koristili za
+        responzivnost, veći od vrijednosti koju zadajemo ili one koja je zadana,
+        recimo @media (width >= zadana) { }, onda se primjenjuje pravilo.
+
+        lg je definiran na 64 rem.
+
+        Ja ću pak sada definirati novi breakpoint koji možemo koristiti za desktop.
+
+        S primjerice desktop:flex-row
+     */
+    --breakpoint-desktop: 64rem; /* Koristim zadanu lg vrijednost, najbliža je specifikaciji */
+
+    /*
+        Slično --coloru, ovo definicija za font nam dozovljava da dobijemo
+        svojstva kao -bold i -medium, -normal.
+
+        TailwindCSS postavlja --font-sans kao zadani. Tako da ćemo definirati
+        -sans za naše potrebe.
+     */
+    --font-sans: "Inter Variable", system-ui, sans-serif;
 }
 
-body {
-  @apply has-[dialog:open]:overflow-hidden;
-}
+/*
+    Ovo je nešto specifično za Wasp + TailwindCSS. NAIME,
 
-@utility card {
-  @apply rounded-xl border border-neutral-200 bg-white shadow-xs transition-all duration-200;
-}
+    Wasp automatski generira index.html file. <body> element je dio te
+    datoteke. Tako da ne možemo s .jsx styleati <body> element. Umjesto toga,
+    to radimo ovdje u CSS-u.
 
-@utility label {
-  @apply text-sm font-medium text-neutral-700;
+    S @apply možemo dodati, isto kao što bi recimo napravili u nekom style blocku
+    TailwindCSS klasu... Ono što sad isto možemo napraviti je koristiti ove definicije
+    od prije, tj. koristiti klase koje se su generirale kako bi styleali body.
+
+    text-[]/[] zadaje velicinu fonta / visinu linije izrazeno
+    kao 1.5 puta velicine fonta, ovako odokativno
+ */
+@layer base {
+    body {
+        @apply bg-pozadinska text-tekst-prva antialiased text-[15px]/[1.5];
+    }
 }
