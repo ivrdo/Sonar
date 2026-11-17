@@ -210,7 +210,6 @@ export function ArtistPage() {
           {/* Desni stupac */}
           <div className="space-y-6">
             <UpcomingConcerts concerts={izvodjac.concerts} />
-            <UpcomingConcerts concerts={izvodjac.concerts} />
             <AboutArtist description={izvodjac.about} links={izvodjac.links} />
             {/* Fans also like */}
           </div>
