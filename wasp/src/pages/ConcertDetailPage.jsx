@@ -111,10 +111,10 @@ export function ConcertDetailPage() {
       image: "/dizajn/izvodjaci/orbita.svg",
       genre: "",
       role: index === 0 ? "headliner" : "support",
-      time: "",
+      time: "20:00",
       following: false,
     })),
-    description: "", // PRIVREMENO: opis koncerta query ne vraća
+    description: `${koncert.izvodjaci.map((i) => i.nazIzvodjaca).join(" and ")} live at ${koncert.mjesto?.nazMjestoKoncerta}, ${koncert.mjesto?.mjesto?.nazMjesto}.\nApply to reserve your spot, your QR ticket will appear in Tickets.`,
     venueName: koncert.mjesto?.nazMjestoKoncerta,
     city: koncert.mjesto?.mjesto?.nazMjesto,
     capacity: koncert.mjesto?.kapacitet,
