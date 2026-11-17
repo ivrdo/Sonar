@@ -1,9 +1,9 @@
-* @ivrdo @GingerCRO @lea5665 @PatrikIvanetic @Samuel-faks @jrudez @valdr333
-*.md @ivrdo @valdr333 @PatrikIvanetic
-/docs/ @ivrdo @valdr333 @PatrikIvanetic
-/wasp/ @ivrdo @GingerCRO @lea5665 @PatrikIvanetic @Samuel-faks @jrudez @valdr333
-/wasp/schema.prisma @valdr333 @jrudez @PatrikIvanetic
-*.tsx @ivrdo @lea5665 @jrudez @PatrikIvanetic
-*.ts @Samuel-faks @ivrdo @GingerCRO @lea5665 @jrudez @PatrikIvanetic
+* @ivrdo @GingerCRO @lea5665 @Samuel-faks @jrudez @valdr333
+*.md @ivrdo @valdr333 @GingerCRO
+/docs/ @ivrdo @valdr333 @GingerCRO
+/wasp/ @ivrdo @GingerCRO @lea5665 @Samuel-faks @jrudez @valdr333
+/wasp/schema.prisma @valdr333 @jrudez
+*.tsx @ivrdo @lea5665 @jrudez @GingerCRO @Samuel-faks
+*.ts @Samuel-faks @ivrdo @GingerCRO @lea5665 @jrudez @Samuel-faks
 *.py @valdr333 @ivrdo
-*.css @ivrdo @lea5665
+*.css @ivrdo @lea5665 @GingerCRO
