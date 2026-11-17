@@ -121,3 +121,59 @@ a izvođači su poredani po popularnosti.
 | `pjesme` | `{ id: number, naziv, izvodjac }` |
 | `mjesta` | `{ id: number, naziv, adresa }` |
 
+## `dohvatiIzvodjaca`
+
+---
+
+| | |
+| :--- | :--- |
+| **Vrsta** | query |
+| **Datoteka** | `wasp/src/operations/izvodjacQueries.ts` |
+| **Ulaz** | `{ mbid: string }` |
+| **Izlaz** | izvođač s poljima `albumi` (svaki s `pjesme`) i `pjesme` (samo singlovi, pjesme koje nisu dio albuma) |
+
+Dohvaća podatke o izvođaču po njegovom MusicBrainz identifikatoru (MBID).
+
+Dohvaća:
+- osnovne podatke izvođača
+- albume izvođača
+- pjesme izvođača
+- pjesme koje nisu povezane s albumom
+
+**Moguće greške:**
+
+| Status | Kada |
+| :--- | :--- |
+| 400 | `mbid` je prazan ili sadrži samo razmake |
+| 404 | izvođač s tim `mbid` ne postoji |
+
+## `dohvatiKoncert`
+
+---
+
+| | |
+| :--- | :--- |
+| **Vrsta** | query |
+| **Datoteka** | `wasp/src/operations/koncertQueries.ts` |
+| **Ulaz** | `{ id: number \| string }` (string zato što id dolazi iz URL-a `/concerts/:id`) |
+| **Izlaz** | podaci koncerta uz `slobodnaMjesta`, `mojaPrijava` i `stanjeGumba` |
+
+Vraća podatke za stranicu koncerta: datum i vrijeme, broj mjesta, stanje, mjesto održavanja s gradom te izvođače poredane po popularnosti.
+Uz to računa:
+
+| Polje | Značenje |
+| :--- | :--- |
+| `slobodnaMjesta` | `brojMjesta` - broj prijava koje nisu otkazane, nikad manje od 0 |
+| `mojaPrijava` | prijava trenutnog korisnika `{ sifPrijavaNa, stanje, qrKod }` ili `null` (neprijavljen ili bez prijave). QR kod vidi samo njegov vlasnik. |
+| `stanjeGumba` | `APPLY`, `PRIJAVLJEN`, `POPUNJENO` ili `ZATVORENO` (pomoćna funkcija `izracunajStanjeButton` u `operations/pomocno.ts`) |
+
+Pravila za `stanjeGumba`, redom: korisnik s prijavom uvijek dobiva `PRIJAVLJEN`. Ako koncert nije u stanju `OTVORENE_PRIJAVE` ili je već počeo, to je `ZATVORENO`.
+Ako nema slobodnih mjesta, `POPUNJENO`. Inače `APPLY`.
+
+**Moguće greške:**
+
+| Status | Kada |
+| :--- | :--- |
+| 400 | `id` nije pozitivan cijeli broj |
+| 404 | koncert ne postoji |
+
