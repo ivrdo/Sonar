@@ -10,7 +10,6 @@
 import { useSearchParams } from "react-router";
 import { pretrazi, useQuery } from "wasp/client/operations";
 import { Link } from "wasp/client/router";
-import { PageLayout } from "../components/PageLayout";
 import { Section } from "../components/Section";
 
 export function SearchPage() {
@@ -39,9 +38,9 @@ export function SearchPage() {
     : 0;
 
   return (
-    <PageLayout title={pojam ? `Results for “${pojam}”` : "Search"}>
-      {/* pb-20: prostor za polje pretrage pri dnu (samo mobitel); desktop:pb-6 vraća normalno */}
-      <div className="desktop:px-8 desktop:py-6 desktop:pb-6 flex flex-col gap-5 p-4 pb-20">
+    // Ljuska je u App.tsx; naslov "Results for …" App čita iz iste adrese (?q=)
+    // pb-20: prostor za polje pretrage pri dnu (samo mobitel); desktop:pb-6 vraća normalno
+    <div className="desktop:px-8 desktop:py-6 desktop:pb-6 flex flex-col gap-5 p-4 pb-20">
         {/*
           Polje za pretragu na mobitelu: zalijepljeno pri dnu, odmah iznad tabova
           (dizajn 3.1 / T12: palcem se lakše dohvati dno ekrana).
@@ -162,8 +161,7 @@ export function SearchPage() {
             </div>
           </div>
         )}
-      </div>
-    </PageLayout>
+    </div>
   );
 }
 
