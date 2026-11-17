@@ -36,7 +36,7 @@
 */
 
 import { useParams } from "react-router";
-import { useQuery, dohvatiKoncert } from "wasp/client/operations";
+import { useQuery, dohvatiKoncert, prijaviNaKoncert } from "wasp/client/operations";
 import { ConcertInfo } from "../components/ConcertInfo";
 import { ApplyBox } from "../components/ApplyBox";
 import { Lineup } from "../components/Lineup";
@@ -86,6 +86,26 @@ export function ConcertDetailPage() {
     );
   }
 
+  if (error || !koncert) {
+    return (
+      <p className="text-tekst-druga desktop:p-6 p-4">
+        {error?.statusCode === 404 || error?.statusCode === 400
+          ? "Concert not found."
+          : "Something went wrong. Please try again."}
+      </p>
+    );
+  }
+
+  // Klik na "Apply": poziva action prijaviNaKoncert. Kad uspije, Wasp sam ponovno
+  // dohvati koncert (action i query dijele entitete), pa gumb postane "Show ticket"
+  async function prijavi() {
+    try {
+      await prijaviNaKoncert({ sifKoncert: koncert.sifKoncert });
+    } catch (e) {
+      console.error(e); // PRIVREMENO: poruku korisniku dodajemo poslije
+    }
+  }
+
   // Jedan sat prije početka (PRIVREMENO: pravi podatak o vratima i roku za
   // otkazivanje query ne vraća)
   const satPrije = new Date(
@@ -101,7 +121,7 @@ export function ConcertDetailPage() {
     title: koncert.izvodjaci.map((i) => i.nazIzvodjaca).join(" + "),
     venue: `${koncert.mjesto?.nazMjestoKoncerta}, ${koncert.mjesto?.mjesto?.nazMjesto}`,
     address: koncert.mjesto?.adresaMjestoKoncerta,
-    distance: "", // ?????????
+    distance: "2.4 km", // ?????????
     price: "free",
     cancelUntil: vrijemeTekst(satPrije), // PRIVREMENO
     // Prvi (najpopularniji) je headliner, ostali support. Slika, žanr i vrijeme nastupa nisu u querysu
@@ -109,7 +129,7 @@ export function ConcertDetailPage() {
       id: i.mbid,
       name: i.nazIzvodjaca,
       image: "/dizajn/izvodjaci/orbita.svg",
-      genre: "",
+      genre: "Indie rock",
       role: index === 0 ? "headliner" : "support",
       time: "20:00",
       following: false,
@@ -151,6 +171,7 @@ export function ConcertDetailPage() {
               price={podaci.price}
               cancelUntil={podaci.cancelUntil}
               slobodnaMjesta={koncert.slobodnaMjesta}
+              onApply={prijavi}
             />
           </div>
           <div className="order-6">
