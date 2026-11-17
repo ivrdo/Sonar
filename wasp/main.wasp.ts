@@ -20,6 +20,7 @@ import { dohvatiIzvodjaca } from "./src/operations/izvodjacQueries" with { type:
 import { dohvatiKoncert } from "./src/operations/koncertQueries" with { type: "ref" };
 import { prijaviNaKoncert } from "./src/operations/prijave" with { type: "ref" };
 import { NotFoundPage } from "./src/pages/NotFoundPage" with { type: "ref" };
+import { onBeforeLogin } from "./src/auth/provjeraRacuna" with { type: "ref" };
 
 
 export default app({
@@ -35,6 +36,7 @@ export default app({
         userSignupFields,
       },
     },
+    onBeforeLogin,
     onAuthSucceededRedirectTo: "/",
     onAuthFailedRedirectTo: "/login",
   },
