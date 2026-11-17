@@ -87,7 +87,7 @@ export function ArtistProfileCard({
                 <div className="min-w-0">
                     {/* Žanrovi i grad, odvojeni točkicom */}
                     <p className="text-[15px] text-tekst-druga desktop:text-[11px]">
-                        {[...tags, city].join(" · ")}
+                        {[...tags, city].filter(Boolean).join(" · ")}
                     </p>
 
                     {/* Ime */}
