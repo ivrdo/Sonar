@@ -1,7 +1,5 @@
 # Popis queryja i akcija - SONAR
 
----
-
 Ovaj dokument popisuje sve operacije aplikacije Sonar. Operacije se deklariraju u `wasp/main.wasp.ts` (landing i pretraga u 
 `landing/landing.wasp.ts` i `search/search.wasp.ts`), a klijent ih poziva iz `wasp/client/operations`.
 
@@ -14,8 +12,6 @@ Ovaj dokument popisuje sve operacije aplikacije Sonar. Operacije se deklariraju 
 
 
 ## Pregled
-
----
 
 | Operacija | Vrsta | Datoteka | Entiteti | Prijava potrebna | Koristi se na |
 | :--- | :--- | :--- | :--- | :--- | :--- |
@@ -35,14 +31,13 @@ Uz operacije postoji i **hook** onBeforeLogin i **skripte za bazu**.
 
 ## `dohvatiNadolazeceKoncerte`
 
----
-
 | | |
 | :--- | :--- |
 | **Vrsta** | query |
 | **Datoteka** | `wasp/src/landing/queries.ts` |
 | **Ulaz** | nema |
 | **Izlaz** | `ConcertsSummary[]`: `{ id, title, startsAt, venue, image }` |
+
 Vraća najviše 4 koncerta u stanju `POTVRDEN` ili `OTVORENE_PRIJAVE` koji tek dolaze, od najranijeg prema najkasnijem.
 `title` je popis izvođača spojen s " + " (npr. "Orbita + Kiša u Svibnju"), a `venue` je oblika "Naziv mjesta, Grad". `image` je privremena slika iz `landing/slike.ts`.
 
@@ -54,8 +49,6 @@ Dohvaća:
 - sliku
 
 ## `dohvatiPopularneIzvodjace`
-
----
 
 | | |
 | :--- | :--- | 
@@ -75,8 +68,6 @@ Podaci uključuju:
 
 ## `dohvatiMjesta`
 
----
-
 | | |
 | :--- | :--- |
 | **Vrsta** | query |
@@ -93,8 +84,6 @@ Za svako mjesto dohvaća:
 - putanju do slike
 
 ## `pretrazi`
-
----
 
 | | |
 | :--- | :--- |
@@ -123,8 +112,6 @@ a izvođači su poredani po popularnosti.
 
 ## `dohvatiIzvodjaca`
 
----
-
 | | |
 | :--- | :--- |
 | **Vrsta** | query |
@@ -148,8 +135,6 @@ Dohvaća:
 | 404 | izvođač s tim `mbid` ne postoji |
 
 ## `dohvatiKoncert`
-
----
 
 | | |
 | :--- | :--- |
@@ -178,8 +163,6 @@ Ako nema slobodnih mjesta, `POPUNJENO`. Inače `APPLY`.
 | 404 | koncert ne postoji |
 
 ## `prijaviNaKoncert`
-
----
 
 | | |
 | :--- | :--- |
@@ -217,8 +200,6 @@ Entiteti navedeni u `main.wasp.ts` zato se u transakciji ne koriste, ali ostaju 
 
 ## `Hook onBeforeLogin`
 
----
-
 | | |
 | :--- | :--- |
 |**Vrsta** | hook prijave(nije ni query ni akcija) |
@@ -235,8 +216,6 @@ Korisnik se vraća na `/login` (`onAuthFailedRedirectTo`), gdje `LoginPage` prik
 | `OBRISAN` | Ovaj račun više ne postoji. |
 
 ## Skripta za bazu (seed)
-
----
 
 Pokreću se naredbom `wasp db seed`, a definirane su u `wasp/src/seed/index.ts`.
 
