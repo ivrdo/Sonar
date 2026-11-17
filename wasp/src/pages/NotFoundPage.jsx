@@ -10,11 +10,11 @@
 */
 
 import { Link } from "wasp/client/router";
-import { PageLayout } from "../components/PageLayout";
 
+// Ljuska (Sidebar, Navbar s naslovom "Page not found", tabovi) je u App.tsx
 export function NotFoundPage() {
   return (
-    <PageLayout title="Page not found">
+    <>
       {/*
         - flex flex-1 items-center justify-center: kartica u sredini slobodnog prostora
         - p-4 / desktop:p-8: razmak od rubova
@@ -51,7 +51,7 @@ export function NotFoundPage() {
           </div>
         </div>
       </div>
-    </PageLayout>
+    </>
   );
 }
 
