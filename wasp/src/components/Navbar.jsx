@@ -4,10 +4,25 @@
     Ova komponenta predstavlja gornju navigacijsku traku aplikacije.
     Navbar nudi korisniku mogućnost pretraživanja.
 */
-import { NavLink } from "react-router";
+import { NavLink, useNavigate, useSearchParams } from "react-router";
 import { Ikona } from "./navigacija";
 
 export function Navbar({title="Discover"}) {
+  // useNavigate: funkcija kojom kodom mijenjamo adresu (odlazak na drugu stranicu)
+  const navigate = useNavigate();
+  // useSearchParams: čita dio adrese iza "?" (npr. q=mjesec iz /search?q=mjesec)
+  const [searchParams] = useSearchParams();
+  const trenutniPojam = searchParams.get("q") ?? ""; // "" ako u adresi nema ?q=
+
+  // Poziva se kad korisnik u polju pritisne Enter
+  function pretrazi(e) {
+    e.preventDefault(); // inače bi preglednik ponovno učitao cijelu stranicu
+    const pojam = new FormData(e.currentTarget).get("q").toString().trim();
+    if (!pojam) return; // prazan pojam: ne radimo ništa
+    // encodeURIComponent: razmaci i "č" postanu ispravan dio adrese (npr. "Kiša u" -> "Ki%C5%A1a%20u")
+    navigate(`/search?q=${encodeURIComponent(pojam)}`);
+  }
+
   return (
     /*
         Glavni element navigacije.
@@ -45,7 +60,12 @@ export function Navbar({title="Discover"}) {
       {/* Polje za pretragu s ikonom */}
       {/* Vanjski kontejner mora biti 'relative' kako bi se ikona pozicionirala pomoću 'absolute' */}
       {/* Polje za pretragu: SAMO desktop */}
-      <div className="desktop:block relative hidden w-80">
+      {/* form + onSubmit: Enter u polju pokreće pretragu; role="search" govori čitačima ekrana da je ovo pretraga */}
+      <form
+        onSubmit={pretrazi}
+        role="search"
+        className="desktop:block relative hidden w-80"
+      >
         {/* Pozicioniranje SVG ikone unutar lijeve strane input polja za pretragu */}
         <span className="text-tekst-treća pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <svg
@@ -62,13 +82,23 @@ export function Navbar({title="Discover"}) {
             />
           </svg>
         </span>
-        {/* Input polje za pretragu */}
+        {/*
+          Input polje za pretragu:
+            - name="q": po tom imenu FormData pronalazi vrijednost polja
+            - defaultValue: na /search?q=mjesec polje već prikazuje "mjesec"
+            - key: kad se adresa promijeni (npr. tipka Natrag), polje se osvježi
+            - type="search": preglednik dodaje gumb za brisanje (x)
+        */}
         <input
-          type="text"
+          key={trenutniPojam}
+          name="q"
+          type="search"
+          defaultValue={trenutniPojam}
+          aria-label="Search"
           placeholder="Search artists, releases, songs, venues"
           className="border-rubovi-1 bg-pozadinska text-tekst-prva placeholder-tekst-treća focus:bg-bijela focus:ring-akcent w-full rounded-lg border py-1.5 pr-4 pl-9 text-xs transition focus:ring-2 focus:outline-none"
         />
-      </div>
+      </form>
 
       {/* Ikone: SAMO mobitel */}
       <div className="desktop:hidden flex items-center gap-1">
