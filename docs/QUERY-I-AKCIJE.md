@@ -177,3 +177,41 @@ Ako nema slobodnih mjesta, `POPUNJENO`. Inače `APPLY`.
 | 400 | `id` nije pozitivan cijeli broj |
 | 404 | koncert ne postoji |
 
+## `prijaviNaKoncert`
+
+---
+
+| | |
+| :--- | :--- |
+| **Vrsta** | akcija |
+| **Datoteka** | `wasp/src/operations/prijave.ts` |
+| **Ulaz** | `{ sifKoncert: number }` |
+| **Izlaz** | `{ sifPrijavaNa, stanje, qrKod, slobodnaMjesta }` |
+
+Prijavljuje trenutnog korisnika na koncert (F-024, UC-008). Stanje nove prijave je `PRIJAVLJEN`, a QR kod je oblika
+`SONAR-<koncert>-<korisnik>-<16 hex znakova>`. Znakovi su nasumični iz `crypto.randomBytes`, jer je kod "tajna" ulaznice.
+
+Cijela provjera i upis izvode se u jednoj transakciji (`prisma.$transaction`) kako bi se zadovoljio NF-07 (istodobne prijave ne smiju premašiti kapacitet):
+
+1. Redak koncerta zaključava se s `SELECT ... FOR UPDATE`. Druge transakcije za isti koncert čekaju.
+2. Provjerava se stanje koncerta i je li već počeo.
+3. Broje se prijave koje nisu otkazane. Brojanje se radi tek nakon zaključavanja, pa se vide sve prijave 
+transakcija koje su završile prije.
+4. Provjerava se ima li korisnik već aktivnu prijavu.
+5. Upisuje se prijava.
+
+Unique indeks `uq_aktivna_prijava` u bazi dodatna je zaštita od duplikata.
+
+**Mohuće greške:**
+
+| Status | Kada |
+| :--- | :--- |
+| 401 | korisnik nije prijavljen |
+| 403 | status računa nije `AKTIVAN` (suspendiran, deaktiviran, obrisan) |
+| 400 | `sifKoncert` nije pozitivan cijeli broj |
+| 404 | koncert ne postoji |
+| 409 | koncert nije u stanju `OTVORENE_PRIJAVE`, koncert je već počeo, nema slobodnih mjesta ili korisnik već ima aktivnu prijavu |
+
+**Napomena:** akcija koristi `prisma` uvezen iz `wasp/server` (zbog `$transaction`), a ne `context.entities`. 
+Entiteti navedeni u `main.wasp.ts` zato se u transakciji ne koriste, ali ostaju deklarirani.
+
