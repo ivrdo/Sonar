@@ -33,3 +33,62 @@ Uz operacije postoji i **hook** onBeforeLogin i **skripte za bazu**.
 
 ---
 
+## `dohvatiNadolazeceKoncerte`
+
+---
+
+| | |
+| :--- | :--- |
+| **Vrsta** | query |
+| **Datoteka** | `wasp/src/landing/queries.ts` |
+| **Ulaz** | nema |
+| **Izlaz** | `ConcertsSummary[]`: `{ id, title, startsAt, venue, image }` |
+Vraća najviše 4 koncerta u stanju `POTVRDEN` ili `OTVORENE_PRIJAVE` koji tek dolaze, od najranijeg prema najkasnijem.
+`title` je popis izvođača spojen s " + " (npr. "Orbita + Kiša u Svibnju"), a `venue` je oblika "Naziv mjesta, Grad". `image` je privremena slika iz `landing/slike.ts`.
+
+Dohvaća:
+- indentifikator koncerta
+- izvođače
+- datum i vrijeme
+- mjesto održavanja
+- sliku
+
+## `dohvatiPopularneIzvodjace`
+
+---
+
+| | |
+| :--- | :--- | 
+| **Vrsta** | query |
+| **Datoteka** | `wasp/src/landing/queries.ts` |
+| **Ulaz** | nema |
+| **Izlaz** | `PopularArtist[]`: `{ id, name, genre, image }` |
+
+Vraća 6 izvođača s najvećom popularnošću (kod izjednačenja po `mbid`). `id` je `mbid` izvođača. `genre` je prva oznaka izvođača
+s najvećom težinom koja nije nacionalnost ili slična oznaka (npr. "croatian", "seen live", "female vocalists"). Ako takve oznake nema, `genre` je prazan tekst.
+
+Podaci uključuju:
+- MBID izvođača
+- naziv
+- žanr
+- putanju do slike
+
+## `dohvatiMjesta`
+
+---
+
+| | |
+| :--- | :--- |
+| **Vrsta** | query |
+| **Datoteka** | `wasp/src/landings/queries.ts` |
+| **Ulaz** | nema |
+| **Izlaz** | `VenueSummary[]`: `{ id, name, city, upcoming, image }` |
+
+Dohvaća najviše 8 mjesta održavanja koncerta. `upcoming` je broj koncerata u stanju `OTVORENE_PRIJAVE` koji tek dolaze. Poredak je po `upcoming` silazno, a kod izjednačenja po nazivu.
+
+Za svako mjesto dohvaća:
+- naziv mjesta
+- grad
+- broj nadolazećih koncerata
+- putanju do slike
+
