@@ -21,6 +21,7 @@ import { dohvatiKoncert } from "./src/operations/koncertQueries" with { type: "r
 import { prijaviNaKoncert } from "./src/operations/prijave" with { type: "ref" };
 import { NotFoundPage } from "./src/pages/NotFoundPage" with { type: "ref" };
 import { onBeforeLogin } from "./src/auth/provjeraRacuna" with { type: "ref" };
+import { SearchPage } from "./src/pages/SearchPage" with { type: "ref" };
 
 
 export default app({
@@ -64,6 +65,7 @@ export default app({
     route("ArtistRoute", "/artists/:id", page(ArtistPage)),
     landingSpec,
     searchSpec,
+    route("SearchRoute", "/search", page(SearchPage)),
     // Mora biti zadnja: hvata sve adrese koje nijedna ruta iznad nije pogodila
     route("NotFoundRoute", "*", page(NotFoundPage)),
   ],

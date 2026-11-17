@@ -40,17 +40,33 @@ export function SearchPage() {
 
   return (
     <PageLayout title={pojam ? `Results for “${pojam}”` : "Search"}>
-      <div className="desktop:px-8 desktop:py-6 flex flex-col gap-5 p-4">
-        {/* key={pojam}: kad se adresa promijeni (npr. iz Navbara), polje se osvježi */}
-        <form onSubmit={posalji} role="search" className="desktop:hidden">
+      {/* pb-20: prostor za polje pretrage pri dnu (samo mobitel); desktop:pb-6 vraća normalno */}
+      <div className="desktop:px-8 desktop:py-6 desktop:pb-6 flex flex-col gap-5 p-4 pb-20">
+        {/*
+          Polje za pretragu na mobitelu: zalijepljeno pri dnu, odmah iznad tabova
+          (dizajn 3.1 / T12: palcem se lakše dohvati dno ekrana).
+            - fixed inset-x-0: izvan toka stranice, cijela širina ekrana
+            - bottom-[calc(...)]: točno iznad tabova (visina tabova + prostor za iPhone traku)
+            - z-20: iznad sadržaja, u istom sloju kao tabovi
+            - bg-bijela border-t border-rubovi-1: bijela traka s crtom gore, kao tabovi
+            - px-4 py-2: razmak oko polja
+            - desktop:hidden: na desktopu se koristi polje u gornjoj traci
+          key={pojam}: kad se adresa promijeni (npr. iz Navbara), polje se osvježi
+        */}
+        <form
+          onSubmit={posalji}
+          role="search"
+          className="border-rubovi-1 bg-bijela desktop:hidden fixed inset-x-0 bottom-[calc(var(--spacing-tabovi)+env(safe-area-inset-bottom))] z-20 border-t px-4 py-2"
+        >
           <input
             key={pojam}
             name="q"
             type="search"
             defaultValue={pojam}
+            autoFocus={!pojam} // prazna stranica: kursor odmah u polju
             placeholder="Search artists, releases, songs, venues"
             aria-label="Search"
-            className="border-input-polja bg-bijela focus:ring-akcent min-h-11 w-full rounded-lg border px-3 text-[15px] focus:ring-2 focus:outline-none"
+            className="border-input-polja bg-pozadinska focus:bg-bijela focus:ring-akcent min-h-11 w-full rounded-lg border px-3 text-[15px] focus:ring-2 focus:outline-none"
           />
         </form>
 
