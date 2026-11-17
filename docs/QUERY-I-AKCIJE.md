@@ -92,3 +92,32 @@ Za svako mjesto dohvaća:
 - broj nadolazećih koncerata
 - putanju do slike
 
+## `pretrazi`
+
+---
+
+| | |
+| :--- | :--- |
+| **Vrsta** | query |
+| **Datoteka** | `wasp/src/search/queries.ts` |
+| **Ulaz** | `{ pojam: string }` |
+| **Izlaz** | `SearchResults`: `{ izvodjaci, albumi, pjesme, mjesta }` |
+
+Pretražuje katalog Sonara prema unesenom pojmu.
+
+Pretražuje:
+- izvođače
+- albume
+- pjesme
+- mjesta koncerata
+
+Koristi pretraživanje koje ne razlikuje velika i mala slova. Pojam kraći od 2 znaka ne pokreće pretraživanje baze. Svaka kategorija vraća najviše 10 rezultata,
+a izvođači su poredani po popularnosti.
+
+| Polje izlaza | Oblik jednog elementa |
+| :--- | :--- |
+| `izvodjaci` | `{ id: string (mbid), naziv }` |
+| `albumi` | `{ id: number, naziv, izvodjac, godina: number \| null }` |
+| `pjesme` | `{ id: number, naziv, izvodjac }` |
+| `mjesta` | `{ id: number, naziv, adresa }` |
+
