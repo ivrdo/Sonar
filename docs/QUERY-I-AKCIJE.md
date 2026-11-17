@@ -24,12 +24,12 @@ Ovaj dokument popisuje sve operacije aplikacije Sonar. Operacije se deklariraju 
 | `dohvatiMjesta` | query | `landing/queries.ts` | MjestoKoncerta, Mjesto, Koncert | ne | početna stranica (sekcija mjesta) |
 | `pretrazi` | query | `search/queries.ts` | Izvodjac, Album, Pjesma | ne | `/search` |
 | `dohvatiIzvodjaca` | query | `operations/izvodjacQueries.ts` | Izvodjac, Album, Pjesma | ne | `/artists/:id` |
-| `dohvatiKoncert` | query | `operations/koncertQueries.ts` | Koncert, MjestoKoncerta, Izvodjac, PrijavaNaKoncert | ne (prijavljeni dobija i svoju prijavu) | `concerts/:id` |
+| `dohvatiKoncert` | query | `operations/koncertQueries.ts` | Koncert, MjestoKoncerta, Izvodjac, PrijavaNaKoncert | ne (prijavljeni dobiva i svoju prijavu) | `concerts/:id` |
 | `prijaviNaKoncert` | akcija | `operations/prijave.ts` | Koncert, PrijavaNaKoncert, Korisnik | da | `/concerts/:id` (gumb Apply) |
 
 Uz operacije postoji i **hook** onBeforeLogin i **skripte za bazu**.
 
-**O prijavi.** Operacije se ne odbijaju automatski za neprijavljene korisnike: Wasp samo postavi `context.user` kad je token valjan, a inače je on `undefined`. Zato akcija `prijavaNaKoncert sama provjerava `context.user` i baca 401. Queryji su javni (F-001, NF-02).
+**O prijavi.** Operacije se ne odbijaju automatski za neprijavljene korisnike: Wasp samo postavi `context.user` kad je token valjan, a inače je on `undefined`. Zato akcija `prijavaNaKoncert` sama provjerava `context.user` i baca 401. Queryji su javni (F-001, NF-02).
 
 ---
 
@@ -47,7 +47,7 @@ Vraća najviše 4 koncerta u stanju `POTVRDEN` ili `OTVORENE_PRIJAVE` koji tek d
 `title` je popis izvođača spojen s " + " (npr. "Orbita + Kiša u Svibnju"), a `venue` je oblika "Naziv mjesta, Grad". `image` je privremena slika iz `landing/slike.ts`.
 
 Dohvaća:
-- indentifikator koncerta
+- identifikator koncerta
 - izvođače
 - datum i vrijeme
 - mjesto održavanja
@@ -164,7 +164,7 @@ Uz to računa:
 | Polje | Značenje |
 | :--- | :--- |
 | `slobodnaMjesta` | `brojMjesta` - broj prijava koje nisu otkazane, nikad manje od 0 |
-| `mojaPrijava` | prijava trenutnog korisnika `{ sifPrijavaNa, stanje, qrKod }` ili `null` (neprijavljen ili bez prijave). QR kod vidi samo njegov vlasnik. |
+| `mojaPrijava` | prijava trenutačnog korisnika `{ sifPrijavaNa, stanje, qrKod }` ili `null` (neprijavljen ili bez prijave). QR kod vidi samo njegov vlasnik. |
 | `stanjeGumba` | `APPLY`, `PRIJAVLJEN`, `POPUNJENO` ili `ZATVORENO` (pomoćna funkcija `izracunajStanjeButton` u `operations/pomocno.ts`) |
 
 Pravila za `stanjeGumba`, redom: korisnik s prijavom uvijek dobiva `PRIJAVLJEN`. Ako koncert nije u stanju `OTVORENE_PRIJAVE` ili je već počeo, to je `ZATVORENO`.
@@ -188,21 +188,21 @@ Ako nema slobodnih mjesta, `POPUNJENO`. Inače `APPLY`.
 | **Ulaz** | `{ sifKoncert: number }` |
 | **Izlaz** | `{ sifPrijavaNa, stanje, qrKod, slobodnaMjesta }` |
 
-Prijavljuje trenutnog korisnika na koncert (F-024, UC-008). Stanje nove prijave je `PRIJAVLJEN`, a QR kod je oblika
+Prijavljuje trenutačnog korisnika na koncert (F-024, UC-008). Stanje nove prijave je `PRIJAVLJEN`, a QR kod je oblika
 `SONAR-<koncert>-<korisnik>-<16 hex znakova>`. Znakovi su nasumični iz `crypto.randomBytes`, jer je kod "tajna" ulaznice.
 
 Cijela provjera i upis izvode se u jednoj transakciji (`prisma.$transaction`) kako bi se zadovoljio NF-07 (istodobne prijave ne smiju premašiti kapacitet):
 
 1. Redak koncerta zaključava se s `SELECT ... FOR UPDATE`. Druge transakcije za isti koncert čekaju.
 2. Provjerava se stanje koncerta i je li već počeo.
-3. Broje se prijave koje nisu otkazane. Brojanje se radi tek nakon zaključavanja, pa se vide sve prijave 
+3. Broje se prijave koje nisu otkazane. Brojanje se radi tek nakon zaključavanja pa se vide sve prijave 
 transakcija koje su završile prije.
 4. Provjerava se ima li korisnik već aktivnu prijavu.
 5. Upisuje se prijava.
 
 Unique indeks `uq_aktivna_prijava` u bazi dodatna je zaštita od duplikata.
 
-**Mohuće greške:**
+**Moguće greške:**
 
 | Status | Kada |
 | :--- | :--- |
