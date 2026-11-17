@@ -215,3 +215,33 @@ Unique indeks `uq_aktivna_prijava` u bazi dodatna je zaštita od duplikata.
 **Napomena:** akcija koristi `prisma` uvezen iz `wasp/server` (zbog `$transaction`), a ne `context.entities`. 
 Entiteti navedeni u `main.wasp.ts` zato se u transakciji ne koriste, ali ostaju deklarirani.
 
+## `Hook onBeforeLogin`
+
+---
+
+| | |
+| :--- | :--- |
+|**Vrsta** | hook prijave(nije ni query ni akcija) |
+| **Datoteka** | `wasp/src/auth/provjeraRacuna.ts` |
+| **Registracija** | `auth.onBeforeLogin` u `main.wasp.ts` |
+
+Wasp ga poziva nakon što Google potvrdi identitet, a prije izdavanja sesije. Hook čita `status` korisnika iz baze i baca 403 ako račun nije `AKTIVAN`. 
+Korisnik se vraća na `/login` (`onAuthFailedRedirectTo`), gdje `LoginPage` prikazuje poruku iz adrese (`?error=...`).
+
+| Status računa | Poruka |
+| :--- | :--- |
+| `SUSPENDIRAN` | Vaš račun je privremeno suspendiran. |
+| `DEAKTIVIRAN` | Vaš račun je deaktiviran. |
+| `OBRISAN` | Ovaj račun više ne postoji. |
+
+## Skripta za bazu (seed)
+
+---
+
+Pokreću se naredbom `wasp db seed`, a definirane su u `wasp/src/seed/index.ts`.
+
+| Skripta | Opis |
+| :--- | :--- |
+| `pregledBaze` | Ispisuje gradove, prvih 10 izvođača i brojeve redaka glavnih tablica. Ništa ne mijenja. |
+| `seedKatalog` | Upisuje gradove, oznake i katalog izvođača, albuma i pjesama iz `seed/data/katalog.ts`. |
+| `seedSve` | Pokreće `seedKatalog`, a zatim generira podatke koji nastaju korištenjem aplikacije (korisnici, koncerti, prijave...) za razvoj i demonstraciju (ograničenje C-07, `seed/generirano.ts`). |
