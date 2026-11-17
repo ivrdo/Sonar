@@ -4,9 +4,16 @@
 /*
     Ova komponenta služi kao istaknuti uvodni box na vrhu stranice (Discover).
     Sadrži privlačan naslov, opisnu poruku i dva akcijska gumba (CTA).
+    Gumb "Sign in with Google" vidi samo neprijavljeni korisnik.
 */
 
+import { Link } from "wasp/client/router";
+import { useAuth } from "wasp/client/auth";
+
 export function HeroBanner() {
+  // user je null ako korisnik nije prijavljen
+  const { data: user, isLoading } = useAuth();
+
   return (
     /*
         Glavni kontejner (box):
@@ -23,21 +30,25 @@ export function HeroBanner() {
       </h1>
 
       {/* Podnaslov / opis */}
-      <p className="text-tekst-druga mb-6 whitespace-nowrap text-sm">
+      <p className="text-tekst-druga mb-6 text-sm">
         Upcoming concerts, artists and venues in one place. Sign in for
         recommendations, ratings and free concert registrations.
       </p>
 
       {/* Kontejner za gumbe (flex row, na manjim ekranima se slažu vertikalno ili horizontalno) */}
       <div className="flex flex-wrap items-center gap-3">
-        {/* 1. Primarni gumb (ispunjen akcent bojom) */}
-        <button
-          type="button"
-          className="bg-akcent text-bijela flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition hover:opacity-90"
-        >
-          {/* Google ikona unutar gumba */}
-          Sign in with Google
-        </button>
+        {/*
+          1. Primarni gumb (ispunjen akcent bojom): vodi na /login.
+             Prikazuje se samo neprijavljenom korisniku (i ne dok se to još provjerava).
+        */}
+        {!isLoading && !user && (
+          <Link
+            to="/login"
+            className="bg-akcent text-bijela focus-visible:ring-akcent flex items-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition hover:opacity-90 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          >
+            Sign in with Google
+          </Link>
+        )}
 
         {/* 2. Sekundarni gumb (s obrubom i ikonom karte) */}
         <button
