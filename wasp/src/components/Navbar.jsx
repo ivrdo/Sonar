@@ -103,7 +103,12 @@ export function Navbar({title="Discover"}) {
       {/* Ikone: SAMO mobitel */}
       <div className="desktop:hidden flex items-center gap-1">
         <NavLink
-          to="/search"
+          // ako u adresi već postoji pojam (npr. /search?q=mjesec), ikona ga zadrži
+          to={
+            trenutniPojam
+              ? `/search?q=${encodeURIComponent(trenutniPojam)}`
+              : "/search"
+          }
           aria-label="Search"
           className="flex h-11 w-11 items-center justify-center rounded-lg"
         >
