@@ -80,24 +80,24 @@ Započnite crtanjem granice oko predloženog sustava. Unutar nje prepoznajte dij
 
 **Cilj:** Prikazati važne pohranjene entitete, njihove identifikatore i veze te dovoljno atributa za razumijevanje podataka aplikacije. ER dijagram odvojen je od reprezentativnog UML dijagrama razreda u nastavku.
 
-**ER dijagram:** [Ugradite čitljiv dijagram projekta.]  
-**Izvor dijagrama:** [Poveznica na njegov izvor.]  
-**Implementacija:** [Navedite gdje je odgovarajući model podataka definiran u projektu.]
+![ER dijagram podataka sustava Sonar](./assets/diagrams/4-2-sonar-data-ERD.svg)
 
-<details>
-<summary><strong>Jedna prijava poplave i povezani podaci</strong></summary>
+**Slika 4.2. ER dijagram podataka sustava Sonar**
 
-**Primjer — CrisisMap:** Ana putem svojeg korisničkog računa podnosi prijavu poplave `R-104`. Odabire lokaciju na karti i označava razinu ozbiljnosti kao visoku. Građanin može podnijeti više prijava; svaka prijava pripada jednoj kategoriji kriznog događaja, primjerice *Poplava*. Aplikacija pohranjuje prijavu i njezine koordinate. Kartografske pločice dolaze od vanjskog pružatelja i nisu entiteti u modelu podataka aplikacije.
+**PlantUML izvor:** [izvor](./puml/4-2-sonar-data-ERD.puml)
 
-![ER dijagram podataka sustava CrisisMap](./assets/diagrams/4-2-crisismap-data-ERD.svg)
+**ER dijagram:** Slika 4.2. (relacijski prikaz s primarnim i stranim ključevima); izvorni konceptualni (Chenov) model izrađen u alatu ERDPlus: [`er-dijagram.png`](./model-podataka/er-dijagram.png) i opis [`model-podataka/README.md`](./model-podataka/README.md).  
+**Izvor dijagrama:** konceptualni model: [`er-dijagram.erdplus`](./model-podataka/er-dijagram.erdplus).  
+**Implementacija:** [`wasp/schema.prisma`](../wasp/schema.prisma) (modeli i nabrojani tipovi) te SQL migracije u [`wasp/migrations/`](../wasp/migrations/), koje sadrže pravila što ih Prisma shema ne izražava (okidači, `CHECK`, djelomični jedinstveni indeks).
 
-**Slika 4.2. ER dijagram podataka sustava CrisisMap**
+**Što model pohranjuje.** Središnji tijek je koncert. Verificirani izvođač (korisnik je povezan s izvođačem vezom `Zastupa`) predlaže `Koncert` na nekom `MjestoKoncerta`. Koncert se održava točno na jednom mjestu, a `brojMjesta` ne smije prelaziti `kapacitet` tog mjesta.
+Slušatelj se na koncert prijavljuje zapisom `PrijavaNaKoncert`, koji nosi stanje i jedinstveni `qrKod`. Korisnik može imati više prijava, a koncert više prijava, ali samo jednu aktivnu po paru korisnik-koncert. Izvođači koji nastupaju na koncertu zasebna su M:N veza, različita
+od izvođača koji je koncert predložio.
 
-**PlantUML izvor:** [izvor](./puml/4-2-crisismap-data-ERD.puml)
+Katalog (`Izvodjac`, `Album`, `Pjesma`, `Oznaka`) postoji neovisno o korisničkim računima, a izvođač se s korisnikom povezuje tek nakon provjere zahtjeva za ulogu (`ZahtjevZaUlogu`). Društveni dio (`Ocjena`, `Svidja`, `Recenzija`, `Lista`, praćenja) veže se na `Stavka`, pa jedna
+tablica ocjena služi za izvođače, albume i pjesme. Moderaciju čine `PrijavaSadrzaja` i zapisnik `Zapis`, čiji je ključ (moderator, vrijeme).
 
-**Analiza primjera:** `R-104` ima jednog autora i jednu kategoriju; Ana i kategorija *Poplava* mogu biti povezane s više prijava. Dijagram prikazuje veze bez prepisivanja svih stupaca baze podataka ili pisanja drugog tabličnog opisa za svaki entitet. Ako aplikacija prihvaća i **anonimne** prijave, tu mogućnost prikažite u vezi s entitetom `Citizen`. Ako su kategorije fiksne vrijednosti, a ne pohranjeni zapisi, nemojte izmišljati tablicu kategorija. Završni ER dijagram usporedite s modelom trajne pohrane i objasnite samo razlike važne za razumijevanje projekta.
-
-</details>
+**Što se ne pohranjuje.** Feed, statistika i broj slobodnih mjesta izvode se upitima. Kartografske pločice dolaze od vanjske usluge i nisu dio modela. Brisanje računa anonimizira redak korisnika (`email` je zato neobavezan), a ne briše ga.
 
 ### 4.3.2 Reprezentativni UML dijagram razreda
 
