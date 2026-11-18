@@ -42,9 +42,7 @@ vi.mock("wasp/client/operations", () => ({
               sifAlbum: 1,
               nazAlbum: "Valovi",
               godinaIzdanja: 2022,
-              //TODO: pjesme su namjerno prazne, ArtistPage šalje rating: null, a PopularSongs.tsx (redak 69) zove song.rating.toFixed(1) pa stranica pada kad izvođač ima pjesmu
-              // pjesme: [{ sifPjesma: 10, nazPjesma: "Bez mjeseca", trajanje: 215 },],
-              pjesme: [],
+              pjesme: [{ sifPjesma: 10, nazPjesma: "Bez mjeseca", trajanje: 215 },],
             },
           ],
           pjesme: [],
@@ -131,27 +129,25 @@ describe("ArtistPage", () => {
 
     expect(html).toContain("Orbita");
     expect(html).toContain("Valovi");
-    //TODO: expect(html).toContain("Bez mjeseca");
+    expect(html).toContain("Bez mjeseca");
   });
 });
 
-//TODO: kad Filip vrati na prave podatke
+import { LandingPage } from "./LandingPage";
+vi.mock("wasp/client/auth", () => ({
+  useAuth: () => ({ data: null, isLoading: false }),
+}));
 
-// import { LandingPage } from "./LandingPage";
-// vi.mock("wasp/client/auth", () => ({
-//   useAuth: () => ({ data: null, isLoading: false }),
-// }));
-//
-// describe("LandingPage", () => {
-//   it("prikazuje sekcije koncerata, izvođača i mjesta", () => {
-//     const html = renderToStaticMarkup(
-//       <StaticRouter location="/">
-//         <LandingPage />
-//       </StaticRouter>,
-//     );
-//
-//     expect(html).toMatch(/Upcoming [Cc]oncerts/);
-//     expect(html).toContain("Popular on Sonar");
-//     expect(html).toContain("Venues");
-//   });
-// });
+describe("LandingPage", () => {
+  it("prikazuje sekcije koncerata, izvođača i mjesta", () => {
+    const html = renderToStaticMarkup(
+      <StaticRouter location="/">
+        <LandingPage />
+      </StaticRouter>,
+    );
+
+    expect(html).toMatch(/Upcoming [Cc]oncerts/);
+    expect(html).toContain("Popular on Sonar");
+    expect(html).toContain("Venues");
+  });
+});
