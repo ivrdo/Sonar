@@ -2,9 +2,9 @@ name: CI
 
 on:
   pull_request:
-    branches: [master, deploy-test, frontend-prototipiranje]
+    branches: [master, deploy-test, frontend-prototipiranje, skripte]
   push:
-    branches: [master, deploy-test, frontend-prototipiranje]
+    branches: [master, deploy-test, frontend-prototipiranje, skripte]
 
 jobs:
   build:
@@ -18,7 +18,7 @@ jobs:
         with:
           node-version: "24.22.3"
       - name: Wasp
-        run: bash ../setup.sh
+        run: bash ../scripts/okruzenje.sh
       - name: Server
         run: |
           wasp build
