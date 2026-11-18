@@ -35,6 +35,7 @@
     kaže kojeg (jer na stranici ima više gumba s tekstom "Follow").
 */
 
+import { useState } from "react";
 import { Link } from "wasp/client/router";
 
 type LineupArtist = {
@@ -52,6 +53,19 @@ type LineupProps = {
 };
 
 export function Lineup({ artists }: LineupProps) {
+
+    // Popis id-eva izvođača koje je korisnica kliknula (zasad samo u ovoj komponenti)
+    const [pratim, setPratim] = useState<(number | string)[]>(
+        artists.filter((a) => a.following).map((a) => a.id),
+    );
+
+    // Klik na gumb: ako je izvođač na popisu, makni ga, inače ga dodaj
+    function promijeniPracenje(id: number | string) {
+        setPratim((trenutni) =>
+            trenutni.includes(id) ? trenutni.filter((x) => x !== id) : [...trenutni, id],
+        );
+    }
+
   return (
     <section>
       <h2 className="text-tekst-prva desktop:mb-2 desktop:text-xs mb-3 text-lg font-bold">
@@ -86,14 +100,15 @@ export function Lineup({ artists }: LineupProps) {
                 </p>
               </div>
             </Link>
-            {/* Gumb Follow / Following (zasad bez funkcije) */}
+            {/* Gumb Follow / Following (zasad samo lokalno stanje) */}
             <button
               type="button"
-              aria-pressed={a.following}
+              onClick={() => promijeniPracenje(a.id)}
+              aria-pressed={pratim.includes(a.id)}
               aria-label={`Follow ${a.name}`}
               className="border-akcent bg-bijela text-akcent hover:bg-akcent-blijedi focus-visible:ring-akcent desktop:h-6 desktop:px-2 desktop:text-[10px] relative z-10 h-9 shrink-0 rounded-lg border px-3 text-sm font-semibold transition focus-visible:ring-2 focus-visible:outline-none"
             >
-              {a.following ? "✓ Following" : "Follow"}
+              {pratim.includes(a.id) ? "✓ Following" : "Follow"}
             </button>
           </li>
         ))}
