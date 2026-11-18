@@ -103,24 +103,22 @@ tablica ocjena služi za izvođače, albume i pjesme. Moderaciju čine `PrijavaS
 
 **Cilj:** Prije implementacije reprezentativnog dijela sustava modelirati i prikazati razrede ili sučelja potrebna za dodjelu odgovornosti, operacija i veza. Oblikovanje ažurirajte kada se te odluke promijene.
 
-**Dijagram razreda:** [Ugradite čitljiv UML dijagram razreda za reprezentativni dio oblikovanja.]  
-**PlantUML izvor:** [Poveznica na odgovarajuću `.puml` datoteku.]  
-**Referenca na kod pri završnom pregledu:** [Poveznica na odgovarajuću implementaciju.]
+**Odabrano područje:** koncert i prijave na koncert, jer taj dio sadrži većinu pravila domene (stanja koncerta, slobodna mjesta, otkazivanje najkasnije sat vremena prije početka, QR ulaznice,) i najstrože zahtjeve (NF-07).
 
-<details>
-<summary><strong>Oblikovanje odgovornosti prijave i dopuštenih promjena</strong></summary>
+![Dijagram razreda za koncerte i prijave na koncert](./assets/diagrams/4-3-sonar-concert-registration-CD.svg)
 
-**Primjer — CrisisMap:** Prijava sadrži pravila za promjenu vlastitog statusa. Razred tijeka rada koordinira podnošenje i pregled, dok sučelje repozitorija opisuje potrebne operacije trajne pohrane. Dijagram predlaže te odgovornosti prije implementacije.
+**Slika 4.3. Dijagram razreda za koncerte i prijave na koncert**
 
-![Dijagram razreda za obradu prijava kriznih događaja](./assets/diagrams/4-3-crisismap-domain-CD.svg)
+**Dijagram razreda:** Slika 4.3.  
+**PlantUML izvor:** [izvor](./puml/4-3-sonar-concert-registration-CD.puml)                                                
+**Referenca na kod pri završnom pregledu:** trenutno povezani dijelovi: [`wasp/src/operations/prijave.ts`](../wasp/src/operations/prijave.ts) (`prijaviNaKoncert`), [`wasp/src/operations/pomocno.ts`](../wasp/src/operations/pomocno.ts) (`zauzetoWhere`, `izracunajStanjeButton`)
+i [`wasp/src/operations/koncertQueries.ts`](../wasp/src/operations/koncertQueries.ts) (`dohvatiKoncert`). Razrede s dijagrama treba povezati s kodom kad se refaktoriranje provede.
 
-**Slika 4.3. Dijagram razreda za obradu prijava kriznih događaja**
+**Odgovornosti.** `Koncert` sadrži pravila svojih prijelaza stanja (`potvrdi`, `odbij`, `otkazi`, `istekni`) i odgovara na pitanje ima li prijave (`prihvacaPrijave`: stanje je otvorene prijave i koncert još nije počeo), pa nijedan drugi dio sustava ne može prešutno otvoriti prijave
+odbijenom ili otkazanom koncertu. `PrijavaNaKoncert` zna je li zauzima mjesto (svako stanje osim otkazane) i može li se otkazati (najkasnije sat vremena prije početka), te provodi prijelaze `PRIJAVLJEN -> DOSAO` i `PRIJAVLJEN -> NIJE_DOSAO`. `MjestoKoncerta` čuva kapacitet i odlučuje prihvaća li traženi broj mjesta.
 
-**PlantUML izvor:** [izvor](./puml/4-3-crisismap-domain-CD.puml)
-
-**Analiza primjera:** `DisasterReport` sadrži dopuštena pravila promjene stanja pa tijek rada ne može prešutno odobriti već odbijenu prijavu. `ReportWorkflow` koordinira operaciju bez preuzimanja pravila prijelaza stanja same prijave; `ReportRepository` definira potrebne operacije pohrane. Kompozicija `Location` i odabrani tipovi prikazuju veze korisne za oblikovanje. Dijagram namjerno izostavlja stupce baze podataka i nepovezane razrede: ER model objašnjava pohranjene podatke, dok ovaj dijagram dodjeljuje programske odgovornosti i operacije. Ti su razredi odluka oblikovanja, a ne obavezni slojevi za svaki tim. Završnu implementaciju usporedite s početnim oblikovanjem i ažurirajte dijagram tamo gdje su se odluke promijenile; generiranje dijagrama iz koda tek na kraju ne može zamijeniti ovo početno modeliranje.
-
-</details>
+`PrijavaService` koordinira tri slučaja uporabe (prijava, otkazivanje, skeniranje) bez preuzimanja pravila prijelaza koja pripadaju `Koncert` i `PrijavaNaKoncert`. Potrebnu pohranu opisuju sučelja `KoncertRepository` i `PrijavaRepository`, a stvaranje QR koda sučelje `QrKodGenerator`. `PrismaKoncertRepository` je
+implementacija koja zaključava redak koncerta (`FOR UPDATE`) unutar transakcije; `CryptoQrKodGenerator` koristi `crypto.randomBytes`, jer je QR kod "tajna" ulaznice i ne smije biti predvidljiv.
 
 ## 4.4 Ponašanje tijekom izvođenja
 
