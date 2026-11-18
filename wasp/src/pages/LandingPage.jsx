@@ -19,18 +19,15 @@ import { useState } from "react";
 import { HeroBanner } from "../components/HeroBanner.jsx";
 import { LandingPageFilterButtons } from "../components/LandingPageFilterButtons.jsx";
 /*
-    PRIVREMENO: sekcije prikazuju PROBNE podatke,
-    a ne podatke iz baze. Koriste se "View" verzije komponenti, koje samo crtaju
-    zadani popis (PROBNI_KONCERTI, PROBNI_IZVODJACI, PROBNA_MJESTA).
-
-    Kad budemo dohvaćali podatke iz baze, ovdje vratiti komponente s queryjem:
-        UpcomingConcertsView -> UpcomingConcertsSection
-        PopularArtistsView   -> PopularArtists
-        VenuesSectionView    -> VenuesSection
+    Sekcije same dohvaćaju podatke iz baze (useQuery) i prikazuju stanja
+    učitavanja, greške i praznog popisa:
+        UpcomingConcertsSection -> dohvatiNadolazeceKoncerte
+        PopularArtists          -> dohvatiPopularneIzvodjace
+        VenuesSection           -> dohvatiMjesta
 */
-import { UpcomingConcertsView } from "../components/UpcomingConcertsSection.tsx";
-import { PopularArtistsView } from "../components/PopularArtists.jsx";
-import { VenuesSectionView } from "../components/VenuesSection.tsx";
+import { UpcomingConcertsSection } from "../components/UpcomingConcertsSection";
+import { PopularArtists } from "../components/PopularArtists";
+import { VenuesSection } from "../components/VenuesSection";
 /*
     Definicija i uvoz glavne funkcionalne komponente LandingPage.
     U Reactu, komponente su JavaScript funkcije koje vraćaju JSX strukturu, koja se kasnije pretvara u DOM elemente.
@@ -49,17 +46,17 @@ export function LandingPage() {
       <LandingPageFilterButtons active={filter} onChange={setFilter} />
 
       {/* SEKCIJA: Upcoming concerts */}
-      {prikazi("concerts") && <UpcomingConcertsView />}
+      {prikazi("concerts") && <UpcomingConcertsSection />}
       {/* SEKCIJA: Popular on Sonar */}
       {prikazi("artists") && (
         <div className={filter === "all" ? "mt-4" : ""}>
-          <PopularArtistsView />
+          <PopularArtists />
         </div>
       )}
       {/* SEKCIJA: Venues */}
       {prikazi("venues") && (
         <div className={filter === "all" ? "mt-4" : ""}>
-          <VenuesSectionView />
+          <VenuesSection />
         </div>
       )}
     </div>
