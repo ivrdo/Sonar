@@ -5,17 +5,18 @@
 Iz korijena repozitorija:
 
 ```sh
-./setup.sh
+./scripts/okruzenje.sh
+./scripts/baza.sh
 cd wasp
 wasp start
 ```
 
-`setup.sh` provjeri Node (24.22.1 ili noviji), instalira Wasp 0.26.1 (i obriše
-stare ovisnosti ako se verzija promijenila), napravi `.env.server` iz primjera
-ako ga nema, pokrene `wasp install`, primijeni migracije i napuni praznu bazu
-probnim podacima. Može se pokretati više puta. Dev container ga pokreće sam,
-ali bez migracija i probnih podataka, pa nakon prvog otvaranja treba još jednom
-pokrenuti `./setup.sh` u terminalu.
+Potreban je Node 24.22.1 ili noviji.
+
+`scripts/okruzenje.sh` instalira Wasp 0.26.1, napravi `.env.server` iz primjera ako ga nema i pokrene
+`wasp install`. Dev container ga pokreće sam.
+
+`scripts/baza.sh` primijeni migracije i napuni bazu probnim podacima. Mora se pokrenuti dok baza radi.
 
 U `.env.server` upisati `GOOGLE_CLIENT_ID` i `GOOGLE_CLIENT_SECRET` (dobivaju se
 privatno, ne commitati ih).
