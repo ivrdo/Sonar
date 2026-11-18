@@ -8,6 +8,8 @@
         - fixed inset-x-0 bottom-0 z-20: zalijepljena za dno ekrana, cijela širina
         - pb-[env(safe-area-inset-bottom)]: na iPhoneu ne ide ispod crtice za "home"
         - aktivni tab: tirkizni tekst i tirkizna crta GORE (inset shadow)
+        - h-tabovi justify-center: svaki tab je točno 60px visok (token iz App.css),
+          ikona i tekst su okomito centrirani; polje pretrage računa s tom visinom
 */
 
 import { NavLink } from "react-router";
@@ -25,7 +27,7 @@ export function BottomTabs() {
           to={s.to}
           end={s.to === "/"}
           className={({ isActive }) =>
-            `flex flex-1 flex-col items-center gap-0.5 pt-2 pb-3 text-[11.5px] ${
+            `h-tabovi flex flex-1 flex-col items-center justify-center gap-0.5 text-[11.5px] ${
               isActive
                 ? "text-akcent font-bold shadow-[inset_0_3px_0_var(--color-akcent)]"
                 : "text-tekst-druga font-medium"
