@@ -5,9 +5,6 @@
     Bijela kartica s redovima: sličica izvođača, ime, podnaslov (žanr, uloga i
     vrijeme nastupa) te gumb Follow / Following.
 
-    Ovo je zasad samo izgled. Gumb još nema funkciju (kad bude akcija za praćenje
-    izvođača, poziva se iz onClick), a redovi još ne vode na stranicu izvođača.
-
     Props (podaci koje komponenta prima od roditelja):
         - artists: popis izvođača, svaki ima:
             id: jedinstveni broj izvođača
@@ -38,60 +35,71 @@
     kaže kojeg (jer na stranici ima više gumba s tekstom "Follow").
 */
 
+import { Link } from "wasp/client/router";
+
 type LineupArtist = {
-    id: number;
-    name: string;
-    image: string;
-    genre: string;
-    role: string;
-    time: string;
-    following: boolean;
+  id: number | string; // mbid izvođača je tekst
+  name: string;
+  image: string;
+  genre: string;
+  role: string;
+  time: string;
+  following: boolean;
 };
 
 type LineupProps = {
-    artists: LineupArtist[];
+  artists: LineupArtist[];
 };
 
 export function Lineup({ artists }: LineupProps) {
-    return (
-        <section>
-            <h2 className="mb-3 text-lg font-bold text-tekst-prva desktop:mb-2 desktop:text-xs">
-                Lineup
-            </h2>
+  return (
+    <section>
+      <h2 className="text-tekst-prva desktop:mb-2 desktop:text-xs mb-3 text-lg font-bold">
+        Lineup
+      </h2>
 
-            <ul className="divide-y divide-rubovi-2 overflow-hidden rounded-xl border border-rubovi-1 bg-bijela">
-                {artists.map((a) => (
-                    <li key={a.id} className="flex items-center gap-3 p-3 desktop:p-2">
-                        {/* Sličica izvođača */}
-                        <img
-                            src={a.image}
-                            className="h-12 w-12 shrink-0 rounded-full object-cover desktop:h-7 desktop:w-7"
-                        />
+      <ul className="divide-rubovi-2 border-rubovi-1 bg-bijela divide-y overflow-hidden rounded-xl border">
+        {artists.map((a) => (
+          <li
+            key={a.id}
+            className="hover:bg-akcent-blijedi desktop:p-2 relative flex items-center gap-3 p-3 transition"
+          >
+            {/* Slika i tekst vode na stranicu izvođača. Gumb Follow je izvan poveznice */}
+            <Link
+              to="/artists/:id"
+              params={{ id: a.id }}
+              className="focus-visible:after:ring-akcent flex min-w-0 flex-1 items-center gap-3 after:absolute after:inset-0 focus-visible:outline-none focus-visible:after:ring-2"
+            >
+              {/* Sličica izvođača */}
+              <img
+                src={a.image}
+                className="desktop:h-7 desktop:w-7 h-12 w-12 shrink-0 rounded-full object-cover"
+              />
 
-                        {/* Ime i podnaslov */}
-                        <div className="min-w-0 flex-1">
-                            <p className="truncate text-[15px] font-semibold text-tekst-prva desktop:text-[11px]">
-                                {a.name}
-                            </p>
-                            <p className="truncate text-sm text-tekst-druga desktop:text-[10px]">
-                                {a.genre} · {a.role} · {a.time}
-                            </p>
-                        </div>
-
-                        {/* Gumb Follow / Following (zasad bez funkcije) */}
-                        <button
-                            type="button"
-                            aria-pressed={a.following}
-                            aria-label={`Follow ${a.name}`}
-                            className="h-9 shrink-0 rounded-lg border border-akcent bg-bijela px-3 text-sm font-semibold text-akcent transition hover:bg-akcent-blijedi focus-visible:ring-2 focus-visible:ring-akcent focus-visible:outline-none desktop:h-6 desktop:px-2 desktop:text-[10px]"
-                        >
-                            {a.following ? "✓ Following" : "Follow"}
-                        </button>
-                    </li>
-                ))}
-            </ul>
-        </section>
-    );
+              {/* Ime i podnaslov */}
+              <div className="min-w-0 flex-1">
+                <p className="text-tekst-prva desktop:text-[11px] truncate text-[15px] font-semibold">
+                  {a.name}
+                </p>
+                <p className="text-tekst-druga desktop:text-[10px] truncate text-sm">
+                  {a.genre} · {a.role} · {a.time}
+                </p>
+              </div>
+            </Link>
+            {/* Gumb Follow / Following (zasad bez funkcije) */}
+            <button
+              type="button"
+              aria-pressed={a.following}
+              aria-label={`Follow ${a.name}`}
+              className="border-akcent bg-bijela text-akcent hover:bg-akcent-blijedi focus-visible:ring-akcent desktop:h-6 desktop:px-2 desktop:text-[10px] relative z-10 h-9 shrink-0 rounded-lg border px-3 text-sm font-semibold transition focus-visible:ring-2 focus-visible:outline-none"
+            >
+              {a.following ? "✓ Following" : "Follow"}
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
 }
 
 export default Lineup;
