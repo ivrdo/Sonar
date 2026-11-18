@@ -1,0 +1,46 @@
+@startuml
+title Sustav Sonar – dijagram razmještaja
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #212529
+skinparam node {
+    BackgroundColor #F8F9FA
+    BorderColor #212529
+    BackgroundColor<<vanjska usluga>> #FFF3CD
+    BorderColor<<vanjska usluga>> #856404
+}
+skinparam database {
+    BackgroundColor #F8F9FA
+    BorderColor #212529
+}
+skinparam artifact {
+    BackgroundColor #FFFFFF
+    BorderColor #212529
+}
+
+node "Korisnički uređaj" as uredaj {
+    node "Web-preglednik" as preglednik {
+        artifact "Klijent Sonar\n(React SPA)" as spa
+    }
+}
+
+cloud "Render (regija Frankfurt)" as render {
+    node "sonar-client\n<<Render Static Site>>" as klijent {
+        artifact "web-app/build\n(200.html, JS, CSS)" as staticne
+    }
+    node "sonar-server\n<<Render Web Service, Node.js 24>>" as posluzitelj {
+        artifact "Wasp poslužitelj\n(Express, Prisma)" as wasp
+    }
+    database "sonar-db\n<<Render PostgreSQL 18>>" as baza
+}
+
+node "Google\n(OAuth 2.0 / OpenID Connect)" <<vanjska usluga>> as google
+
+preglednik --> klijent : HTTPS\n(statičke datoteke)
+spa --> wasp : HTTPS\n(upiti, akcije, /auth)
+spa ..> google : HTTPS\n(preusmjerenje na prijavu)
+wasp --> google : HTTPS\n(zamjena koda za token, profil)
+wasp --> baza : PostgreSQL (TLS)\ninterna mreža
+
+@enduml
