@@ -51,25 +51,26 @@ Preduvjeti: javna adresa je dostupna i na njoj je najnovija verzija grane, za pr
 | ST-03 | Prijava suspendiranog računa (F-002) | Račun sa statusom `SUSPENDIRAN`. | Prijava je odbijena, korisnik nije prijavljen. | Nije pokrenuto | Nije pokrenuto | Postaviti status računa u bazi; pokušati prijavu preko Googlea; provjeriti da korisnik nije prijavljen. |
 | ST-04 | Pretraga kataloga (F-008) | Pojam „orbita”; pojam bez rezultata. | Za „orbita” prikazuju se rezultati; za pojam bez rezultata prikazuje se prazno stanje. | Kako je očekivano. | Prošlo | Upisati pojam u traku za pretragu; potvrditi; provjeriti adresu `/search?q=…` i rezultate. |
 | ST-05 | Nepostojeća adresa | Adresa `/nema-me`. | Prikazuje se stranica „nije pronađeno”. | Kako je očekivano. | Prošlo | Otvoriti adresu; provjeriti stranicu. |
-| ST-06 | Stranica izvođača (F-008) | Klik na izvođača iz popularnih. | Otvara se stranica izvođača s njegovim imenom i diskografijom. | Nije pokrenuto | Nije pokrenuto | S landinga kliknuti izvođača; usporediti prikazane podatke s bazom. |
-| ST-07 | Stranica koncerta (F-024) | Klik na koncert iz nadolazećih. | Otvara se stranica koncerta s naslovom, datumom, mjestom, popisom izvođača i podacima o mjestu. | Nije pokrenuto | Nije pokrenuto | S landinga kliknuti karticu koncerta; usporediti prikaz s bazom. |
+| ST-06 | Stranica izvođača (F-008) | Klik na izvođača iz popularnih. | Otvara se stranica izvođača s njegovim imenom i diskografijom. | Otvorila se stranica izvođača s imenom i diskografijom. | Prošlo | S landinga kliknuti izvođača; provjeriti da se prikazuje isti izvođač koji je na kartici. |
+| ST-07 | Stranica koncerta (F-024) | Klik na koncert iz nadolazećih. | Otvara se stranica koncerta s naslovom, datumom, mjestom, popisom izvođača i podacima o mjestu. | Otvorila se stranica koncerta s naslovom, datumom, mjestom, izvođačima i podacima o mjestu. | Prošlo | S landinga kliknuti karticu koncerta; provjeriti da se prikazuje isti koncert koji je na kartici. |
 | ST-08 | Prijava na koncert (F-024) | Prijavljeni slušatelj; koncert u stanju `OTVORENE_PRIJAVE` s više slobodnih mjesta. | Nakon klika na „Apply” gumb piše „Show ticket”; u bazi nastaje jedna prijava u stanju `PRIJAVLJEN` s QR kodom; slobodnih mjesta je jedno manje. | Nije pokrenuto | Nije pokrenuto | Prijaviti se; otvoriti koncert; zabilježiti broj slobodnih mjesta; kliknuti „Apply”; osvježiti stranicu; provjeriti prijavu u bazi. |
-| ST-09 | Prijava bez prijave u sustav (NF-02) | Neprijavljeni korisnik na stranici koncerta. | Prijava nije moguća; u bazi ne nastaje prijava. | Nije pokrenuto | Nije pokrenuto | Odjaviti se; otvoriti koncert; kliknuti „Apply”; provjeriti ishod i bazu. |
+| ST-09 | Prijava bez prijave u sustav (NF-02) | Neprijavljeni korisnik na stranici koncerta. | Prijava nije moguća; u bazi ne nastaje prijava. | Klik na „Apply” ne daje korisniku nikakvu poruku. Server je odbio zahtjev `POST /operations/prijavi-na-koncert` s kodom 401 i porukom „Za prijavu na koncert morate biti prijavljeni.” (vidljivo u konzoli preglednika), pa prijava nije nastala. | Prošlo (s napomenom: korisnik ne dobiva poruku) | Odjaviti se; otvoriti koncert; kliknuti „Apply”; u konzoli preglednika provjeriti odgovor poslužitelja. |
 | ST-10 | Dvostruka prijava (F-024) | Korisnik koji je već prijavljen na koncert. | Gumb piše „Show ticket”; broj prijava korisnika na taj koncert ostaje jedan. | Nije pokrenuto | Nije pokrenuto | Nakon ST-08 ponovno otvoriti isti koncert; provjeriti gumb i broj prijava u bazi. |
 | ST-11 | Popunjen koncert (F-024) | Koncert bez slobodnih mjesta. | Gumb piše „Sold out” i onemogućen je; prijava nije moguća. | Nije pokrenuto | Nije pokrenuto | Otvoriti popunjen koncert; provjeriti gumb. |
 | ST-12 | Istodobne prijave na zadnje mjesto (NF-07) | Koncert s jednim slobodnim mjestom; dva različita računa. | Točno jedna prijava uspijeva; broj aktivnih prijava jednak je broju mjesta. | Nije pokrenuto | Nije pokrenuto | Pripremiti koncert (broj mjesta = broj aktivnih prijava + 1); u dva preglednika prijaviti različite račune; istodobno kliknuti „Apply”; u bazi provjeriti broj aktivnih prijava na koncert (prijave koje nisu `OTKAZAN`). |
-| ST-13 | Nepostojeći koncert | Adresa `/concerts/99999`. | Prikazuje se poruka „Concert not found.” | Nije pokrenuto | Nije pokrenuto | Otvoriti adresu; provjeriti poruku. |
+| ST-13 | Nepostojeći koncert | Adresa `/concerts/99999`. | Prikazuje se poruka „Concert not found.” | Prikazala se poruka „Concert not found.” | Prošlo | Otvoriti adresu; provjeriti poruku. |
 | ST-14 | Responzivnost glavnog toka (NF-09) | Širina 375 px i širina računala. | Landing, pretraga, izvođač i koncert čitljivi su bez vodoravnog pomicanja; na mobitelu je vidljiva donja navigacija. | Kako je očekivano. | Prošlo | U alatima preglednika postaviti širinu 375 px; proći glavni tok; ponoviti na računalu. |
 
 ## 5.3 Provedena ispitivanja i rezultati
 
-**Najnovije izvođenje:** automatizirani testovi, 18.11.2026., revizija `e622b14`, lokalno (`wasp test client run`). Ručni slučajevi ST-01, ST-04, ST-05 i ST-14 izvedeni su na javnoj adresi; ostali još nisu izvedeni.
+**Najnovije izvođenje:** automatizirani testovi, 18.11.2026., revizija `e622b14`, lokalno (`wasp test client run`). Ručni slučajevi izvedeni su na javnoj adresi (ST-01, ST-04, ST-05, ST-14, ST-06, ST-07, ST-09, ST-13); ostali još nisu izvedeni.
 
 | ID ispitivanja ili izvođenja | Datum i revizija aplikacije | Okruženje | Opaženi rezultat i ishod | Dokaz |
 | --- | --- | --- | --- | --- |
 | CT-01 do CT-13 | 18.11.2026., revizija `e622b14` | Lokalno, `wasp test client run` | 13 od 13 testova prošlo (3 testne datoteke) | Ispis naredbe `wasp test client run`: [vitest-ispis.txt](ispitivanje-dokazi/vitest-ispis.txt) |
 | ST-01, ST-04, ST-05, ST-14 | 18.11.2026., verzija koja je bila na javnoj adresi | Javna adresa | Rezultati upisani u poglavlju 5.2 | – |
-| ST-02, ST-03, ST-06 do ST-13 | – | Javna adresa | Nisu izvedeni do ovog trenutka. | – |
+| ST-06, ST-07, ST-09, ST-13 | 18.11.2026., master nakon PR-a #31 (točan commit nije provjeren) | Javna adresa | Rezultati upisani u poglavlju 5.2 | – |
+| ST-02, ST-03, ST-08, ST-10, ST-11, ST-12 | – | Javna adresa | Nisu izvedeni do ovog trenutka. | – |
 
 Slučaj koji ne uspije ili ga nije moguće izvesti (npr. jer funkcionalnost još nije dostupna na javnoj adresi) bilježi se u stvarnom stanju, uz poveznicu na odgovarajući zadatak (Issue). Nakon ispravka slučaj se ponovno izvodi.
 
