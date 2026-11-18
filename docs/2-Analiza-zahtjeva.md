@@ -116,62 +116,64 @@
 
 | ID zahtjeva | Obrazac uporabe / modul | Arhitekturna realizacija | Ispitivanje ili provjera |
 | --- | --- | --- | --- |
-| F-001 | UC-001 Javni pregled i prijava putem Googlea | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-002 | UC-001 Javni pregled i prijava putem Googlea | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-003 | UC-002 Upravljanje profilom i računom | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-004 | UC-002 Upravljanje profilom i računom | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-005 | UC-002 Upravljanje profilom i računom | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-006 | UC-002 Upravljanje profilom i računom | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-007 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-008 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-009 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-010 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-011 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-012 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-013 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-014 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-015 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-016 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-017 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-018 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-019 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-020 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-021 | UC-006 Predlaganje koncerta | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-022 | UC-007 Obrada prijedloga koncerta | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-023 | UC-007 Obrada prijedloga koncerta | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-024 | UC-008 Prijava na koncert i otkazivanje prijave | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-025 | UC-008 Prijava na koncert i otkazivanje prijave | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-026 | UC-009 Skeniranje QR ulaznice | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-027 | UC-008 Prijava na koncert i otkazivanje prijave | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-028 | UC-009 Skeniranje QR ulaznice | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-029 | UC-010 Prijava sadržaja i moderacija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-030 | UC-010 Prijava sadržaja i moderacija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-031 | UC-010 Prijava sadržaja i moderacija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-032 | UC-010 Prijava sadržaja i moderacija; UC-011 Zahtjev za ulogu i verifikacija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-033 | UC-011 Zahtjev za ulogu i verifikacija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-034 | UC-011 Zahtjev za ulogu i verifikacija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-035 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-036 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-037 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-038 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-039 | UC-012 Statistika izvođača i upravitelja mjesta | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-040 | UC-012 Statistika izvođača i upravitelja mjesta | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-041 | UC-012 Statistika izvođača i upravitelja mjesta | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-042 | UC-013 Administracija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-043 | UC-013 Administracija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-044 | UC-013 Administracija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-045 | UC-013 Administracija | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-046 | UC-002 Upravljanje profilom i računom | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| F-047 | UC-002 Upravljanje profilom i računom | na čekanju: arhitektura se oblikuje u 5. tjednu | na čekanju: ispitni slučajevi se pišu uz implementaciju |
-| NF-01 | cijeli sustav | na čekanju | na čekanju |
-| NF-02 | cijeli sustav | na čekanju | na čekanju |
-| NF-03 | cijeli sustav | na čekanju | na čekanju |
-| NF-04 | cijeli sustav | na čekanju | na čekanju |
-| NF-05 | cijeli sustav | na čekanju | na čekanju |
-| NF-06 | cijeli sustav | na čekanju | na čekanju |
-| NF-07 | cijeli sustav | na čekanju | na čekanju |
-| NF-08 | cijeli sustav | na čekanju | na čekanju |
-| NF-09 | cijeli sustav | na čekanju | na čekanju |
+| F-001 | UC-001 Javni pregled i prijava putem Googlea | Landing (`LandingPage`) sa sekcijama nadolazećih koncerata, popularnih izvođača i mjesta; queryji `dohvatiNadolazeceKoncerte`, `dohvatiPopularneIzvodjace` i `dohvatiMjesta` (`src/landing/queries.ts`). Karta (`MapPage`) na čekanju: 2. ciklus. | CT-10, ST-01; karta na čekanju |
+| F-002 | UC-001 Javni pregled i prijava putem Googlea | Wasp autentikacija s Googleom (`main.wasp.ts`, `src/auth/google.ts`); korisnik je entitet `Korisnik`, a e-pošta se preuzima iz Google profila (`userSignupFields`); stranica `/login` (`LoginPage`). | ST-02, ST-03 |
+| F-003 | UC-002 Upravljanje profilom i računom | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-004 | UC-002 Upravljanje profilom i računom | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-005 | UC-002 Upravljanje profilom i računom | Stranica izvođača iz kataloga (`ArtistPage`, `ArtistProfileCard`, `AboutArtist`, `Discography`, `PopularSongs`) i query `dohvatiIzvodjaca` (`src/operations/izvodjacQueries.ts`). Profil verificiranog izvođača na čekanju: 2. ciklus. | CT-12, ST-06 |
+| F-006 | UC-002 Upravljanje profilom i računom | Podaci o mjestu na stranici koncerta (`VenueFacts`) i sekcija mjesta na landingu (`VenuesSection`, `dohvatiMjesta`); okidač `trg_mjesto_kapacitet` ne dopušta kapacitet manji od broja mjesta koncerta u tijeku. Stranica mjesta i unos upravitelja na čekanju: 2. ciklus. | ST-07 |
+| F-007 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | Jednokratni uvoz skriptom `scripts/importKatalog.ts` (MusicBrainz i Last.fm) u `src/seed/data/katalog.ts`, koji seed `seedSve` (`src/seed`) upisuje u bazu; aplikacija pri radu čita samo iz baze (`Izvodjac`, `Album`, `Pjesma`, `Oznaka`, `MjestoKoncerta`). | ST-04; seed na javnoj adresi (6.3) |
+| F-008 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | Pretraga: `SearchPage`, traka za pretragu u `Navbar` i query `pretrazi` (`src/search/queries.ts`) nad izvođačima, albumima, pjesmama i mjestima; stranica izvođača (`ArtistPage`). Stranice albuma, pjesme i mjesta na čekanju: 2. ciklus. | CT-12, ST-04, ST-06 |
+| F-009 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-010 | UC-003 Pretraga kataloga i zahtjev za dodavanje izvođača | Podnožje s izvorima podataka (`DataSourcesFooter`). | ST-01 |
+| F-011 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: 2. ciklus (u modelu postoje `PracenjeIzvodjaca` i `PracenjeKorisnika`) | na čekanju: nakon implementacije |
+| F-012 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: 2. ciklus (u modelu postoje `Ocjena` s ograničenjem 1 do 5 i `Svidja`) | na čekanju: nakon implementacije |
+| F-013 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: 2. ciklus (u modelu postoji `Recenzija`) | na čekanju: nakon implementacije |
+| F-014 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-015 | UC-004 Ocjenjivanje, recenziranje i liste | na čekanju: 2. ciklus (u modelu postoje `Lista` i `ListaStavka`) | na čekanju: nakon implementacije |
+| F-016 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-017 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: Python servis preporuka, 2. ciklus (u modelu postoji `Preporuka`) | na čekanju: nakon implementacije |
+| F-018 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: Python servis preporuka, 2. ciklus (u modelu postoji `Preporuka`) | na čekanju: nakon implementacije |
+| F-019 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: Python servis preporuka, 2. ciklus (u modelu postoji `Preporuka`) | na čekanju: nakon implementacije |
+| F-020 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: Python servis preporuka, 2. ciklus (u modelu postoji `Preporuka`) | na čekanju: nakon implementacije |
+| F-021 | UC-006 Predlaganje koncerta | Okidač `trg_koncert_broj_mjesta` ne dopušta koncert s više mjesta od kapaciteta mjesta ni koncert na mjestu bez kapaciteta. Predlaganje koncerta u sučelju na čekanju: 2. ciklus. | na čekanju: nakon implementacije |
+| F-022 | UC-007 Obrada prijedloga koncerta | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-023 | UC-007 Obrada prijedloga koncerta | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-024 | UC-008 Prijava na koncert i otkazivanje prijave | Stranica koncerta (`ConcertDetailPage`, `ApplyBox`), query `dohvatiKoncert` (`src/operations/koncertQueries.ts`) i akcija `prijaviNaKoncert` (`src/operations/prijave.ts`), koja stvara prijavu s QR kodom; stanje gumba računa `izracunajStanjeButton` (`src/operations/pomocno.ts`). Prikaz QR ulaznice na čekanju: 2. ciklus. | CT-01 do CT-07, CT-11, ST-07, ST-08, ST-10, ST-11 |
+| F-025 | UC-008 Prijava na koncert i otkazivanje prijave | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-026 | UC-009 Skeniranje QR ulaznice | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-027 | UC-008 Prijava na koncert i otkazivanje prijave | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-028 | UC-009 Skeniranje QR ulaznice | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-029 | UC-010 Prijava sadržaja i moderacija | na čekanju: 2. ciklus (u modelu postoji `PrijavaSadrzaja`) | na čekanju: nakon implementacije |
+| F-030 | UC-010 Prijava sadržaja i moderacija | na čekanju: 2. ciklus (u modelu postoji `PrijavaSadrzaja`) | na čekanju: nakon implementacije |
+| F-031 | UC-010 Prijava sadržaja i moderacija | Prijava računa sa statusom `SUSPENDIRAN` odbija se u `onBeforeLogin` (`src/auth/provjeraRacuna.ts`). Automatska suspenzija na čekanju: 2. ciklus. | ST-03 |
+| F-032 | UC-010 Prijava sadržaja i moderacija; UC-011 Zahtjev za ulogu i verifikacija | na čekanju: 2. ciklus (u modelu postoji `Zapis`) | na čekanju: nakon implementacije |
+| F-033 | UC-011 Zahtjev za ulogu i verifikacija | na čekanju: 2. ciklus (u modelu postoji `ZahtjevZaUlogu`) | na čekanju: nakon implementacije |
+| F-034 | UC-011 Zahtjev za ulogu i verifikacija | na čekanju: 2. ciklus (u modelu postoji `ZahtjevZaUlogu`) | na čekanju: nakon implementacije |
+| F-035 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: 2. ciklus (u modelu postoji `Obavijest`) | na čekanju: nakon implementacije |
+| F-036 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: 2. ciklus (u modelu postoji `Obavijest`) | na čekanju: nakon implementacije |
+| F-037 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: 2. ciklus (u modelu postoji `Obavijest`) | na čekanju: nakon implementacije |
+| F-038 | UC-005 Praćenje, feed, preporuke i obavijesti | na čekanju: 2. ciklus (u modelu postoji `Obavijest`) | na čekanju: nakon implementacije |
+| F-039 | UC-012 Statistika izvođača i upravitelja mjesta | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-040 | UC-012 Statistika izvođača i upravitelja mjesta | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-041 | UC-012 Statistika izvođača i upravitelja mjesta | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-042 | UC-013 Administracija | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-043 | UC-013 Administracija | na čekanju: 2. ciklus; do tada uloge mijenja održavatelj izravno u bazi (6.3) | na čekanju: nakon implementacije |
+| F-044 | UC-013 Administracija | na čekanju: 2. ciklus (u modelu postoji `PraviloSustava`) | na čekanju: nakon implementacije |
+| F-045 | UC-013 Administracija | Prijava računa sa statusom `DEAKTIVIRAN` odbija se u `onBeforeLogin` (`src/auth/provjeraRacuna.ts`). Deaktivacija iz administratorskog sučelja na čekanju: 2. ciklus. | na čekanju; ST-03 provjerava isti put za suspendiran račun |
+| F-046 | UC-002 Upravljanje profilom i računom | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| F-047 | UC-002 Upravljanje profilom i računom | Prijava računa sa statusom `OBRISAN` odbija se u `onBeforeLogin` (`src/auth/provjeraRacuna.ts`). Brisanje računa i anonimizacija na čekanju: 2. ciklus. | na čekanju: nakon implementacije |
+| NF-01 | cijeli sustav | na čekanju: statistika (F-039) još ne postoji, pa se lokacija slušatelja nigdje ne prikazuje | na čekanju: nakon implementacije |
+| NF-02 | cijeli sustav | Akcija `prijaviNaKoncert` odbija neprijavljenog korisnika (401) i račun koji nije aktivan (403). Ograničenje ostalih stranica prema ulozi na čekanju: 2. ciklus. | ST-09 |
+| NF-03 | cijeli sustav | Wasp autentikacija: prijava preko Googlea (OAuth 2.0 i OpenID Connect), a operacije dobivaju korisnika iz sesijskog tokena; akcija bez prijave vraća 401. | ST-02, ST-09 |
+| NF-04 | cijeli sustav | Katalog se čita iz vlastite baze (F-007), pa rad aplikacije ne ovisi o MusicBrainzu i Last.fmu. Dodavanje izvođača (F-009) na čekanju: 2. ciklus. | na čekanju: nema zasebnog ispitnog slučaja |
+| NF-05 | cijeli sustav | Stranice čitaju gotove podatke iz baze preko queryja. Preporuke (F-020) na čekanju: 2. ciklus. | na čekanju: nakon implementacije preporuka |
+| NF-06 | cijeli sustav | Skripta `scripts/importKatalog.ts` čeka barem 1,1 s prije svakog zahtjeva MusicBrainzu, kod odgovora 503 čeka dvostruko dulje i šalje vlastiti User-Agent. Dohvat u pozadini (F-009) na čekanju: 2. ciklus. | na čekanju: nema zasebnog ispitnog slučaja |
+| NF-07 | cijeli sustav | `prijaviNaKoncert` radi u transakciji (`prisma.$transaction`) i zaključava redak koncerta (`SELECT … FOR UPDATE`) prije brojanja slobodnih mjesta. | ST-12 (ručno) |
+| NF-08 | cijeli sustav | na čekanju: 2. ciklus | na čekanju: nakon implementacije |
+| NF-09 | cijeli sustav | Responzivna ljuska u `App.tsx`: bočna traka (`Sidebar`) na računalu i donji tabovi (`BottomTabs`) na mobitelu. Skeniranje QR ulaznice (F-028) na čekanju: 2. ciklus. | ST-14 |
+
+CT su automatizirani testovi, a ST ispitni slučajevi provedeni ručno na javnoj adresi. Oba su opisana u poglavlju 5.
 
 ---
 
