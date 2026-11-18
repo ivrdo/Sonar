@@ -1,0 +1,10 @@
+[ Client ]  RUN  v4.1.11 /workspace/wasp
+[ Client ]
+[ Client ]  ✓ src/operations/pomocno.test.ts (7 tests) 2ms
+[ Client ]  ✓ src/components/ConcertCard.test.tsx (2 tests) 5ms
+[ Client ]  ✓ src/pages/pages.test.tsx (3 tests) 17ms
+[ Client ]
+[ Client ]  Test Files  3 passed (3)
+[ Client ]       Tests  12 passed (12)
+[ Client ]    Start at  01:20:31
+[ Client ]    Duration  327ms (transform 78ms, setup 126ms, import 99ms, tests 24ms, environment 464ms)
