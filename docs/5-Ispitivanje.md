@@ -10,11 +10,9 @@ Ispitivanje je podijeljeno na dvije razine: automatizirane testove klijentskog k
 
 - pravilo gumba „Apply” na stranici koncerta (`izracunajStanjeButton` u `src/operations/pomocno.ts`): stanja `APPLY`, `PRIJAVLJEN`, `POPUNJENO` i `ZATVORENO` te njihov redoslijed;
 - komponentu `ConcertCard`: prikaz naslova, datuma, vremena i mjesta te poveznicu na stranicu koncerta;
-- sekcije landinga (nadolazeći koncerti, popularni izvođači, mjesta) te stranice koncerta i izvođača.
+- sekcije landinga (nadolazeći koncerti, popularni izvođači, mjesta), cijelu stranicu landinga te stranice koncerta i izvođača.
 
 Stranice se crtaju u običan HTML tekst (`renderToStaticMarkup` iz Reacta), a Waspovi moduli (`useQuery`, `Link`) zamijenjeni su lažnima. Testovi stoga ne trebaju poslužitelj ni bazu: provjerava se kako se prikazuju podaci koje bi vratili queryji. Što točno vraćaju queryji, ovdje se ne ispituje.
-
-Dva dijela još nisu pokrivena, što je u kodu testa označeno komentarom `TODO`: test cijele stranice landinga (čeka da landing prestane koristiti probne podatke) i prikaz popularnih pjesama na stranici izvođača.
 
 **Poslužiteljski kod nije pokriven automatiziranim testovima.** Naredba `wasp test client` izvodi Vitest kroz Waspov dodatak koji odbija svaki uvoz iz `wasp/server`, a Wasp testiranje servera ne podržava. Queryji i akcija `prijaviNaKoncert` zato se ispituju ručno u pokrenutoj aplikaciji (ispitni slučajevi ST-xx u poglavlju 5.2).
 
@@ -39,7 +37,8 @@ Oznaka **CT-xx** označava automatizirani test (poveznica vodi na izvorni kod te
 | CT-09 | `ConcertCard`: poveznica na koncert | Kartica s id-em koncerta 7. | Kartica vodi na `/concerts/7`. | Test prošao. | Prošlo | Isto; [ConcertCard.test.tsx](../wasp/src/components/ConcertCard.test.tsx) |
 | CT-10 | Sekcije landinga: prikaz podataka iz querya (F-001) | Lažni `useQuery` vraća jedan koncert, jednog izvođača i jedno mjesto. | Prikazani su koncert s datumom, vremenom i mjestom, izvođač i mjesto. | Test prošao. | Prošlo | `wasp test client run`; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
 | CT-11 | `ConcertDetailPage`: prikaz koncerta (F-024) | Lažni `dohvatiKoncert` vraća koncert s izvođačima „Orbita” i „Kiša u Svibnju” i stanjem gumba `APPLY`. | Naslov je „Orbita + Kiša u Svibnju”, a gumb piše „Apply”. | Test prošao. | Prošlo | Isto; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
-| CT-12 | `ArtistPage`: prikaz izvođača (F-008) | Lažni `dohvatiIzvodjaca` vraća izvođača „Orbita” s albumom „Valovi”. | Prikazani su ime izvođača i album u diskografiji. | Test prošao. | Prošlo | Isto; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
+| CT-12 | `ArtistPage`: prikaz izvođača (F-008) | Lažni `dohvatiIzvodjaca` vraća izvođača „Orbita” s albumom „Valovi” i pjesmom „Bez mjeseca”. | Prikazani su ime izvođača, album u diskografiji i pjesma s albuma. | Test prošao. | Prošlo | Isto; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
+| CT-13 | `LandingPage`: prikaz sekcija (F-001) | Lažni `useQuery` vraća koncert, izvođača i mjesto; lažni `useAuth` vraća da nitko nije prijavljen. | Prikazane su sekcije nadolazećih koncerata, popularnih izvođača i mjesta. | Test prošao. | Prošlo | Isto; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
 
 ### Ručni slučajevi (javna adresa)
 
@@ -64,11 +63,11 @@ Preduvjeti: javna adresa je dostupna i na njoj je najnovija verzija grane, za pr
 
 ## 5.3 Provedena ispitivanja i rezultati
 
-**Najnovije izvođenje:** automatizirani testovi, 18.11.2026., revizija `41a7584`, lokalno (`wasp test client run`). Ručni slučajevi ST-01, ST-04, ST-05 i ST-14 izvedeni su na javnoj adresi; ostali još nisu izvedeni.
+**Najnovije izvođenje:** automatizirani testovi, 18.11.2026., revizija `e622b14`, lokalno (`wasp test client run`). Ručni slučajevi ST-01, ST-04, ST-05 i ST-14 izvedeni su na javnoj adresi; ostali još nisu izvedeni.
 
 | ID ispitivanja ili izvođenja | Datum i revizija aplikacije | Okruženje | Opaženi rezultat i ishod | Dokaz |
 | --- | --- | --- | --- | --- |
-| CT-01 do CT-12 | 18.11.2026., revizija `41a7584` | Lokalno, `wasp test client run` | 12 od 12 testova prošlo (3 testne datoteke) | Ispis naredbe `wasp test client run`: [vitest-ispis.txt](ispitivanje-dokazi/vitest-ispis.txt) |
+| CT-01 do CT-13 | 18.11.2026., revizija `e622b14` | Lokalno, `wasp test client run` | 13 od 13 testova prošlo (3 testne datoteke) | Ispis naredbe `wasp test client run`: [vitest-ispis.txt](ispitivanje-dokazi/vitest-ispis.txt) |
 | ST-01, ST-04, ST-05, ST-14 | 18.11.2026., verzija koja je bila na javnoj adresi | Javna adresa | Rezultati upisani u poglavlju 5.2 | – |
 | ST-02, ST-03, ST-06 do ST-13 | – | Javna adresa | Nisu izvedeni do ovog trenutka. | – |
 
