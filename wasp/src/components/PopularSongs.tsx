@@ -31,7 +31,7 @@ export type Song = {
     album: string;
     type: "Album" | "EP" | "Single" | "Live";
     cover: string;
-    rating: number;
+    rating: number | null; // null ako pjesma još nema ocjena
     duration: string;
     liked: boolean;
 };
@@ -66,7 +66,10 @@ function SongRow({ number, song }: SongRowProps) {
                 </p>
             </div>
 
-            <span className="text-sm text-tekst-druga desktop:text-[10px]">★ {song.rating.toFixed(1)}</span>
+            {/* Ocjena se prikazuje samo ako postoji (null = pjesma još nema ocjena) */}
+            {song.rating !== null && (
+                <span className="text-sm text-tekst-druga desktop:text-[10px]">★ {song.rating.toFixed(1)}</span>
+            )}
             <span className="hidden text-sm text-tekst-druga desktop:inline desktop:text-[10px]">{song.duration}</span>
 
             <button

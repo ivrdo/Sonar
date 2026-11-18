@@ -3,8 +3,8 @@
 // ==========================================
 /*
     Ova komponenta predstavlja bočnu navigacijsku traku (sidebar) aplikacije.
-    Sadrži logotip/naziv aplikacije ("Sonar"), navigacijske linkove (Home, Map)
-    te gumb za prijavu (Sign in with Google) na dnu.
+    Sadrži logotip/naziv aplikacije ("Sonar"), navigacijske linkove (isti popis kao BottomTabs: Home, Search, Map, Tickets, Profile)
+    te na dnu gumb za prijavu (Sign in with Google), koji nakon prijave nestaje.
 
     Korištene Tailwind klase u komponenti:
     - sticky top-0: drži sidebar fiksiranim na vrhu ekrana pri skrolanju
@@ -20,6 +20,10 @@
 */
 
 import { NavLink } from "react-router";
+import { Link } from "wasp/client/router";
+import { useAuth, logout } from "wasp/client/auth";
+import { GLAVNE_STRANICE, Ikona } from "./navigacija";
+import { GoogleIkona } from "./GoogleIkona";
 
 function klaseStavke({ isActive }) {
   const zajednicke =
@@ -30,6 +34,9 @@ function klaseStavke({ isActive }) {
 }
 
 export function Sidebar() {
+  // user je null ako korisnik nije prijavljen; inače ima polja iz tablice Korisnik
+  const { data: user, isLoading } = useAuth();
+
   return (
     <aside className="sticky top-0 hidden h-screen w-64 flex-none flex-col justify-between border-r border-rubovi-2 bg-bijela px-6 py-6 desktop:flex">
       {/* Gornji dio: Naslov aplikacije i navigacija */}
@@ -39,75 +46,47 @@ export function Sidebar() {
           Sonar
         </h1>
 
-        {/* Glavna navigacijska lista */}
-        <nav className="flex flex-col gap-1">
-          {/* Aktivna stavka: Home */}
-          <NavLink to="/" end className={klaseStavke}>
-            {/* Home ikona */}
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
+        {/* Glavna navigacijska lista: isti popis kao BottomTabs (navigacija.jsx) */}
+        <nav aria-label="Main" className="flex flex-col gap-1">
+          {GLAVNE_STRANICE.map((s) => (
+            <NavLink
+              key={s.to}
+              to={s.to}
+              end={s.to === "/"}
+              className={klaseStavke}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
-              />
-            </svg>
-            Home
-          </NavLink>
-
-          {/* Neaktivna stavka: Map */}
-          <NavLink to="/map" className={klaseStavke}>
-            {/* Map ikona */}
-            <svg
-              className="h-5 w-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"
-              />
-            </svg>
-            Map
-          </NavLink>
+              <Ikona ime={s.ikona} />
+              {s.label}
+            </NavLink>
+          ))}
         </nav>
       </div>
 
-      {/* Donji dio: Gumb za prijavu (Sign in with Google) */}
+      {/*
+        Donji dio ovisi o prijavi (dok se provjerava, isLoading, ne prikazuje se ništa):
+          - nije prijavljen: "Sign in with Google", vodi na /login
+          - prijavljen: PRIVREMENA poveznica "Sign out" (dok ne postoji stranica profila)
+      */}
       <div>
-        <button
-          type="button"
-          className="border-akcent text-akcent hover:bg-akcent-blijedi flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition"
+        {!isLoading && user && (
+          // PRIVREMENO: odjava. logout() briše sesiju, pa se opet pojavi "Sign in with Google"
+          <button
+            type="button"
+            onClick={() => logout()}
+            className="text-tekst-druga hover:text-akcent focus-visible:ring-akcent w-full rounded-lg px-3 py-2.5 text-left text-sm font-medium transition hover:underline focus-visible:ring-2 focus-visible:outline-none"
+          >
+            Sign out
+          </button>
+        )}
+        {!isLoading && !user && (
+        <Link
+          to="/login"
+          className="border-akcent text-akcent hover:bg-akcent-blijedi focus-visible:ring-akcent flex w-full items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition focus-visible:ring-2 focus-visible:outline-none"
         >
-          {/* Google logotip ikona */}
-          <svg className="h-4 w-4" viewBox="0 0 24 24">
-            <path
-              fill="#4285F4"
-              d="M23.745 12.27c0-.7-.06-1.4-.19-2.07H12v4.51h6.6c-.29 1.52-1.14 2.82-2.4 3.68v3.05h3.88c2.27-2.09 3.66-5.17 3.66-9.17z"
-            />
-            <path
-              fill="#34A853"
-              d="M12 24c3.24 0 5.95-1.08 7.93-2.91l-3.88-3.05c-1.08.72-2.45 1.16-4.05 1.16-3.12 0-5.77-2.1-6.72-4.93H1.19v3.15C3.17 21.36 7.24 24 12 24z"
-            />
-            <path
-              fill="#FBBC05"
-              d="M5.28 14.27c-.25-.72-.38-1.49-.38-2.27s.13-1.55.38-2.27V6.58H1.19C.43 8.1 0 9.99 0 12s.43 3.9 1.19 5.42l4.09-3.15z"
-            />
-            <path
-              fill="#EA4335"
-              d="M12 4.75c1.77 0 3.35.61 4.6 1.8l3.42-3.42C17.95 1.19 15.24 0 12 0 7.24 0 3.17 2.64 1.19 6.58l4.09 3.15c.95-2.83 3.6-4.98 6.72-4.98z"
-            />
-          </svg>
+          <GoogleIkona />
           Sign in with Google
-        </button>
+        </Link>
+        )}
       </div>
     </aside>
   );

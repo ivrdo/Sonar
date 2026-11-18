@@ -3,11 +3,43 @@
 /*
     Ova komponenta predstavlja gornju navigacijsku traku aplikacije.
     Navbar nudi korisniku mogućnost pretraživanja.
+
+    Prijavljeni korisnik na desktopu desno od pretrage vidi zvonce za obavijesti
+    (s brojačem) i krug sa svojim inicijalima koji vodi na /profile.
 */
-import { NavLink } from "react-router";
+import { NavLink, useNavigate, useSearchParams } from "react-router";
+import { useAuth } from "wasp/client/auth";
 import { Ikona } from "./navigacija";
 
-export function Navbar({title="Discover"}) {
+// PRIVREMENO: broj nepročitanih obavijesti je fiksan (kao u dizajnu) dok ne
+// postoji query za obavijesti (tablica Obavijest, polje procitano)
+const BROJ_OBAVIJESTI = 2;
+
+/*
+    Props:
+        - title: naslov trake
+        - pretraga: false sakriva polje za pretragu (desktop) i ikone pretrage
+          i obavijesti (mobitel); npr. na stranici /login. Zadano: true
+*/
+export function Navbar({title="Discover", pretraga = true}) {
+  // user je null ako korisnik nije prijavljen; nazKorisnik je ime iz Google profila
+  const { data: user, isLoading } = useAuth();
+
+  // useNavigate: funkcija kojom kodom mijenjamo adresu (odlazak na drugu stranicu)
+  const navigate = useNavigate();
+  // useSearchParams: čita dio adrese iza "?" (npr. q=mjesec iz /search?q=mjesec)
+  const [searchParams] = useSearchParams();
+  const trenutniPojam = searchParams.get("q") ?? ""; // "" ako u adresi nema ?q=
+
+  // Poziva se kad korisnik u polju pritisne Enter
+  function pretrazi(e) {
+    e.preventDefault(); // inače bi preglednik ponovno učitao cijelu stranicu
+    const pojam = new FormData(e.currentTarget).get("q").toString().trim();
+    if (!pojam) return; // prazan pojam: ne radimo ništa
+    // encodeURIComponent: razmaci i "č" postanu ispravan dio adrese (npr. "Kiša u" -> "Ki%C5%A1a%20u")
+    navigate(`/search?q=${encodeURIComponent(pojam)}`);
+  }
+
   return (
     /*
         Glavni element navigacije.
@@ -45,7 +77,13 @@ export function Navbar({title="Discover"}) {
       {/* Polje za pretragu s ikonom */}
       {/* Vanjski kontejner mora biti 'relative' kako bi se ikona pozicionirala pomoću 'absolute' */}
       {/* Polje za pretragu: SAMO desktop */}
-      <div className="desktop:block relative hidden w-80">
+      {/* form + onSubmit: Enter u polju pokreće pretragu; role="search" govori čitačima ekrana da je ovo pretraga */}
+      {pretraga && (
+      <form
+        onSubmit={pretrazi}
+        role="search"
+        className="desktop:block relative hidden w-80"
+      >
         {/* Pozicioniranje SVG ikone unutar lijeve strane input polja za pretragu */}
         <span className="text-tekst-treća pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
           <svg
@@ -62,37 +100,97 @@ export function Navbar({title="Discover"}) {
             />
           </svg>
         </span>
-        {/* Input polje za pretragu */}
+        {/*
+          Input polje za pretragu:
+            - name="q": po tom imenu FormData pronalazi vrijednost polja
+            - defaultValue: na /search?q=mjesec polje već prikazuje "mjesec"
+            - key: kad se adresa promijeni (npr. tipka Natrag), polje se osvježi
+            - type="search": preglednik dodaje gumb za brisanje (x)
+        */}
         <input
-          type="text"
+          key={trenutniPojam}
+          name="q"
+          type="search"
+          defaultValue={trenutniPojam}
+          aria-label="Search"
           placeholder="Search artists, releases, songs, venues"
           className="border-rubovi-1 bg-pozadinska text-tekst-prva placeholder-tekst-treća focus:bg-bijela focus:ring-akcent w-full rounded-lg border py-1.5 pr-4 pl-9 text-xs transition focus:ring-2 focus:outline-none"
         />
-      </div>
+      </form>
+      )}
 
-      {/* Ikone: SAMO mobitel */}
+      {/* Ikone: SAMO mobitel (povećalo uvijek, zvonce samo prijavljenom korisniku) */}
+      {pretraga && (
       <div className="desktop:hidden flex items-center gap-1">
         <NavLink
-          to="/search"
+          // ako u adresi već postoji pojam (npr. /search?q=mjesec), ikona ga zadrži
+          to={
+            trenutniPojam
+              ? `/search?q=${encodeURIComponent(trenutniPojam)}`
+              : "/search"
+          }
           aria-label="Search"
           className="flex h-11 w-11 items-center justify-center rounded-lg"
         >
           <Ikona ime="search" />
         </NavLink>
-        <NavLink
-          to="/notifications"
-          aria-label="Notifications"
-          className="relative flex h-11 w-11 items-center justify-center rounded-lg"
-        >
-          <Ikona ime="bell" />
-          {/* crveni brojač kao u dizajnu */}
-          <span className="bg-status-crveni absolute top-1 right-1 min-w-[17px] rounded-full px-1 text-center text-[10.5px] leading-[17px] font-bold text-white">
-            2
-          </span>
-        </NavLink>
+        {/* Zvonce samo za prijavljenog korisnika (neprijavljeni nema obavijesti) */}
+        {!isLoading && user && (
+          <NavLink
+            to="/notifications"
+            aria-label="Notifications"
+            className="relative flex h-11 w-11 items-center justify-center rounded-lg"
+          >
+            <Ikona ime="bell" />
+            {/* crveni brojač kao u dizajnu */}
+            <span className="bg-status-crveni absolute top-1 right-1 min-w-[17px] rounded-full px-1 text-center text-[10.5px] leading-[17px] font-bold text-white">
+              {BROJ_OBAVIJESTI}
+            </span>
+          </NavLink>
+        )}
       </div>
+      )}
+
+      {/*
+        SAMO desktop i SAMO prijavljeni korisnik: zvonce s brojačem i krug s inicijalima.
+        Stoje desno od polja za pretragu. Dok se prijava provjerava (isLoading), ne prikazuju se.
+      */}
+      {!isLoading && user && (
+        <div className="desktop:flex hidden items-center gap-2">
+          <NavLink
+            to="/notifications"
+            aria-label={`Notifications (${BROJ_OBAVIJESTI} unread)`}
+            className="hover:bg-pozadinska focus-visible:ring-akcent text-tekst-druga relative flex h-9 w-9 items-center justify-center rounded-lg transition focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <Ikona ime="bell" />
+            <span className="bg-status-crveni absolute -top-0.5 -right-0.5 min-w-[17px] rounded-full px-1 text-center text-[10.5px] leading-[17px] font-bold text-white">
+              {BROJ_OBAVIJESTI}
+            </span>
+          </NavLink>
+          <NavLink
+            to="/profile"
+            aria-label="Profile"
+            title={user.nazKorisnik}
+            className="bg-akcent-mekani text-akcent focus-visible:ring-akcent flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition hover:brightness-95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          >
+            {inicijali(user.nazKorisnik)}
+          </NavLink>
+        </div>
+      )}
     </header>
   );
+}
+
+/*
+    Inicijali iz imena: prvo slovo prve i zadnje riječi, velikim slovima.
+        "Filip Juračić" -> "FJ", "Ana" -> "A", "" -> "?"
+*/
+function inicijali(ime) {
+  const rijeci = (ime ?? "").trim().split(/\s+/).filter(Boolean);
+  if (rijeci.length === 0) return "?";
+  const prvo = rijeci[0][0];
+  const zadnje = rijeci.length > 1 ? rijeci[rijeci.length - 1][0] : "";
+  return (prvo + zadnje).toUpperCase();
 }
 
 // Izvoz komponente za korištenje u drugim dijelovima aplikacije

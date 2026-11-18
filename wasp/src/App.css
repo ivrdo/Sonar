@@ -93,6 +93,14 @@
         -sans za naše potrebe.
      */
     --font-sans: "Inter Variable", system-ui, sans-serif;
+
+    /*
+        Visina donjih tabova na mobitelu (60px). Koriste je BottomTabs i
+        polje za pretragu koje stoji odmah iznad njih.
+
+        --spacing-<ime> generira klase poput h-tabovi, pb-tabovi, bottom-tabovi.
+     */
+    --spacing-tabovi: 3.75rem;
 }
 
 /*
