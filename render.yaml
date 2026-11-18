@@ -4,7 +4,7 @@ services:
     runtime: node
     plan: free
     region: frankfurt
-    branch: deploy-test
+    branch: master
     rootDir: wasp
     buildCommand: >-
       npm install -g @wasp.sh/wasp-cli@0.26.1 --allow-scripts=@wasp.sh/wasp-cli &&
@@ -37,7 +37,7 @@ services:
   - type: web
     name: sonar-client
     runtime: static
-    branch: deploy-test
+    branch: master
     rootDir: wasp
     buildCommand: >-
       npm install -g @wasp.sh/wasp-cli@0.26.1 --allow-scripts=@wasp.sh/wasp-cli &&
