@@ -93,7 +93,7 @@ export function Discography({ releases }: DiscographyProps) {
               {r.title}
             </p>
             <p className="truncate text-[13px] text-tekst-druga desktop:text-[10px]">
-              {r.type} · {r.year}
+                {r.year ? r.type + " · " + r.year : r.type}
             </p>
           </li>
         ))}

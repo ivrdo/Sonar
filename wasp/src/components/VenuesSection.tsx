@@ -4,11 +4,21 @@ import { Tile } from "./Tile";
 import type { VenueSummary } from "../landing/types";
 import { dohvatiMjesta, useQuery } from "wasp/client/operations";
 
+// Poveznica "Open map" desno od naslova sekcije.
+// Prikazuje se SAMO kad ima mjesta; kod učitavanja, greške i praznog popisa je skrivena.
+const OPEN_MAP = <Link to="/map">Open map</Link>;
+
 type VenuesSectionViewProps = {
   venues?: VenueSummary[];
 };
 
-// Probni podaci, dok ne stigne query dohvatiMjesta
+/*
+    PRIVREMENO: probna mjesta kao u dizajnu, uz dodatna da
+    redak bude pun i na širokim ekranima. Služe da se vidi
+    kako stranica izgleda dok ne dohvaćamo podatke iz baze. Kad query
+    dohvatiMjesta bude vraćao podatke, LandingPage opet koristi VenuesSection,
+    a ovaj popis se može obrisati.
+*/
 export const PROBNA_MJESTA: VenueSummary[] = [
   {
     id: 1,
@@ -19,24 +29,45 @@ export const PROBNA_MJESTA: VenueSummary[] = [
   },
   {
     id: 2,
-    name: "Klub Mjesečina",
+    name: "Tvornica Zvuka",
     city: "Zagreb",
-    upcoming: 1,
-    image: "/dizajn/mjesta/klub-mjesecina.svg",
-  },
-  {
-    id: 3,
-    name: "Tvornica zvuka",
-    city: "Zagreb",
-    upcoming: 2,
+    upcoming: 4,
     image: "/dizajn/mjesta/tvornica-zvuka.svg",
   },
   {
-    id: 4,
+    id: 3,
     name: "Klub Mlin",
     city: "Zagreb",
-    upcoming: 0,
+    upcoming: 2,
     image: "/dizajn/mjesta/klub-mlin.svg",
+  },
+  {
+    id: 4,
+    name: "Galerija Zvuk",
+    city: "Zagreb",
+    upcoming: 1,
+    image: "/dizajn/mjesta/galerija-zvuk.svg",
+  },
+  {
+    id: 5,
+    name: "Atrij",
+    city: "Zagreb",
+    upcoming: 0,
+    image: "/dizajn/mjesta/atrij.svg",
+  },
+  {
+    id: 6,
+    name: "Klub Mjesečina",
+    city: "Zagreb",
+    upcoming: 2,
+    image: "/dizajn/mjesta/klub-mjesecina.svg",
+  },
+  {
+    id: 7,
+    name: "Sjever",
+    city: "Zagreb",
+    upcoming: 1,
+    image: "/dizajn/mjesta/sjever.svg",
   },
 ];
 
@@ -50,8 +81,18 @@ function podnaslov(v: VenueSummary): string {
 
 export function VenuesSectionView({ venues = PROBNA_MJESTA }: VenuesSectionViewProps) {
   return (
-    <Section title="Venues" action={<Link to="/map">Open map</Link>}>
-      <div className="desktop:grid-cols-4 desktop:gap-x-4 desktop:gap-y-5 grid grid-cols-2 gap-x-3 gap-y-3.5">
+    <Section title="Venues" action={OPEN_MAP}>
+      {/*
+        Responzivna mreža u JEDNOM retku:
+          - grid-cols-[repeat(auto-fill,minmax(6rem,1fr))]: stane što više stupaca
+            širokih barem 10rem (desktop 13rem); preostala širina se podijeli među
+            njima (1fr), pa je redak uvijek popunjen do desnog ruba
+          - grid-rows-1 auto-rows-0 overflow-hidden: vidi se samo prvi redak; stavke
+            koje ne stanu prelaze u sljedeće retke visine 0 i skrivene su
+          - zato gap-y nema (gap-x je razmak između stupaca)
+        Veći ekran = više ikona u retku; najmanja širina mijenja se u minmax(...).
+      */}
+      <div className="desktop:grid-cols-[repeat(auto-fill,minmax(13rem,1fr))] desktop:gap-x-4 grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] grid-rows-1 auto-rows-0 gap-x-3 overflow-hidden">
         {venues.map((v) => (
           <Tile
             key={v.id}
@@ -71,21 +112,21 @@ export function VenuesSection() {
 
   if (isLoading) {
     return (
-      <Section title="Venues" action={<Link to="/map">Open map</Link>}>
+      <Section title="Venues">
         <p className="text-tekst-druga text-sm">Loading…</p>
       </Section>
     );
   }
   if (error || !data) {
     return (
-      <Section title="Venues" action={<Link to="/map">Open map</Link>}>
+      <Section title="Venues">
         <p className="text-tekst-druga text-sm">Could not load venues.</p>
       </Section>
     );
   }
   if (data.length === 0) {
     return (
-      <Section title="Venues" action={<Link to="/map">Open map</Link>}>
+      <Section title="Venues">
         <p className="text-tekst-druga text-sm">No venues yet.</p>
       </Section>
     );

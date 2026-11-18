@@ -3,11 +3,28 @@
 /*
     Ova komponenta predstavlja gornju navigacijsku traku aplikacije.
     Navbar nudi korisniku mogućnost pretraživanja.
+
+    Prijavljeni korisnik na desktopu desno od pretrage vidi zvonce za obavijesti
+    (s brojačem) i krug sa svojim inicijalima koji vodi na /profile.
 */
 import { NavLink, useNavigate, useSearchParams } from "react-router";
+import { useAuth } from "wasp/client/auth";
 import { Ikona } from "./navigacija";
 
-export function Navbar({title="Discover"}) {
+// PRIVREMENO: broj nepročitanih obavijesti je fiksan (kao u dizajnu) dok ne
+// postoji query za obavijesti (tablica Obavijest, polje procitano)
+const BROJ_OBAVIJESTI = 2;
+
+/*
+    Props:
+        - title: naslov trake
+        - pretraga: false sakriva polje za pretragu (desktop) i ikone pretrage
+          i obavijesti (mobitel); npr. na stranici /login. Zadano: true
+*/
+export function Navbar({title="Discover", pretraga = true}) {
+  // user je null ako korisnik nije prijavljen; nazKorisnik je ime iz Google profila
+  const { data: user, isLoading } = useAuth();
+
   // useNavigate: funkcija kojom kodom mijenjamo adresu (odlazak na drugu stranicu)
   const navigate = useNavigate();
   // useSearchParams: čita dio adrese iza "?" (npr. q=mjesec iz /search?q=mjesec)
@@ -61,6 +78,7 @@ export function Navbar({title="Discover"}) {
       {/* Vanjski kontejner mora biti 'relative' kako bi se ikona pozicionirala pomoću 'absolute' */}
       {/* Polje za pretragu: SAMO desktop */}
       {/* form + onSubmit: Enter u polju pokreće pretragu; role="search" govori čitačima ekrana da je ovo pretraga */}
+      {pretraga && (
       <form
         onSubmit={pretrazi}
         role="search"
@@ -99,8 +117,10 @@ export function Navbar({title="Discover"}) {
           className="border-rubovi-1 bg-pozadinska text-tekst-prva placeholder-tekst-treća focus:bg-bijela focus:ring-akcent w-full rounded-lg border py-1.5 pr-4 pl-9 text-xs transition focus:ring-2 focus:outline-none"
         />
       </form>
+      )}
 
-      {/* Ikone: SAMO mobitel */}
+      {/* Ikone: SAMO mobitel (povećalo uvijek, zvonce samo prijavljenom korisniku) */}
+      {pretraga && (
       <div className="desktop:hidden flex items-center gap-1">
         <NavLink
           // ako u adresi već postoji pojam (npr. /search?q=mjesec), ikona ga zadrži
@@ -114,20 +134,63 @@ export function Navbar({title="Discover"}) {
         >
           <Ikona ime="search" />
         </NavLink>
-        <NavLink
-          to="/notifications"
-          aria-label="Notifications"
-          className="relative flex h-11 w-11 items-center justify-center rounded-lg"
-        >
-          <Ikona ime="bell" />
-          {/* crveni brojač kao u dizajnu */}
-          <span className="bg-status-crveni absolute top-1 right-1 min-w-[17px] rounded-full px-1 text-center text-[10.5px] leading-[17px] font-bold text-white">
-            2
-          </span>
-        </NavLink>
+        {/* Zvonce samo za prijavljenog korisnika (neprijavljeni nema obavijesti) */}
+        {!isLoading && user && (
+          <NavLink
+            to="/notifications"
+            aria-label="Notifications"
+            className="relative flex h-11 w-11 items-center justify-center rounded-lg"
+          >
+            <Ikona ime="bell" />
+            {/* crveni brojač kao u dizajnu */}
+            <span className="bg-status-crveni absolute top-1 right-1 min-w-[17px] rounded-full px-1 text-center text-[10.5px] leading-[17px] font-bold text-white">
+              {BROJ_OBAVIJESTI}
+            </span>
+          </NavLink>
+        )}
       </div>
+      )}
+
+      {/*
+        SAMO desktop i SAMO prijavljeni korisnik: zvonce s brojačem i krug s inicijalima.
+        Stoje desno od polja za pretragu. Dok se prijava provjerava (isLoading), ne prikazuju se.
+      */}
+      {!isLoading && user && (
+        <div className="desktop:flex hidden items-center gap-2">
+          <NavLink
+            to="/notifications"
+            aria-label={`Notifications (${BROJ_OBAVIJESTI} unread)`}
+            className="hover:bg-pozadinska focus-visible:ring-akcent text-tekst-druga relative flex h-9 w-9 items-center justify-center rounded-lg transition focus-visible:ring-2 focus-visible:outline-none"
+          >
+            <Ikona ime="bell" />
+            <span className="bg-status-crveni absolute -top-0.5 -right-0.5 min-w-[17px] rounded-full px-1 text-center text-[10.5px] leading-[17px] font-bold text-white">
+              {BROJ_OBAVIJESTI}
+            </span>
+          </NavLink>
+          <NavLink
+            to="/profile"
+            aria-label="Profile"
+            title={user.nazKorisnik}
+            className="bg-akcent-mekani text-akcent focus-visible:ring-akcent flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition hover:brightness-95 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+          >
+            {inicijali(user.nazKorisnik)}
+          </NavLink>
+        </div>
+      )}
     </header>
   );
+}
+
+/*
+    Inicijali iz imena: prvo slovo prve i zadnje riječi, velikim slovima.
+        "Filip Juračić" -> "FJ", "Ana" -> "A", "" -> "?"
+*/
+function inicijali(ime) {
+  const rijeci = (ime ?? "").trim().split(/\s+/).filter(Boolean);
+  if (rijeci.length === 0) return "?";
+  const prvo = rijeci[0][0];
+  const zadnje = rijeci.length > 1 ? rijeci[rijeci.length - 1][0] : "";
+  return (prvo + zadnje).toUpperCase();
 }
 
 // Izvoz komponente za korištenje u drugim dijelovima aplikacije

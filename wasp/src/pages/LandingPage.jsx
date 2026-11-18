@@ -4,56 +4,61 @@
     Ovo je glavna stranica (landing page) naše aplikacije, služi kao kontejner
     za slaganje vizualnih komponenti sučelja.
 
-    U početnoj fazi razvoja, stanica je namjerno pojednostavljena kako bismo
-    stabilno postavili i u potpunosti razumjeli temelje layouta (trenutno sadrži samo navbar)
+    Ljuska (Sidebar, Navbar, BottomTabs, footer) je u App.tsx, pa ovdje
+    dolazi samo sadržaj stranice.
+
+    Filter gumbi odlučuju koje se sekcije prikazuju ispod njih:
+        - Everything: sve tri sekcije
+        - Concerts: samo Upcoming concerts
+        - Artists: samo Popular on Sonar
+        - Venues: samo Venues
+    Odabrani filter pamti se u stanju (useState); HeroBanner je uvijek vidljiv.
 */
 
-// Uvozimo navbar i sidebar komponente definirane u direktoriju ../src/components.
-// Koristi se relativna putanja.
-import { Navbar } from "../components/Navbar";
-import { Sidebar } from "../components/Sidebar";
-import { BottomTabs } from "../components/BottomTabs";
+import { useState } from "react";
 import { HeroBanner } from "../components/HeroBanner.jsx";
 import { LandingPageFilterButtons } from "../components/LandingPageFilterButtons.jsx";
-import { UpcomingConcertsSection } from "../components/UpcomingConcertsSection.tsx";
-import { PopularArtists } from "../components/PopularArtists.jsx";
-import { DataSourcesFooter } from "../components/DataSourcesFooter";
+/*
+    Sekcije same dohvaćaju podatke iz baze (useQuery) i prikazuju stanja
+    učitavanja, greške i praznog popisa:
+        UpcomingConcertsSection -> dohvatiNadolazeceKoncerte
+        PopularArtists          -> dohvatiPopularneIzvodjace
+        VenuesSection           -> dohvatiMjesta
+*/
+import { UpcomingConcertsSection } from "../components/UpcomingConcertsSection";
+import { PopularArtists } from "../components/PopularArtists";
+import { VenuesSection } from "../components/VenuesSection";
 /*
     Definicija i uvoz glavne funkcionalne komponente LandingPage.
     U Reactu, komponente su JavaScript funkcije koje vraćaju JSX strukturu, koja se kasnije pretvara u DOM elemente.
 */
 export function LandingPage() {
-  return (
-    /*
-        Ovo je glavni wrapper cijele stranice.
+  // Odabrani filter: "all", "concerts", "artists" ili "venues"
+  const [filter, setFilter] = useState("all");
 
-        Koriste se Tailwind klase:
-            - min-h-screen: visina elemenata je jednaka visini cijelog prozora preglednika (100vh)
-            - bg-pozadinska: koristi se unaprijed definirana boja pozadine iz App.tsx datoteke
-      */
-    <div className="bg-pozadinska flex min-h-screen">
-      {" "}
-      {/* div blok u kojem se prikazuje navbar i sidebar */}
-      <Sidebar />{" "}
-      {/* Ovdje se stavlja i prikazuje sidebar uz lijevi rub stranice. */}
-      <div className="flex flex-1 flex-col">
-        {" "}
-        {/* div blok za cijeli prostor desno od sidebara */}
-        <Navbar /> {/* Ovdje se stavlja i prikazuje navbar na vrhu stranice. */}
-        <div className="desktop:px-8 desktop:py-6 flex flex-col gap-5 p-4">
-          {/* Ovdje dolaze sekcije: Upcoming concerts, Popular on Sonar, Venues… */}
-          <HeroBanner /> {/* Početni "Live music near you..." tekst */}
-          <LandingPageFilterButtons />{" "}
-          {/* Filter gumbi: Everything, Concerts, Artists, Venues */}
-          <UpcomingConcertsSection/>
-          {/* SEKCIJA: Popular on Sonar */}
-          <div className="mt-4">
-            <PopularArtists />
-          </div>
+  // Prikazuje li se sekcija za zadani filter (Everything prikazuje sve)
+  const prikazi = (vrsta) => filter === "all" || filter === vrsta;
+
+  return (
+    <div className="desktop:px-8 desktop:py-6 flex flex-col gap-5 p-4">
+      <HeroBanner /> {/* Početni "Live music near you..." tekst */}
+      {/* Filter gumbi: Everything, Concerts, Artists, Venues */}
+      <LandingPageFilterButtons active={filter} onChange={setFilter} />
+
+      {/* SEKCIJA: Upcoming concerts */}
+      {prikazi("concerts") && <UpcomingConcertsSection />}
+      {/* SEKCIJA: Popular on Sonar */}
+      {prikazi("artists") && (
+        <div className={filter === "all" ? "mt-4" : ""}>
+          <PopularArtists />
         </div>
-        <DataSourcesFooter/>
-      </div>
-      <BottomTabs />
+      )}
+      {/* SEKCIJA: Venues */}
+      {prikazi("venues") && (
+        <div className={filter === "all" ? "mt-4" : ""}>
+          <VenuesSection />
+        </div>
+      )}
     </div>
   );
 }
