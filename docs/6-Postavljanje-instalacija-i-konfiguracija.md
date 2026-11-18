@@ -52,10 +52,10 @@ Stabilna inačica je na grani `master`, a razvoj se odvija na grani `frontend-pr
 Iz korijena repozitorija:
 
 ```bash
-./setup.sh
+./scripts/okruzenje.sh
 ```
 
-Skripta provjeri verziju Node.js-a, instalira Wasp CLI 0.26.1 (i obriše stare ovisnosti ako se verzija promijenila), napravi `wasp/.env.server` iz `wasp/.env.server.example` ako ne postoji, pokrene `wasp install` te primijeni migracije i napuni praznu bazu početnim podacima. Može se pokretati više puta. Dev container je pokreće sam pri izradi, ali bez terminala, pa tada preskoči migracije i početne podatke. Nakon prvog otvaranja treba je pokrenuti još jednom u terminalu.
+Skripta instalira Wasp CLI 0.26.1 (i obriše stare ovisnosti ako se verzija promijenila), napravi `wasp/.env.server` iz `wasp/.env.server.example` ako ne postoji i pokrene `wasp install`. Može se pokretati više puta. Dev container je pokreće sam pri izradi.
 
 Varijable u `wasp/.env.server` (datoteka se ne commita):
 
@@ -71,8 +71,16 @@ Dok je Google OAuth klijent u testnom načinu rada, prijaviti se mogu samo Googl
 
 ### 3. Inicijalizacija baze podataka i migracije
 
-* **Shema:** verzionirane migracije su u `wasp/migrations/`. Primjenjuje ih `wasp db migrate-dev` (skripta `setup.sh` to radi kad se pokrene u terminalu). Kad netko commita nove migracije, prije `wasp start` treba pokrenuti `wasp db migrate-dev`.
-* **Početni podaci:** `wasp db seed seedSve` učitava katalog (izvođači, albumi, pjesme, mjesta i oznake iz MusicBrainza i Last.fma, spremljeni u `wasp/src/seed/data`) i generira podatke koji inače nastaju korištenjem aplikacije (korisnici, koncerti, prijave, ocjene). Skripta nije predviđena za ponovno pokretanje, pa je `setup.sh` pokreće samo kad je tablica `Korisnik` prazna. Za potpuno novu bazu: `wasp db reset`, zatim `wasp db seed seedSve`.
+Pri prvom pokretanju, dok baza radi, iz korijena repozitorija u terminalu:
+
+```bash
+./scripts/baza.sh
+```
+
+Skripta primijeni migracije (`wasp db migrate-dev`) i učita početne podatke (`wasp db seed seedSve`).
+
+* **Shema:** verzionirane migracije su u `wasp/migrations/`. Primjenjuje ih `wasp db migrate-dev`. Kad netko commita nove migracije, prije `wasp start` treba pokrenuti `wasp db migrate-dev`.
+* **Početni podaci:** `wasp db seed seedSve` učitava katalog (izvođači, albumi, pjesme, mjesta i oznake iz MusicBrainza i Last.fma, spremljeni u `wasp/src/seed/data`) i generira podatke koji inače nastaju korištenjem aplikacije (korisnici, koncerti, prijave, ocjene). Nije predviđena za ponovno pokretanje, pa se `scripts/baza.sh` ne pokreće na bazi koja već ima podatke. Za potpuno novu bazu: `wasp db reset`, zatim `wasp db seed seedSve`.
 * **Promjena sheme:** zaustaviti `wasp start` (Wasp ne dopušta dvije naredbe nad istim projektom istovremeno), pokrenuti `wasp db migrate-dev --name <naziv>` i commitati novu mapu u `wasp/migrations/` zajedno s promjenom `schema.prisma`.
 
 ### 4. Pokretanje i verifikacija

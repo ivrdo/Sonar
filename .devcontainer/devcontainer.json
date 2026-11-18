@@ -7,10 +7,8 @@
   "runServices": ["db", "workspace"],
   "workspaceFolder": "/workspace",
   "remoteUser": "node",
-  // Verzije Nodea i Waspa su zadane u setup.sh. Bez terminala (< /dev/null)
-  // skripta preskače migracije i probne podatke, da ne zapne na pitanju za ime
-  // migracije.
-  "postCreateCommand": "bash setup.sh < /dev/null",
+  // Ova naredba postavlja okruzenje containera za rad na projektu
+  "postCreateCommand": "bash scripts/okruzenje.sh",
   // Portove 3000 i 3001 već objavljuje .devcontainer/compose.yaml
   "otherPortsAttributes": { "onAutoForward": "ignore" }
 }
