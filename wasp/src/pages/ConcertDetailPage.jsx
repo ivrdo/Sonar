@@ -42,6 +42,7 @@ import { ApplyBox } from "../components/ApplyBox";
 import { Lineup } from "../components/Lineup";
 import { AboutConcert } from "../components/AboutConcert";
 import { VenueFacts } from "../components/VenueFacts";
+import { useState } from "react";
 
 // Datum kao "Fri 20 Nov 2026" (vrijeme Europe/Zagreb, neovisno o računalu korisnika)
 function datumTekst(datumVrijeme) {
@@ -69,6 +70,9 @@ export function ConcertDetailPage() {
   const { id } = useParams();
   // Backend sam pretvara id iz teksta u broj
   const { data: koncert, isLoading, error } = useQuery(dohvatiKoncert, { id });
+  // Stanje prijave: šalje li se zahtjev i poruka ako nije uspio
+  const [saljeSe, setSaljeSe] = useState(false);
+  const [greskaPrijave, setGreskaPrijave] = useState("");
 
   if (isLoading) {
     return (
@@ -86,24 +90,27 @@ export function ConcertDetailPage() {
     );
   }
 
-  if (error || !koncert) {
-    return (
-      <p className="text-tekst-druga desktop:p-6 p-4">
-        {error?.statusCode === 404 || error?.statusCode === 400
-          ? "Concert not found."
-          : "Something went wrong. Please try again."}
-      </p>
-    );
-  }
-
   // Klik na "Apply": poziva action prijaviNaKoncert. Kad uspije, Wasp sam ponovno
   // dohvati koncert (action i query dijele entitete), pa gumb postane "Show ticket"
   async function prijavi() {
+    setGreskaPrijave("");
+    setSaljeSe(true);
     try {
       await prijaviNaKoncert({ sifKoncert: koncert.sifKoncert });
     } catch (e) {
-      console.error(e); // PRIVREMENO: poruku korisniku dodajemo poslije
+      if (e.statusCode === 401) {
+        setGreskaPrijave("Sign in to apply for this concert.");
+      } else if (e.statusCode === 403) {
+        setGreskaPrijave("Your account can't apply for concerts.");
+      } else if (e.statusCode === 409) {
+        setGreskaPrijave(
+          "Applications for this concert are no longer available.",
+        );
+      } else {
+        setGreskaPrijave("Something went wrong. Please try again.");
+      }
     }
+    setSaljeSe(false);
   }
 
   // Jedan sat prije početka (PRIVREMENO: pravi podatak o vratima i roku za
@@ -172,6 +179,8 @@ export function ConcertDetailPage() {
               cancelUntil={podaci.cancelUntil}
               slobodnaMjesta={koncert.slobodnaMjesta}
               onApply={prijavi}
+              saljeSe={saljeSe}
+              greska={greskaPrijave}
             />
           </div>
           <div className="order-6">
