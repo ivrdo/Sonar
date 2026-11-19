@@ -6,8 +6,6 @@
 
 ## A.1 Evidencija sastanaka
 
-> **Kratice:** Filip = Filip Juračić; Ivor = Ivor Vrdoljak; Val = Val Dragašević; Samuel = Samuel Sobočan; Lea = Lea Mrkonjić; Josip = Josip Rudež; Patrik = Patrik Ivanetić.
-
 | Datum i sudionici | Glavna tema | Donesena odluka ili zadatak | Poveznica na zadatak ili rezultat |
 |---|---|---|---|
 | 6. 10.; Filip, Ivor | Postavljanje komunikacijskih kanala | Filip otvara GitHub repozitorij, Ivor organizira Discord server i HackMD tim za dokumentaciju. | [HackMD](https://hackmd.io/team/fer-progi-team-best); [GitHub](https://github.com/ivrdo/Sonar) (prije `SWE-Project-FER-2026`) |

@@ -64,8 +64,8 @@ Kratak sažetak: [README – Uporaba umjetne inteligencije](../README.md#ai-usag
 
 | Alat | Inačica ili model | Koristio/la | Glavna svrha |
 | --- | --- | --- | --- |
-| Claude Code | Claude Opus 5.5, razina razmišljanja xhigh | @ivrdo | izrada UI mockupova (demoa) izgleda sučelja |
-| OpenCode | Qwen3.6-35B-A3B, pokrenut lokalno | @ivrdo | izdvajanje podataka o aktivnostima tima iz izvezene povijesti razgovora |
+| Claude Code | Claude Opus 5.5, razina razmišljanja xhigh | @ivrdo | izrada UI mockupova (demoa) izgleda sučelja; pomoć pri dokumentaciji |
+| OpenCode | Qwen3.6-35B-A3B, pokrenut lokalno | @ivrdo | izdvajanje podataka o aktivnostima tima iz izvezene povijesti razgovora; pomoć pri dokumentaciji |
 
 ### Opseg doprinosa umjetne inteligencije
 
@@ -73,6 +73,7 @@ Kratak sažetak: [README – Uporaba umjetne inteligencije](../README.md#ai-usag
 | --- | --- | --- | --- | --- |
 | UI mockupovi: `jednostavan.html` i `stiliziran.html` | Izrada nacrta, u više krugova | Dva statična HTML demoa izgleda sučelja | @ivrdo je u više iterativnih krugova davao stilski input na temelju iskustva sa stvarnim web stranicama (Bandcamp, Discogs, Metal Archives, Artcore) i dorađivao demoe prema rezultatu prethodnog kruga. Demoi služe isključivo vizualnom pregledu i orijentaciji, a kod i stilizacija aplikacije pišu se ručno. Uporaba je navedena i u zadatku #15. | Grana `frontend-prijedlozi`; [jednostavan.html](https://ivrdo.github.io/Sonar/jednostavan.html), [stiliziran.html](https://ivrdo.github.io/Sonar/stiliziran.html); [#15](https://github.com/ivrdo/Sonar/issues/15) |
 | [A. Pregled aktivnosti grupe](A-Pregled-aktivnosti-grupe.md) | Izdvajanje i sažimanje podataka | Podaci o aktivnostima tima izdvojeni iz izvezene povijesti razgovora | Analiza je provedena uz odobrenje članova tima. Model je pokrenut lokalno, pa povijest razgovora nije poslana nijednoj vanjskoj usluzi, čime je očuvana privatnost članova tima. Izdvojeni podaci uneseni su u tablice dodatka A. | `docs/A-Pregled-aktivnosti-grupe.md` |
+| Dokumentacija (`docs/`, `README.md`) | Popunjavanje tablica, premještanje datoteka, provjera točnosti, oblikovanje | Nacrti unosa u tablice, premještene datoteke, popisi uočenih netočnosti, oblikovani tekst | Korišteni su Claude Code (Claude Opus 5.5) i OpenCode s lokalno pokrenutim modelom Qwen3.6-35B-A3B. Tim je zadavao sadržaj i činjenice. | `docs/`, `README.md` |
 
 Stranice i artefakti koji nisu navedeni iznad izrađeni su bez pomoći generativne umjetne inteligencije. [Po želji: kao dodatne retke navedite kod ili ispitivanja izrađena uz pomoć umjetne inteligencije.]
 
@@ -84,7 +85,7 @@ Stranice i artefakti koji nisu navedeni iznad izrađeni su bez pomoći generativ
 | Nema tvrdnji o neostvarenim funkcionalnostima | [Provjereno je da opisane funkcionalnosti, ispitivanja i rezultati stvarno postoje; planirani rad označen je kao planiran] | [Usporedba s odjeljkom 5.4 (Ispitivanje) i odjeljkom 7.1 (Zaključak)] |
 | Dosljednost s drugim stranicama | [Nazivi, ID-ovi i dijagrami provjereni su prema Analizi zahtjeva, Obrascima uporabe, Arhitekturi i oblikovanju te Ispitivanju] | [Kontrolni popis ili bilješka pregleda] |
 | Izvori dijagrama | [Generirani PlantUML je iscrtan, ispravljen i odgovara implementiranom sustavu] | [`.puml` datoteka i izrađena slika] |
-| Povjerljivi sadržaj | [Kako je tim osigurao da u upite ili dokumentaciju nisu unesene tajne, pristupni podaci ni osobni podaci] | [Primijenjeni postupak] |
+| Povjerljivi sadržaj | U alate umjetne inteligencije ne unose se tajne (ključevi, lozinke, adrese baza), osobni podaci ni tuđi zaštićeni sadržaj. Tajne se drže samo u lokalnim datotekama okruženja i postavkama Rendera, izvan repozitorija. Osobni podaci članova tima obrađivani su samo lokalno pokrenutim modelom, uz njihovo odobrenje. | `.env` i `wasp/.env.server` u `.gitignore`; dokumentacija navodi samo javne adrese (6.3) |
 
 ### Pogreške pronađene u izlazu umjetne inteligencije
 
