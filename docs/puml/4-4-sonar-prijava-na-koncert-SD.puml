@@ -1,0 +1,105 @@
+@startuml
+title Sustav Sonar – sekvencijski dijagram prijave na koncert (UC-008)
+
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam ArrowColor #212529
+skinparam database {
+    BackgroundColor #F8F9FA
+    BorderColor #212529
+}
+skinparam participant {
+    BackgroundColor #F8F9FA
+    BorderColor #212529
+}
+skinparam actor {
+    BackgroundColor #F8F9FA
+    BorderColor #212529
+}
+skinparam sequence {
+    LifeLineBorderColor #ADB5BD
+    GroupBorderColor #6C757D
+}
+skinparam note {
+    BackgroundColor #FFF3CD
+    BorderColor #856404
+}
+skinparam sequenceMessageAlign left
+skinparam maxMessageSize 280
+
+actor "Slušatelj" as K
+participant "Preglednik\n(ConcertDetailPage, ApplyBox)" as P
+participant "Wasp poslužitelj\n(akcija prijaviNaKoncert)" as S
+database "Baza\n(PostgreSQL)" as DB
+
+autonumber
+
+K -> P : klik „Apply · free”\n(stanjeGumba = APPLY)
+activate P
+P -> P : setSaljeSe(true)\ngumb „Applying...”, onemogućen
+P -> S : prijaviNaKoncert({ sifKoncert })
+activate S
+
+S -> S : provjera context.user i statusa računa
+
+alt context.user ne postoji (korisnik nije prijavljen)
+    S --> P : HttpError 401\n„Za prijavu na koncert morate biti prijavljeni.”
+else context.user.status ≠ AKTIVAN
+    S --> P : HttpError 403\n„Vaš račun nema pravo prijave na koncert.”
+else sifKoncert nije pozitivan cijeli broj
+    S --> P : HttpError 400\n„Neispravan id koncerta.”
+else prijavljen i aktivan korisnik
+    S -> DB : BEGIN (prisma.$transaction)
+    activate DB
+    S -> DB : SELECT "sifKoncert" FROM "Koncert"\nWHERE "sifKoncert" = :id FOR UPDATE
+    note right of DB : redak koncerta zaključan do kraja\ntransakcije: istodobne prijave na isti\nkoncert čekaju u redu (NF-07)
+    S -> DB : findUnique Koncert\n(stanje, brojMjesta, datumVrijeme)
+    DB --> S : koncert
+
+    alt koncert ne postoji
+        S -> DB : ROLLBACK
+        S --> P : HttpError 404\n„Koncert nije pronađen.”
+    else stanje ≠ OTVORENE_PRIJAVE
+        S -> DB : ROLLBACK
+        S --> P : HttpError 409\n„Prijave za ovaj koncert nisu otvorene.”
+    else datumVrijeme ≤ sada
+        S -> DB : ROLLBACK
+        S --> P : HttpError 409\n„Koncert je već počeo.”
+    else prijave su otvorene
+        S -> DB : count PrijavaNaKoncert\n(zauzetoWhere: stanje ≠ OTKAZAN)
+        DB --> S : zauzeto
+
+        alt zauzeto ≥ brojMjesta
+            S -> DB : ROLLBACK
+            S --> P : HttpError 409\n„Nema slobodnih mjesta, koncert je popunjen.”
+        else ima slobodnih mjesta
+            S -> DB : findFirst aktivna prijava\nistog korisnika na isti koncert
+            DB --> S : postojeća prijava ili null
+
+            alt korisnik je već prijavljen
+                S -> DB : ROLLBACK
+                S --> P : HttpError 409\n„Već ste prijavljeni na ovaj koncert.”
+            else nema aktivne prijave
+                S -> S : napraviQrKod()\nSONAR-koncert-korisnik-randomBytes(8)
+                S -> DB : INSERT PrijavaNaKoncert\n(stanje PRIJAVLJEN, qrKod)
+                note right of DB : unique indeks uq_aktivna_prijava:\nako ipak odbije dupli unos (P2002),\nposlužitelj vraća isti 409\n„Već ste prijavljeni na ovaj koncert.”
+                S -> DB : COMMIT
+                deactivate DB
+                S --> P : { sifPrijavaNa, stanje: PRIJAVLJEN,\nqrKod, slobodnaMjesta }
+            end
+        end
+    end
+end
+deactivate S
+
+alt akcija je uspjela
+    P -> S : useQuery(dohvatiKoncert) ponovno\n(Wasp osvježava query jer dijeli\nentitete Koncert i PrijavaNaKoncert)
+    S --> P : stanjeGumba = PRIJAVLJEN,\nslobodnaMjesta umanjena za 1
+    P --> K : ApplyBox: gumb „Show ticket”
+else akcija je bacila grešku
+    P --> K : ApplyBox prikazuje poruku ispod gumba:\n401 → „Sign in to apply for this concert.”\n403 → „Your account can't apply for concerts.”\n409 → „Applications for this concert are no longer available.”\nostalo → „Something went wrong. Please try again.”
+end
+P -> P : setSaljeSe(false)
+deactivate P
+
+@enduml
