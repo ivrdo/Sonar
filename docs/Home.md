@@ -2,14 +2,12 @@
 
 **Kolegij:** [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz), Fakultet elektrotehnike i računarstva Sveučilišta u Zagrebu  
 **Akademska godina:** 2026./2027.  
-**Tim:** [Oznaka i naziv tima]  
+**Tim:** "Ginger i patuljci", L-A-10.2<br>
 **Nositelji:** prof. dr. sc. Alan Jović, prof. dr. sc. Vlado Sruk<br>
 **Asistent:** Saša Kendjel, univ. mag. ing.<br>
 **Demonstrator:** Mirko Bušić<br>
 
 ## Pregled projekta
-
-**Cilj:** Omogućiti čitatelju koji prvi put vidi projekt da u dvije ili tri rečenice prepozna aplikaciju, njezine ciljane korisnike i glavnu svrhu.
 
 Sonar je web aplikacija koja na jednom mjestu povezuje slušatelje, izvođače i mjesta održavanja koncerata. Slušatelji ocjenjuju glazbu, prate izvođače i prijavljuju se na koncerte u svojoj blizini, izvođači predlažu koncerte i vide gdje imaju publiku, a upravitelji mjesta potvrđuju koncerte i evidentiraju dolaske.
 
@@ -82,6 +80,7 @@ Kratak sažetak: [README – Uporaba umjetne inteligencije](../README.md#ai-usag
 | Claude Code | Claude Opus 5.5, razina razmišljanja xhigh | @ivrdo | izrada UI mockupova (demoa) izgleda sučelja; pomoć pri dokumentaciji |
 | OpenCode | Qwen3.6-35B-A3B, pokrenut lokalno | @ivrdo | izdvajanje podataka o aktivnostima tima iz izvezene povijesti razgovora; pomoć pri dokumentaciji |
 | Claude | Claude Sonnet 5.5, web aplikacija (claude.ai) | @valdr333 | pomoć pri oblikovanju i uređivanju dokumentacije (stranice 1, 2 i 3); provjera ispravnosti koda; pomoć pri razumijevanju koda; pomoć pri optimizaciji koda |
+| Claude | Claude Sonnet 5.5, web aplikacija (claude.ai) | @GingerCRO | pomoć pri razumijevanju dokumentacije i koda; objašnjavanje Reacta, Tailwinda i Waspa; pomoć pri otklanjanju pogrešaka |
 
 ### Opseg doprinosa umjetne inteligencije
 
@@ -94,24 +93,23 @@ Kratak sažetak: [README – Uporaba umjetne inteligencije](../README.md#ai-usag
 | Unos podataka u bazu (`scripts/importKatalog.ts`) | Provjera ispravnosti, savjeti i pomoć pri razumijevanju API-jeva | Prijedlozi ispravaka i korištenih podataka | Kod je pisao tim. Alat je korišten za traženje mogućih pogrešaka, provjeru ponašanja i savjet izbora podataka. Prijedlozi su ručno pregledani i ispitani prije nego što su ušli u kod. | [#20](https://github.com/ivrdo/Sonar/pull/20) |
 | Rad na kodu (`wasp/src/landing`, `wasp/src/components`) | Pomoć pri analizi kodova i zadataka | Prijedlozi ispravaka i analiza koda | Kod je pisao tim. Alat je korišten za traženje mogućih pogrešaka, provjeru ponašanja i analizu tuđih kodova. Prijedlozi su ručno pregledani i ispitani prije nego što su ušli u kod. | [#19](https://github.com/ivrdo/Sonar/issues/19) |
 
-Stranice i artefakti koji nisu navedeni iznad izrađeni su bez pomoći generativne umjetne inteligencije. [Po želji: kao dodatne retke navedite kod ili ispitivanja izrađena uz pomoć umjetne inteligencije.]
+Stranice i artefakti koji nisu navedeni iznad izrađeni su bez pomoći generativne umjetne inteligencije.
 
 ### Provjera generiranog sadržaja
 
 | Provjera | Kako je provedena | Dokaz |
 | --- | --- | --- |
-| Činjenična točnost | [Svaka tvrdnja o funkcionalnostima, ponašanju ili arhitekturi uspoređena je s pokrenutom aplikacijom i kodom] | [Imena pregledavatelja; poveznice na zahtjev za uključivanje promjena (PR) ili zadatak] |
-| Nema tvrdnji o neostvarenim funkcionalnostima | [Provjereno je da opisane funkcionalnosti, ispitivanja i rezultati stvarno postoje; planirani rad označen je kao planiran] | [Usporedba s odjeljkom 5.4 (Ispitivanje) i odjeljkom 7.1 (Zaključak)] |
-| Dosljednost s drugim stranicama | [Nazivi, ID-ovi i dijagrami provjereni su prema Analizi zahtjeva, Obrascima uporabe, Arhitekturi i oblikovanju te Ispitivanju] | [Kontrolni popis ili bilješka pregleda] |
-| Izvori dijagrama | [Generirani PlantUML je iscrtan, ispravljen i odgovara implementiranom sustavu] | [`.puml` datoteka i izrađena slika] |
+| Činjenična točnost | Promjene dokumentacije pregledali su članovi tima u PR-ovima prije spajanja. Rezultati u poglavlju 5 dobiveni su izvođenjem ispitnih slučajeva na javnoj adresi. | PR-ovi prema grani `master` s barem dva odobrenja |
+| Nema tvrdnji o neostvarenim funkcionalnostima | U tablici sljedivosti svaki zahtjev bez implementacije označen je kao „na čekanju: 2. ciklus”. Ishodi ispitnih slučajeva upisani su tek nakon stvarnog izvođenja, a do tada stoji „Nije pokrenuto”. | Odjeljak 2.6; poglavlje 5 (CT-01 do CT-13, ST-01 do ST-14) |
+| Dosljednost s drugim stranicama | Oznake zahtjeva (F-xxx, NF-xx), obrazaca uporabe (UC-001 do UC-013) i ispitnih slučajeva (CT, ST) usklađene su između poglavlja 2, 3, 4 i 5. Nazivi entiteta uspoređeni su sa `wasp/schema.prisma`. | Odjeljak 3.3; tablica 2.6; `wasp/schema.prisma` |
+| Izvori dijagrama | Svaki dijagram ima PlantUML izvor i iscrtanu sliku. ER dijagram uspoređen je sa shemom baze, a dijagram razmještaja sa stvarnim postavljanjem na Renderu. | `docs/puml/`, `docs/assets/diagrams/`; `wasp/schema.prisma`; `render.yaml` |
 | Povjerljivi sadržaj | U alate umjetne inteligencije ne unose se tajne (ključevi, lozinke, adrese baza), osobni podaci ni tuđi zaštićeni sadržaj. Tajne se drže samo u lokalnim datotekama okruženja i postavkama Rendera, izvan repozitorija. Osobni podaci članova tima obrađivani su samo lokalno pokrenutim modelom, uz njihovo odobrenje. | `.env` i `wasp/.env.server` u `.gitignore`; dokumentacija navodi samo javne adrese (6.3) |
 | Slike i ikone iz mockupova | Provjereno je da su SVG ikone i privremene slike preuzete iz prijedloga dizajna izvorne, da ne kopiraju tuđe logotipe ni naslovnice te da su u kodu označene kao privremene. | `wasp/public/dizajn/`; commit `70abaf5`; `wasp/src/landing/slike.ts` |
 | Usklađenost PlantUML izvora i slike | Svaka `.puml` datoteka i pripadna `.svg` slika commitane su zajedno, pa slika odgovara izvoru. | `docs/puml/`, `docs/assets/diagrams/`; commitovi `495f014`, `8b18612`, `8926698`, `c534bd3` |
 | Upućivanja na kod | Za datoteke, funkcije, okidače i rute navedene u dokumentaciji provjereno je da postoje u kodu pod tim imenom. | Tablica 2.6; `docs/QUERY-I-AKCIJE.md`; `wasp/src/operations/`; `wasp/migrations/` |
 | Rezultati ispitivanja | Rezultati automatiziranih testova preuzeti su iz stvarnog ispisa naredbe, a ručni slučajevi sadrže konkretne vrijednosti iz baze. | `docs/ispitivanje-dokazi/vitest-ispis.txt`; poglavlje 5.2 i 5.3 |
-| Upute za instalaciju | Upute za lokalnu instalaciju isprobane su od čiste kopije repozitorija u dev containeru. | Poglavlje 6.2; `scripts/okruzenje.sh`, `scripts/baza.sh`; [ime, datum] |
+| Upute za instalaciju | Upute za lokalnu instalaciju isprobane su od čiste kopije repozitorija u dev containeru. | Poglavlje 6.2; `scripts/okruzenje.sh`, `scripts/baza.sh` |
 | Konfiguracija postavljanja | Opis postavljanja uspoređen je s konfiguracijskim datotekama. | Poglavlje 6.3; `render.yaml`; `.github/workflows/ci.yml` |
-| Uklonjeni primjeri iz predloška | Provjereno je da primjeri iz predloška kolegija (CrisisMap) nisu predstavljeni kao dio Sonara. | Poglavlje 4; [PR] |
 | Podaci o aktivnostima tima | Podatke koje je model izdvojio iz povijesti razgovora članovi tima usporedili su sa stvarnim događajima, commitovima i PR-ovima. | Dodatak A; GitHub Insights → Contributors |
 | Komentari u kodu | Komentari koji opisuju ponašanje komponenti i operacija provjereni su prema samom kodu. | `wasp/src/` |
 
