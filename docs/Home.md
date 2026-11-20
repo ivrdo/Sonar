@@ -3,9 +3,9 @@
 **Kolegij:** [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz), Fakultet elektrotehnike i računarstva Sveučilišta u Zagrebu  
 **Akademska godina:** 2026./2027.  
 **Tim:** [Oznaka i naziv tima]  
-**Nositelji:** prof. dr. sc. Alan Jović, prof. dr. sc. Vlado Sruk
-**Asistent:** Saša Kendjel, univ. mag. ing.
-**Demonstrator:** Mirko Bušić
+**Nositelji:** prof. dr. sc. Alan Jović, prof. dr. sc. Vlado Sruk<br>
+**Asistent:** Saša Kendjel, univ. mag. ing.<br>
+**Demonstrator:** Mirko Bušić<br>
 
 ## Pregled projekta
 
