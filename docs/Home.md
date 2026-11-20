@@ -83,6 +83,7 @@ Kratak sažetak: [README – Uporaba umjetne inteligencije](../README.md#ai-usag
 | Claude | Claude Sonnet 5.5, web aplikacija (claude.ai) | @GingerCRO | pomoć pri razumijevanju dokumentacije i koda; objašnjavanje Reacta, Tailwinda i Waspa; pomoć pri otklanjanju pogrešaka |
 | Claude | Claude Opus 5.5, web aplikacija (claude.ai) | @Samuel-faks | pomoć za razumijevanje strukture dokumenta; objašnjavanje Reacta, Gita i Waspa; provjera koda |
 | Claude | Claude Sonnet 5.5, web aplikacija (claude.ai) | @jrudez | pomoć pri oblikovanju dokumentacije; pojašnjenje rada i koncepata Prisme i TypeScripta; analiza koda |
+| Claude | Claude Opus 5.5, web aplikacija (claude.ai) | @lea5665 | pomoć pri razumijevanju koda; objašnjavanje Reacta, Tailwinda i Waspa; pomoć pri otklanjanju pogrešaka |
 
 ### Opseg doprinosa umjetne inteligencije
 
