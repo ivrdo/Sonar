@@ -43,8 +43,22 @@ Dokumentacija se kontinuirano ažurira kako se aplikacija razvija.
 
 ## Organizacija projekta i razvojni proces
 
-**Način rada:** [Stvarni način rada i trajanje iteracije, ako je relevantno.]  
+**Način rada:** dvotjedni sprintovi. Zadaci su GitHub Issues raspoređeni po sprintovima na ploči GitHub Projects.  
 **Praćenje trenutačnih zadataka i nedostataka:** [GitHub Issues](https://github.com/ivrdo/Sonar/issues)
+
+| Sprint | Razdoblje | Cilj |
+| --- | --- | --- |
+| 1 | 6.–19. 10. | Tim, tema, razvojno okruženje, prvi ER model |
+| 2 | 20. 10.–2. 11. | Wasp okruženje, dokumentacija 1–3, Prisma i prve React stranice |
+| 3 | 3.–16. 11. | Model podataka, katalog, stranice i queryji, deploy na Render |
+| 4 | 17.–20. 11. | Povezivanje frontenda, dokumentacija, CI, predaja prvog ciklusa (skraćen do roka) |
+
+**Definicija gotovog (engl. Definition of Done):** zadatak je gotov kada je
+
+- spojen u `master` kroz PR s barem dva odobrenja,
+- CI provjera prošla,
+- promjena radi na javnoj adresi,
+- dokumentacija ažurirana ako se ponašanje promijenilo.
 
 ## Pravila dokumentacije
 
