@@ -81,6 +81,7 @@ Kratak sažetak: [README – Uporaba umjetne inteligencije](../README.md#ai-usag
 | OpenCode | Qwen3.6-35B-A3B, pokrenut lokalno | @ivrdo | izdvajanje podataka o aktivnostima tima iz izvezene povijesti razgovora; pomoć pri dokumentaciji |
 | Claude | Claude Sonnet 5.5, web aplikacija (claude.ai) | @valdr333 | pomoć pri oblikovanju i uređivanju dokumentacije (stranice 1, 2 i 3); provjera ispravnosti koda; pomoć pri razumijevanju koda; pomoć pri optimizaciji koda |
 | Claude | Claude Sonnet 5.5, web aplikacija (claude.ai) | @GingerCRO | pomoć pri razumijevanju dokumentacije i koda; objašnjavanje Reacta, Tailwinda i Waspa; pomoć pri otklanjanju pogrešaka |
+| Claude | Claude Sonnet 5.5, web aplikacija (claude.ai) | @jrudez | pomoć pri oblikovanju dokumentacije; pojašnjenje rada i koncepata Prisme i TypeScripta; analiza koda |
 
 ### Opseg doprinosa umjetne inteligencije
 
