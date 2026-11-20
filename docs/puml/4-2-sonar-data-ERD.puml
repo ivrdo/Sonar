@@ -1,0 +1,257 @@
+@startuml
+title Sonar – ER dijagram pohranjenih podataka
+hide circle
+skinparam linetype ortho
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam entity {
+  BackgroundColor #F8F9FA
+  BorderColor #212529
+}
+left to right direction
+
+entity Korisnik {
+  *sifKorisnik
+  --
+  nazKorisnik
+  email (neobavezno)
+  opis (neobavezno)
+  uloga
+  status
+  postavkeObavijesti
+  maxUdaljenostKm
+  sifMjesto <<FK>>
+  zastupaMbid <<FK>>
+  upravljaSifMjestoKoncerta <<FK>>
+}
+entity Zapis {
+  *sifKorisnik <<FK>>
+  *datumVrijemeZapis
+  --
+  vrstaRadnje
+  opis (neobavezno)
+}
+entity PraviloSustava {
+  *sifPravilo
+  --
+  brojUklonjenihDoSuspenzije
+  trajanjeSuspenzijeDana
+}
+entity Mjesto {
+  *sifMjesto
+  --
+  nazMjesto
+  koordinate
+}
+entity MjestoKoncerta {
+  *sifMjestoKoncerta
+  --
+  mbid
+  nazMjestoKoncerta
+  adresaMjestoKoncerta
+  koordinate
+  kapacitet (neobavezno)
+  sifMjesto <<FK>>
+}
+entity Stavka {
+  *sifStavka
+  --
+  tip
+}
+entity Izvodjac {
+  *mbid
+  --
+  nazIzvodjaca
+  biografija (neobavezno)
+  popularnost
+  stanjeDohvata
+  sifStavka <<FK>>
+}
+entity Album {
+  *sifAlbum
+  --
+  mbid
+  nazAlbum
+  godinaIzdanja (neobavezno)
+  sifStavka <<FK>>
+  izvodjacMbid <<FK>>
+}
+entity Pjesma {
+  *sifPjesma
+  --
+  mbid
+  nazPjesma
+  trajanje (neobavezno)
+  sifStavka <<FK>>
+  sifAlbum <<FK>> (neobavezno)
+  izvodjacMbid <<FK>>
+}
+entity Oznaka {
+  *sifOznaka
+  --
+  nazOznaka
+  tip
+}
+entity IzvodjacOznaka {
+  *mbid <<FK>>
+  *sifOznaka <<FK>>
+  --
+  tezina
+}
+entity Koncert {
+  *sifKoncert
+  --
+  datumVrijeme
+  brojMjesta
+  stanje
+  rokZaPotvrdu
+  razlogOdbijanja (neobavezno)
+  sifStavka <<FK>>
+  sifMjestoKoncerta <<FK>>
+  predlozioMbid <<FK>>
+}
+entity PrijavaNaKoncert {
+  *sifPrijavaNa
+  --
+  sifKorisnik <<FK>>
+  sifKoncert <<FK>>
+  stanje
+  qrKod
+  datumPrijave
+  vrijemeSkeniranja (neobavezno)
+}
+entity Ocjena {
+  *sifKorisnik <<FK>>
+  *sifStavka <<FK>>
+  --
+  ocjena
+  datum
+}
+entity Svidja {
+  *sifKorisnik <<FK>>
+  *sifStavka <<FK>>
+  --
+  datum
+}
+entity Recenzija {
+  *sifRecenzija
+  --
+  tekst
+  datum
+  stanje
+  odgovorIzvodjaca (neobavezno)
+  sifKorisnik <<FK>>
+  sifStavka <<FK>>
+}
+entity Lista {
+  *sifLista
+  --
+  nazLista
+  sifKorisnik <<FK>>
+}
+entity ListaStavka {
+  *sifLista <<FK>>
+  *sifStavka <<FK>>
+  --
+  redniBroj
+}
+entity PracenjeIzvodjaca {
+  *sifKorisnik <<FK>>
+  *mbid <<FK>>
+  --
+  datum
+}
+entity PracenjeKorisnika {
+  *sifPratitelj <<FK>>
+  *sifPraceni <<FK>>
+  --
+  datum
+}
+entity PrijavaSadrzaja {
+  *sifPrijava
+  --
+  razlog
+  stanje
+  datum
+  razlogOdluke (neobavezno)
+  sifPodnositelj <<FK>>
+  sifRecenzija <<FK>> (neobavezno)
+  sifPrijavljeni <<FK>> (neobavezno)
+}
+entity ZahtjevZaUlogu {
+  *sifZahtjev
+  --
+  tipUloge
+  poveznica
+  kod
+  stanje
+  napomenaModeratora (neobavezno)
+  datum
+  sifKorisnik <<FK>>
+  izvodjacMbid <<FK>> (neobavezno)
+  sifMjestoKoncerta <<FK>> (neobavezno)
+}
+entity Obavijest {
+  *sifObavijest
+  --
+  tip
+  tekst
+  poveznica (neobavezno)
+  procitano
+  datum
+  sifKorisnik <<FK>>
+}
+entity Preporuka {
+  *sifPreporuka
+  --
+  razlog
+  bodovi
+  datumIzracuna
+  sifKorisnik <<FK>>
+  sifStavka <<FK>>
+}
+
+Korisnik }o--o| Mjesto : živi u
+MjestoKoncerta }o--|| Mjesto : nalazi se u
+Korisnik }o--o| Izvodjac : zastupa
+Korisnik }o--o| MjestoKoncerta : upravlja
+Zapis }o--|| Korisnik : izvršio (moderator)
+Izvodjac |o--|| Stavka : je stavka
+Album |o--|| Stavka : je stavka
+Pjesma |o--|| Stavka : je stavka
+Koncert |o--|| Stavka : je stavka
+Album }o--|| Izvodjac : posjeduje
+Pjesma }o--|| Izvodjac : izvodi
+Pjesma }o--o| Album : ima
+IzvodjacOznaka }o--|| Izvodjac
+IzvodjacOznaka }o--|| Oznaka
+Koncert }o--|| MjestoKoncerta : održava se
+Koncert }o--|| Izvodjac : predložio
+PrijavaNaKoncert }o--|| Korisnik
+PrijavaNaKoncert }o--|| Koncert
+Ocjena }o--|| Korisnik
+Ocjena }o--|| Stavka
+Svidja }o--|| Korisnik
+Svidja }o--|| Stavka
+Recenzija }o--|| Korisnik : napisao
+Recenzija }o--|| Stavka : odnosi se na
+Lista }o--|| Korisnik : izradio
+ListaStavka }o--|| Lista
+ListaStavka }o--|| Stavka
+PracenjeIzvodjaca }o--|| Korisnik
+PracenjeIzvodjaca }o--|| Izvodjac
+PracenjeKorisnika }o--|| Korisnik : pratitelj / praćeni
+PrijavaSadrzaja }o--|| Korisnik : podnio
+PrijavaSadrzaja }o--o| Recenzija : prijavljena recenzija
+ZahtjevZaUlogu }o--|| Korisnik : podnio
+ZahtjevZaUlogu }o--o| Izvodjac
+ZahtjevZaUlogu }o--o| MjestoKoncerta
+Obavijest }o--|| Korisnik : prima
+Preporuka }o--|| Korisnik
+Preporuka }o--|| Stavka : preporučena stavka
+Koncert }o--o{ Izvodjac : nastupa (M:N)
+Korisnik }o--o{ Oznaka : odabrao pri registraciji (M:N)
+Korisnik }o--o{ Izvodjac : odabrao pri registraciji (M:N)
+note bottom of PraviloSustava : Tablica s jednim retkom (parametri sustava);\nadministrator je podešava, bez FK veze u shemi.
+note bottom of Stavka : Nadentitet: točno jedan izvođač, album,\npjesma ili koncert (atribut tip).
+@enduml

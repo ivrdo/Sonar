@@ -1,0 +1,131 @@
+@startuml
+title Sonar – dijagram razreda: koncert i prijave na koncert
+skinparam shadowing false
+skinparam defaultFontName Arial
+skinparam classAttributeIconSize 0
+skinparam ArrowColor #212529
+skinparam class {
+  BackgroundColor #F8F9FA
+  BorderColor #212529
+  BackgroundColor<<interface>> #E7F1FF
+  BackgroundColor<<enumeration>> #FFF3CD
+}
+
+enum KoncertStanje <<enumeration>> {
+  PREDLOZEN
+  POTVRDEN
+  OTVORENE_PRIJAVE
+  ODRZAN
+  ODBIJEN
+  ISTEKAO
+  OTKAZAN
+}
+
+enum PrijavaStanje <<enumeration>> {
+  PRIJAVLJEN
+  DOSAO
+  NIJE_DOSAO
+  OTKAZAN
+}
+
+class Koncert {
+  -sifKoncert : int
+  -datumVrijeme : DateTime
+  -brojMjesta : int
+  -stanje : KoncertStanje
+  -rokZaPotvrdu : DateTime
+  -razlogOdbijanja : String
+  +potvrdi() : void
+  +odbij(razlog : String) : void
+  +otkazi() : void
+  +istekni(sada : DateTime) : void
+  +prihvacaPrijave(sada : DateTime) : boolean
+  +slobodnaMjesta(zauzeto : int) : int
+}
+
+class MjestoKoncerta {
+  -sifMjestoKoncerta : int
+  -kapacitet : int
+  +mozePrimitiBrojMjesta(n : int) : boolean
+}
+
+class PrijavaNaKoncert {
+  -sifPrijavaNa : int
+  -stanje : PrijavaStanje
+  -qrKod : String
+  -datumPrijave : DateTime
+  -vrijemeSkeniranja : DateTime
+  +mozeSeOtkazati(sada : DateTime, pocetak : DateTime) : boolean
+  +otkazi(sada : DateTime, pocetak : DateTime) : void
+  +oznaciDosao(sada : DateTime) : void
+  +oznaciNijeDosao() : void
+  +zauzimaMjesto() : boolean
+}
+
+class Korisnik {
+  -sifKorisnik : int
+  -uloga : KorisnikUloga
+  -status : KorisnikStatus
+  +smijePrijavuNaKoncert() : boolean
+}
+
+class PrijavaService {
+  +prijavi(korisnik : Korisnik, sifKoncert : int) : Ulaznica
+  +otkazi(korisnik : Korisnik, sifPrijavaNa : int) : void
+  +skeniraj(upravitelj : Korisnik, qrKod : String) : void
+}
+
+class Ulaznica <<value object>> {
+  +sifPrijavaNa : int
+  +qrKod : String
+  +slobodnaMjesta : int
+}
+
+interface KoncertRepository <<interface>> {
+  +zakljucajIDohvati(sifKoncert : int) : Koncert
+  +brojZauzetihMjesta(sifKoncert : int) : int
+}
+
+interface PrijavaRepository <<interface>> {
+  +postojiAktivna(sifKorisnik : int, sifKoncert : int) : boolean
+  +spremi(prijava : PrijavaNaKoncert) : PrijavaNaKoncert
+  +dohvatiPoQrKodu(qrKod : String) : PrijavaNaKoncert
+}
+
+interface QrKodGenerator <<interface>> {
+  +generiraj(sifKoncert : int, sifKorisnik : int) : String
+}
+
+class PrismaKoncertRepository
+class PrismaPrijavaRepository
+class CryptoQrKodGenerator
+
+Koncert --> KoncertStanje
+PrijavaNaKoncert --> PrijavaStanje
+Koncert "0..*" --> "1" MjestoKoncerta : održava se na
+PrijavaNaKoncert "0..*" --> "1" Koncert : za koncert
+PrijavaNaKoncert "0..*" --> "1" Korisnik : prijavio se
+
+PrijavaService ..> Koncert
+PrijavaService ..> PrijavaNaKoncert
+PrijavaService ..> Ulaznica : stvara
+PrijavaService --> KoncertRepository
+PrijavaService --> PrijavaRepository
+PrijavaService --> QrKodGenerator
+
+PrismaKoncertRepository ..|> KoncertRepository
+PrismaPrijavaRepository ..|> PrijavaRepository
+CryptoQrKodGenerator ..|> QrKodGenerator
+
+note right of Koncert
+  Slobodna mjesta se ne pohranjuju:
+  brojMjesta - zauzeto (prijave koje
+  nisu u stanju OTKAZAN).
+end note
+
+note bottom of PrismaKoncertRepository
+  zakljucajIDohvati koristi
+  SELECT ... FOR UPDATE unutar
+  transakcije (NF-07).
+end note
+@enduml
