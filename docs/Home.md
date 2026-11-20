@@ -3,8 +3,9 @@
 **Kolegij:** [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz), Fakultet elektrotehnike i računarstva Sveučilišta u Zagrebu  
 **Akademska godina:** 2026./2027.  
 **Tim:** [Oznaka i naziv tima]  
-**Nastavnik:** Vlado Sruk  
-**Asistent / demonstrator:** [Ime i uloga u ovom izvođenju kolegija]
+**Nositelji:** prof. dr. sc. Alan Jović, prof. dr. sc. Vlado Sruk
+**Asistent:** Saša Kendjel, univ. mag. ing.
+**Demonstrator:** Mirko Bušić
 
 ## Pregled projekta
 
@@ -104,6 +105,15 @@ Stranice i artefakti koji nisu navedeni iznad izrađeni su bez pomoći generativ
 | Dosljednost s drugim stranicama | [Nazivi, ID-ovi i dijagrami provjereni su prema Analizi zahtjeva, Obrascima uporabe, Arhitekturi i oblikovanju te Ispitivanju] | [Kontrolni popis ili bilješka pregleda] |
 | Izvori dijagrama | [Generirani PlantUML je iscrtan, ispravljen i odgovara implementiranom sustavu] | [`.puml` datoteka i izrađena slika] |
 | Povjerljivi sadržaj | U alate umjetne inteligencije ne unose se tajne (ključevi, lozinke, adrese baza), osobni podaci ni tuđi zaštićeni sadržaj. Tajne se drže samo u lokalnim datotekama okruženja i postavkama Rendera, izvan repozitorija. Osobni podaci članova tima obrađivani su samo lokalno pokrenutim modelom, uz njihovo odobrenje. | `.env` i `wasp/.env.server` u `.gitignore`; dokumentacija navodi samo javne adrese (6.3) |
+| Slike i ikone iz mockupova | Provjereno je da su SVG ikone i privremene slike preuzete iz prijedloga dizajna izvorne, da ne kopiraju tuđe logotipe ni naslovnice te da su u kodu označene kao privremene. | `wasp/public/dizajn/`; commit `70abaf5`; `wasp/src/landing/slike.ts` |
+| Usklađenost PlantUML izvora i slike | Svaka `.puml` datoteka i pripadna `.svg` slika commitane su zajedno, pa slika odgovara izvoru. | `docs/puml/`, `docs/assets/diagrams/`; commitovi `495f014`, `8b18612`, `8926698`, `c534bd3` |
+| Upućivanja na kod | Za datoteke, funkcije, okidače i rute navedene u dokumentaciji provjereno je da postoje u kodu pod tim imenom. | Tablica 2.6; `docs/QUERY-I-AKCIJE.md`; `wasp/src/operations/`; `wasp/migrations/` |
+| Rezultati ispitivanja | Rezultati automatiziranih testova preuzeti su iz stvarnog ispisa naredbe, a ručni slučajevi sadrže konkretne vrijednosti iz baze. | `docs/ispitivanje-dokazi/vitest-ispis.txt`; poglavlje 5.2 i 5.3 |
+| Upute za instalaciju | Upute za lokalnu instalaciju isprobane su od čiste kopije repozitorija u dev containeru. | Poglavlje 6.2; `scripts/okruzenje.sh`, `scripts/baza.sh`; [ime, datum] |
+| Konfiguracija postavljanja | Opis postavljanja uspoređen je s konfiguracijskim datotekama. | Poglavlje 6.3; `render.yaml`; `.github/workflows/ci.yml` |
+| Uklonjeni primjeri iz predloška | Provjereno je da primjeri iz predloška kolegija (CrisisMap) nisu predstavljeni kao dio Sonara. | Poglavlje 4; [PR] |
+| Podaci o aktivnostima tima | Podatke koje je model izdvojio iz povijesti razgovora članovi tima usporedili su sa stvarnim događajima, commitovima i PR-ovima. | Dodatak A; GitHub Insights → Contributors |
+| Komentari u kodu | Komentari koji opisuju ponašanje komponenti i operacija provjereni su prema samom kodu. | `wasp/src/` |
 
 ### Pogreške pronađene u izlazu umjetne inteligencije
 
