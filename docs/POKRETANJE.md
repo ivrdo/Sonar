@@ -4,7 +4,8 @@ Upute za pokretanje Sonara na vlastitom računalu: baza, varijable okoline,
 Google prijava, migracije i probni podaci (seed).
 
 Instalacija alata (Docker, IntelliJ, dev container) opisana je u
-[README.md](../README.md). Ove upute pretpostavljaju da je to gotovo.
+[poglavlju 6.2](./6-Postavljanje-instalacija-i-konfiguracija.md#62-lokalna-instalacija-i-konfiguracija).
+Ove upute pretpostavljaju da je to gotovo.
 
 ## Sadržaj
 
@@ -24,7 +25,7 @@ Instalacija alata (Docker, IntelliJ, dev container) opisana je u
 | Wasp | 0.26.1 | `setup.sh` ga instalira sam |
 | Docker (s Compose) | | za bazu PostgreSQL 18 |
 
-Preporučeno je raditi u **dev containeru** (vidi README): on sam pokreće bazu
+Preporučeno je raditi u **dev containeru** (vidi 6.2): on sam pokreće bazu
 i instalira Node i Wasp.
 
 ## 2. Brzi start
