@@ -1,43 +1,86 @@
 # 5. Ispitivanje
 
-**Cilj:** Prikazati kako tim provjerava važno ponašanje aplikacije, što je stvarno ispitano, što rezultati pokazuju i koji poznati nedostaci ostaju. Planirano ispitivanje nije dokaz uspješnog izvođenja.
-
-Povezivanje zahtjev → obrazac uporabe → ispitivanje održavajte u [tablici sljedivosti zahtjeva](2-Analiza-zahtjeva.md); specifikacije ispitivanja i dokaze izvođenja zabilježite ovdje ili povežite s ispitivanjima u repozitoriju.
+Ovo poglavlje opisuje što se u aplikaciji Sonar ispituje, kako se ispituje i gdje se vide rezultati. Ispitni slučajevi vežu se uz zahtjeve iz [analize zahtjeva](2-Analiza-zahtjeva.md) (F-xxx, NF-xx). Rezultati se u tablicama upisuju tek nakon stvarnog izvođenja slučaja, do tada u stupcima „Stvarni rezultat” i „Ishod” stoji **Nije pokrenuto**.
 
 ## 5.1 Pristup ispitivanju
 
-**Cilj:** Odabrati provjere koje obuhvaćaju glavne korisničke ciljeve, važne uvjete neuspjeha i projektno specifične nefunkcijske zahtjeve.
+Ispitivanje je podijeljeno na dvije razine: automatizirane testove klijentskog koda i ručno ispitivanje glavnog toka u pokrenutoj aplikaciji.
 
-**Pristup ispitivanju:** [U nekoliko rečenica navedite komponente ili pravila koja se ispituju izdvojeno, glavne interakcije provjerene u pokrenutoj aplikaciji i relevantne nefunkcijske provjere. Navedite koje su provjere automatizirane, koje se izvode ručno i gdje tim čuva dokaze.]
+**Automatizirani testovi (Vitest).** Pokreću se naredbom `wasp test client run` u direktoriju `wasp/`. Testovi su smješteni uz izvorni kod (`*.test.ts` i `*.test.tsx`) i ispituju:
 
-Odaberite normalne slučajeve, granične vrijednosti i neuspjehe koji otkrivaju različita ponašanja. Selenium IDE može snimiti i ponovno izvesti osnovnu interakciju u pregledniku; Selenium WebDriver omogućuje zapis provjere preglednika u kodu. Selenium ili drugi prikladan alat koristite kada pomaže da sustavska provjera bude ponovljiva. Navedite alat koji tim stvarno koristi. Ispitivanje razreda ili pravila pripada razini komponente; otvaranje obrasca u pregledniku provjerava pokrenuti sustav. Tijek kontinuirane integracije (engl. *continuous integration*, CI) i njegova izvođenja navedite samo ako ga tim stvarno koristi. Kontinuirana integracija podrazumijeva da se promjene redovito integriraju u zajednički repozitorij te automatizirano izgrađuju i provjeravaju. Sama uporaba GitHub Actionsa ili drugog alata ne znači da projekt primjenjuje CI ako se takve provjere stvarno ne izvode nad promjenama.
+- pravilo gumba „Apply” na stranici koncerta (`izracunajStanjeButton` u `src/operations/pomocno.ts`): stanja `APPLY`, `PRIJAVLJEN`, `POPUNJENO` i `ZATVORENO` te njihov redoslijed;
+- komponentu `ConcertCard`: prikaz naslova, datuma, vremena i mjesta te poveznicu na stranicu koncerta;
+- sekcije landinga (nadolazeći koncerti, popularni izvođači, mjesta), cijelu stranicu landinga te stranice koncerta i izvođača.
+
+Stranice se crtaju u običan HTML tekst (`renderToStaticMarkup` iz Reacta), a Waspovi moduli (`useQuery`, `Link`) zamijenjeni su lažnima. Testovi stoga ne trebaju poslužitelj ni bazu: provjerava se kako se prikazuju podaci koje bi vratili queryji. Što točno vraćaju queryji, ovdje se ne ispituje.
+
+**Poslužiteljski kod nije pokriven automatiziranim testovima.** Naredba `wasp test client` izvodi Vitest kroz Waspov dodatak koji odbija svaki uvoz iz `wasp/server`, a Wasp testiranje servera ne podržava. Queryji i akcija `prijaviNaKoncert` zato se ispituju ručno u pokrenutoj aplikaciji (ispitni slučajevi ST-xx u poglavlju 5.2).
+
+**Ručno ispitivanje.** Na javnoj adresi <https://sonar-client.onrender.com> prolazi se glavni tok: prijava, landing, pretraga, stranica izvođača, stranica koncerta i prijava na koncert, na mobitelu (širina 375 px) i na računalu. Istodobne prijave na zadnje slobodno mjesto (NF-07) ispituju se isključivo ručno, jer ovise o zaključavanju retka koncerta u pravoj bazi podataka.
 
 ## 5.2 Ispitni slučajevi
 
-**Cilj:** Važne provjere učiniti ponovljivima bilježenjem scenarija, ulaza, koraka, očekivanog rezultata i rezultata izvođenja. Svakoj provjeri dodijelite stabilan ID koji se može koristiti u tablici sljedivosti zahtjeva.
+Oznaka **CT-xx** označava automatizirani test (poveznica vodi na izvorni kod testa), a **ST-xx** ručni ispitni slučaj na razini sustava.
+
+### Automatizirani testovi
 
 | ID ispitnog slučaja | Scenarij ispitivanja | Ulazni podaci | Očekivani rezultat | Stvarni rezultat | Ishod | Koraci ispitivanja |
 | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |  |
+| CT-01 | Gumb „Apply”: korisnik se može prijaviti (F-024) | Stanje koncerta `OTVORENE_PRIJAVE`, koncert sutra, 10 slobodnih mjesta, korisnik nije prijavljen na koncert. | `APPLY` | Test prošao. | Prošlo | `wasp test client run`; [pomocno.test.ts](../wasp/src/operations/pomocno.test.ts) |
+| CT-02 | Gumb „Apply”: nema slobodnih mjesta (F-024) | Kao CT-01, ali 0 slobodnih mjesta. | `POPUNJENO` | Test prošao. | Prošlo | Isto; [pomocno.test.ts](../wasp/src/operations/pomocno.test.ts) |
+| CT-03 | Gumb „Apply”: koncert nije u stanju otvorenih prijava (F-024) | Kao CT-01, ali stanje koncerta `ODRZAN`. | `ZATVORENO` | Test prošao. | Prošlo | Isto; [pomocno.test.ts](../wasp/src/operations/pomocno.test.ts) |
+| CT-04 | Gumb „Apply”: koncert je već počeo (F-024) | Kao CT-01, ali početak koncerta jučer. | `ZATVORENO` | Test prošao. | Prošlo | Isto; [pomocno.test.ts](../wasp/src/operations/pomocno.test.ts) |
+| CT-05 | Gumb „Apply”: korisnik je već prijavljen (F-024) | Kao CT-01, ali korisnik već ima prijavu. | `PRIJAVLJEN` | Test prošao. | Prošlo | Isto; [pomocno.test.ts](../wasp/src/operations/pomocno.test.ts) |
+| CT-06 | Redoslijed pravila: prijavljen korisnik i popunjen koncert | Korisnik ima prijavu, 0 slobodnih mjesta. | `PRIJAVLJEN` (prijavljeni korisnik uvijek vidi svoju ulaznicu). | Test prošao. | Prošlo | Isto; [pomocno.test.ts](../wasp/src/operations/pomocno.test.ts) |
+| CT-07 | Redoslijed pravila: zatvorene prijave i popunjen koncert | Stanje koncerta `ODRZAN`, 0 slobodnih mjesta. | `ZATVORENO` | Test prošao. | Prošlo | Isto; [pomocno.test.ts](../wasp/src/operations/pomocno.test.ts) |
+| CT-08 | `ConcertCard`: prikaz podataka koncerta | Naslov „Orbita + Kiša u Svibnju”, „Fri 20 Nov”, 20:00, „Dom kulture, Zagreb”. | Prikazani su naslov te redak „Fri 20 Nov · 20:00 · Dom kulture, Zagreb”. | Test prošao. | Prošlo | `wasp test client run`; [ConcertCard.test.tsx](../wasp/src/components/ConcertCard.test.tsx) |
+| CT-09 | `ConcertCard`: poveznica na koncert | Kartica s id-em koncerta 7. | Kartica vodi na `/concerts/7`. | Test prošao. | Prošlo | Isto; [ConcertCard.test.tsx](../wasp/src/components/ConcertCard.test.tsx) |
+| CT-10 | Sekcije landinga: prikaz podataka iz querya (F-001) | Lažni `useQuery` vraća jedan koncert, jednog izvođača i jedno mjesto. | Prikazani su koncert s datumom, vremenom i mjestom, izvođač i mjesto. | Test prošao. | Prošlo | `wasp test client run`; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
+| CT-11 | `ConcertDetailPage`: prikaz koncerta (F-024) | Lažni `dohvatiKoncert` vraća koncert s izvođačima „Orbita” i „Kiša u Svibnju” i stanjem gumba `APPLY`. | Naslov je „Orbita + Kiša u Svibnju”, a gumb piše „Apply”. | Test prošao. | Prošlo | Isto; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
+| CT-12 | `ArtistPage`: prikaz izvođača (F-008) | Lažni `dohvatiIzvodjaca` vraća izvođača „Orbita” s albumom „Valovi” i pjesmom „Bez mjeseca”. | Prikazani su ime izvođača, album u diskografiji i pjesma s albuma. | Test prošao. | Prošlo | Isto; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
+| CT-13 | `LandingPage`: prikaz sekcija (F-001) | Lažni `useQuery` vraća koncert, izvođača i mjesto; lažni `useAuth` vraća da nitko nije prijavljen. | Prikazane su sekcije nadolazećih koncerata, popularnih izvođača i mjesta. | Test prošao. | Prošlo | Isto; [pages.test.tsx](../wasp/src/pages/pages.test.tsx) |
 
-Scenarij određuje funkcionalnost koja se ispituje. Opaženi rezultat i **Prošlo**, **Nije prošlo** ili **Blokirano** unesite tek nakon izvođenja; do tada koristite **Nije pokrenuto**. Koraci ispitivanja moraju omogućiti drugom članu tima da ponovi provjeru. Izvorni kod automatiziranog ispitivanja čuvajte u Git repozitoriju projekta i iz relevantnog slučaja postavite poveznicu na njega; za ručnu provjeru ovdje dokumentirajte korake. Odaberite normalne slučajeve, smislene nevaljane ulaze ili granice, neuspjehe i relevantna svojstva kvalitete. Funkcionalnost koja nije implementirana predstavlja nedovršen opseg; provjera kako aplikacija obrađuje nevaljani ID valjano je negativno ispitivanje.
+### Ručni slučajevi (javna adresa)
+
+Preduvjeti: javna adresa je dostupna i na njoj je najnovija verzija grane, za prijavu je potreban Googleov račun koji je među testnim korisnicima OAuth klijenta, za ST-03 račun sa statusom `SUSPENDIRAN`, za ST-11 i ST-12 koncert u stanju `OTVORENE_PRIJAVE` s 0, odnosno 1 slobodnim mjestom.
+
+| ID ispitnog slučaja | Scenarij ispitivanja | Ulazni podaci | Očekivani rezultat | Stvarni rezultat | Ishod | Koraci ispitivanja |
+| --- | --- | --- | --- | --- | --- | --- |
+| ST-01 | Javni pregled bez prijave (F-001, F-010) | Neprijavljeni korisnik. | Landing prikazuje nadolazeće koncerte, popularne izvođače i mjesta te navod izvora podataka u podnožju. | Kako je očekivano. | Prošlo | Otvoriti javnu adresu u anonimnom prozoru; provjeriti sekcije i podnožje. |
+| ST-02 | Prijava preko Googlea (F-002) | Valjan Google račun s aktivnim statusom. | Nakon odabira računa korisnik je prijavljen i vraćen u aplikaciju. | Prijava preko Googlea uspjela; korisnik je vraćen u aplikaciju kao prijavljen. | Prošlo | Otvoriti stranicu za prijavu; odabrati „Continue with Google”; odabrati račun; provjeriti povratak u aplikaciju. |
+| ST-03 | Prijava suspendiranog računa (F-002) | Račun sa statusom `SUSPENDIRAN`. | Prijava je odbijena, korisnik nije prijavljen. | Račun sa statusom `suspendiran` (postavljen u bazi) pokušao se prijaviti preko Googlea. Prijava je odbijena, a korisniku je prikazana poruka „Vaš račun je privremeno suspendiran. Prijava s ovim računom nije moguća.” Nakon vraćanja statusa na `aktivan` prijava je ponovno uspjela. | Prošlo | Postaviti status računa u bazi; pokušati prijavu preko Googlea; provjeriti da korisnik nije prijavljen. |
+| ST-04 | Pretraga kataloga (F-008) | Pojam „orbita”; pojam bez rezultata. | Za „orbita” prikazuju se rezultati; za pojam bez rezultata prikazuje se prazno stanje. | Kako je očekivano. | Prošlo | Upisati pojam u traku za pretragu; potvrditi; provjeriti adresu `/search?q=…` i rezultate. |
+| ST-05 | Nepostojeća adresa | Adresa `/nema-me`. | Prikazuje se stranica „nije pronađeno”. | Kako je očekivano. | Prošlo | Otvoriti adresu; provjeriti stranicu. |
+| ST-06 | Stranica izvođača (F-008) | Klik na izvođača iz popularnih. | Otvara se stranica izvođača s njegovim imenom i diskografijom. | Otvorila se stranica izvođača s imenom i diskografijom. | Prošlo | S landinga kliknuti izvođača; provjeriti da se prikazuje isti izvođač koji je na kartici. |
+| ST-07 | Stranica koncerta (F-024) | Klik na koncert iz nadolazećih. | Otvara se stranica koncerta s naslovom, datumom, mjestom, popisom izvođača i podacima o mjestu. | Otvorila se stranica koncerta s naslovom, datumom, mjestom, izvođačima i podacima o mjestu. | Prošlo | S landinga kliknuti karticu koncerta; provjeriti da se prikazuje isti koncert koji je na kartici. |
+| ST-08 | Prijava na koncert (F-024) | Prijavljeni slušatelj; koncert u stanju `OTVORENE_PRIJAVE` s više slobodnih mjesta. | Nakon klika na „Apply” gumb piše „Show ticket”; u bazi nastaje jedna prijava u stanju `PRIJAVLJEN` s QR kodom; slobodnih mjesta je jedno manje. | Na koncertu 18 gumb je nakon klika na „Apply” prešao u „Show ticket”. U bazi je nastao jedan redak prijave sa stanjem `prijavljen` i QR kodom oblika `SONAR-18-175-…`, a slobodnih mjesta bilo je 51 umjesto 52. | Prošlo | Prijaviti se; otvoriti koncert; zabilježiti broj slobodnih mjesta; kliknuti „Apply”; osvježiti stranicu; provjeriti prijavu u bazi. |
+| ST-09 | Prijava bez prijave u sustav (NF-02) | Neprijavljeni korisnik na stranici koncerta. | Prijava nije moguća; u bazi ne nastaje prijava. | Klik na „Apply” ne daje korisniku nikakvu poruku. Server je odbio zahtjev `POST /operations/prijavi-na-koncert` s kodom 401 i porukom „Za prijavu na koncert morate biti prijavljeni.” (vidljivo u konzoli preglednika), pa prijava nije nastala. | Prošlo (s napomenom: korisnik ne dobiva poruku) | Odjaviti se; otvoriti koncert; kliknuti „Apply”; u konzoli preglednika provjeriti odgovor poslužitelja. |
+| ST-10 | Dvostruka prijava (F-024) | Korisnik koji je već prijavljen na koncert. | Gumb piše „Show ticket”; broj prijava korisnika na taj koncert ostaje jedan. | Nakon osvježavanja stranice koncerta 18 gumb i dalje piše „Show ticket”; upit nad bazom pokazuje jednu aktivnu prijavu tog korisnika na taj koncert. | Prošlo | Nakon ST-08 ponovno otvoriti isti koncert; provjeriti gumb i broj prijava u bazi. |
+| ST-11 | Popunjen koncert (F-024) | Koncert bez slobodnih mjesta. | Gumb piše „Sold out” i onemogućen je; prijava nije moguća. | Na koncertu 1 (upit nad bazom: 0 slobodnih mjesta) gumb piše „Sold out”. Klik na gumb ne daje nikakav učinak. | Prošlo | Otvoriti popunjen koncert; provjeriti gumb. |
+| ST-12 | Istodobne prijave na zadnje mjesto (NF-07) | Koncert s jednim slobodnim mjestom; dva različita računa. | Točno jedna prijava uspijeva; broj aktivnih prijava jednak je broju mjesta. | Dva računa u dva preglednika kliknula su „Apply” na koncertu 2 (jedno slobodno mjesto), a klik je zakazan skriptom za isti trenutak (oko 17:30:31). Jedan zahtjev odbijen je s kodom 409 i porukom „Nema slobodnih mjesta, koncert je popunjen.”, a u drugom je gumb prešao u „Show ticket”. U bazi je nastala jedna nova prijava (`sifPrijavaNa` 818), a koncert 2 ima 30 aktivnih prijava od 30 mjesta (0 slobodnih). Redoslijed dolaska zahtjeva na poslužitelj nije mjeren, pa slučaj potvrđuje ishod (kapacitet nije premašen), a ne da su zahtjevi stigli u istom trenutku. | Prošlo | Pripremiti koncert (broj mjesta = broj aktivnih prijava + 1); u dva preglednika prijaviti različite račune; istodobno kliknuti „Apply”; u bazi provjeriti broj aktivnih prijava na koncert (prijave koje nisu `OTKAZAN`). |
+| ST-13 | Nepostojeći koncert | Adresa `/concerts/99999`. | Prikazuje se poruka „Concert not found.” | Prikazala se poruka „Concert not found.” | Prošlo | Otvoriti adresu; provjeriti poruku. |
+| ST-14 | Responzivnost glavnog toka (NF-09) | Širina 375 px i širina računala. | Landing, pretraga, izvođač i koncert čitljivi su bez vodoravnog pomicanja; na mobitelu je vidljiva donja navigacija. | Kako je očekivano. | Prošlo | U alatima preglednika postaviti širinu 375 px; proći glavni tok; ponoviti na računalu. |
 
 ## 5.3 Provedena ispitivanja i rezultati
 
-**Cilj:** Navesti reviziju aplikacije, okruženje i dokaze potrebne za tumačenje stvarnih rezultata u tablici ispitnih slučajeva. Dodajte kratak zapis izvođenja kada te podatke nije moguće jasno prenijeti poveznicom na kod ispitivanja ili CI izvođenje.
+**Najnovije izvođenje:** automatizirani testovi, 18.11.2026., revizija `e622b14`, lokalno (`wasp test client run`). Ručni slučajevi ST-01 do ST-14 izvedeni su na javnoj adresi.
 
-**Najnovije izvođenje ili dokaz:** [Poveznica na CI izvođenje, bilješku ručnog ispitivanja ili kratak sažetak izvođenja s datumom, revizijom i okruženjem.]
+| ID ispitivanja ili izvođenja | Datum i revizija aplikacije | Okruženje | Opaženi rezultat i ishod | Dokaz |
+| --- | --- | --- | --- | --- |
+| CT-01 do CT-13 | 18.11.2026., revizija `e622b14` | Lokalno, `wasp test client run` | 13 od 13 testova prošlo (3 testne datoteke) | Ispis naredbe `wasp test client run`: [vitest-ispis.txt](ispitivanje-dokazi/vitest-ispis.txt) |
+| ST-01, ST-04, ST-05, ST-14 | 18.11.2026., verzija koja je bila na javnoj adresi | Javna adresa | Rezultati upisani u poglavlju 5.2 | – |
+| ST-06, ST-07, ST-09, ST-13 | 18.11.2026., master nakon PR-a #31 (točan commit nije provjeren) | Javna adresa | Rezultati upisani u poglavlju 5.2 | – |
+| ST-02, ST-08, ST-10, ST-11 | 18.11.2026., master nakon PR-a #31 (točan commit nije provjeren) | Javna adresa; stanje baze provjereno upitima iz IntelliJa | Rezultati upisani u poglavlju 5.2 | – |
+| ST-12 | 18.11.2026., master nakon PR-a #31 (točan commit nije provjeren) | Javna adresa; dva računa u dva preglednika, stanje baze provjereno upitima iz IntelliJa | Rezultat upisan u poglavlju 5.2 | – |
+| ST-03 | 18.11.2026., master nakon PR-a #31 (točan commit nije provjeren) | Javna adresa; status računa postavljen i vraćen u bazi upitima iz IntelliJa | Rezultat upisan u poglavlju 5.2 | – |
 
-Stupci **Stvarni rezultat** i **Ishod** iznad mjerodavni su rezultati za pojedinačni slučaj. Nemojte kopirati sve rezultate u drugu obaveznu tablicu. Neuspješna i blokirana izvođenja zabilježite iskreno; pri ponovnom izvođenju zadržite relevantnu povijest umjesto prikazivanja starog uspješnog rezultata kao trenutačnog.
+Nakon ispitivanja prijava iz ST-12 (koncert 2) je otkazana, a status računa iz ST-03 vraćen je na `aktivan`. Prijava iz ST-08 (koncert 18) ostala je u bazi.
+
+Slučaj koji ne uspije ili ga nije moguće izvesti (npr. jer funkcionalnost još nije dostupna na javnoj adresi) bilježi se u stvarnom stanju, uz poveznicu na odgovarajući zadatak (Issue). Nakon ispravka slučaj se ponovno izvodi.
 
 ## 5.4 Poznati nedostaci i ograničenja ispitivanja
 
-**Cilj:** Omogućiti čitatelju da vidi nedostatke koji utječu na uporabu trenutačne aplikacije i važno ponašanje koje tim nije mogao provjeriti.
-
 | Problem ili ograničenje | Korisniku vidljiv učinak ili neprovjereno ponašanje | Dokaz ili poveznica na zadatak |
 | --- | --- | --- |
-|  |  |  |
-
-Detaljnu reprodukciju nedostatka i napredak čuvajte u alatu za praćenje zadataka, uz kratku poveznicu ovdje za nedostatke koji bitno utječu na aplikaciju ili demonstraciju. Ako je obavezna funkcionalnost nedovršena, jasno to navedite u završnim rezultatima; nemojte je nazivati poznatim nedostatkom niti uspješnim ispitivanjem. Iskreno zabilježite i nedostajuću mogućnost ispitivanja, primjerice vanjskog pružatelja koji tijekom izvođenja nije bio dostupan. Ovaj odjeljak ne zahtijeva drugi potpuni dnevnik problema.
-
-**Završna provjera:** ID-ovi ispitivanja i očekivani ishodi odgovaraju primjenjivim zahtjevima i obrascima uporabe. Izvedeni rezultati upućuju na stvarnu reviziju aplikacije i pregledljivo izvođenje ili ponovljivo opažanje. Važni neuspjesi i otvoreni nedostaci ostaju vidljivi, dok završni opis isporučenih funkcionalnosti odražava ono što podržavaju ispitivanja i pokrenuta aplikacija.
+| Poslužiteljski kod nije pokriven automatiziranim testovima | Pravila prijave (kapacitet, dvostruka prijava, ovlasti) provjeravaju se samo ručno (ST-08 do ST-13). | Odjeljak 5.1. |
+| Istodobne prijave na zadnje mjesto (NF-07) ispituju se samo ručno | Zaključavanje u bazi provjereno je samo ručnim slučajem ST-12. | ST-12. |

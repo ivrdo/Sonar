@@ -18,6 +18,8 @@
         - cancelUntil: do kada se može otkazati (npr. "19:00")
         - slobodnaMjesta: broj slobodnih mjesta (slobodnaMjesta iz querya)
         - onApply: neobavezno, funkcija koja se pozove klikom na "Apply" (poziv prijaviNaKoncert)
+                - saljeSe: neobavezno, true dok se prijava šalje (gumb piše "Applying..." i onemogućen je)
+                - greska: neobavezno, poruka o neuspjeloj prijavi, prikazuje se ispod gumba
 
     Koriste se Tailwind klase (boje su tokeni iz App.css):
         - desktop:rounded-xl desktop:border desktop:border-rubovi-1 desktop:bg-bijela desktop:p-4:
@@ -40,21 +42,26 @@ type ApplyBoxProps = {
     cancelUntil: string;
     slobodnaMjesta: number;
     onApply?: () => void;
+    saljeSe?: boolean;
+    greska?: string;
 };
 
-export function ApplyBox({ stanje, price, cancelUntil, slobodnaMjesta, onApply }: ApplyBoxProps) {
+export function ApplyBox({ stanje, price, cancelUntil, slobodnaMjesta, onApply, saljeSe, greska }: ApplyBoxProps) {
     // Tekst na gumbu ovisi o stanju
     let tekstGumba = "Apply · " + price;
-    if (stanje === "PRIJAVLJEN") {
-        tekstGumba = "Show ticket";
+    if (saljeSe) {
+      tekstGumba = "Applying...";
+    } else if (stanje === "PRIJAVLJEN") {
+      tekstGumba = "Show ticket";
     } else if (stanje === "POPUNJENO") {
-        tekstGumba = "Sold out";
+      tekstGumba = "Sold out";
     } else if (stanje === "ZATVORENO") {
-        tekstGumba = "Applications closed";
+      tekstGumba = "Applications closed";
     }
 
     // Gumb radi samo kad se korisnik može prijaviti
-    const onemogucen = stanje === "POPUNJENO" || stanje === "ZATVORENO";
+    const onemogucen =
+      stanje === "POPUNJENO" || stanje === "ZATVORENO" || saljeSe;
 
     return (
       <section className="desktop:rounded-xl desktop:border desktop:border-rubovi-1 desktop:bg-bijela desktop:p-4">
@@ -73,6 +80,16 @@ export function ApplyBox({ stanje, price, cancelUntil, slobodnaMjesta, onApply }
         >
           {tekstGumba}
         </button>
+
+        {greska && (
+          <p
+            role="alert"
+            className="text-status-crveni desktop:text-left desktop:text-[11px] mt-2 text-center text-sm"
+          >
+            {greska}
+          </p>
+        )}
+
         <p className="text-tekst-druga desktop:text-left desktop:text-[11px] mt-2 text-center text-sm">
           You can cancel until {cancelUntil} on the day.
           <span className="desktop:inline hidden">
