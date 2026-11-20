@@ -1,105 +1,84 @@
-# Informacije
+# Sonar
 
-- [PROCES.md](https://github.com/ivrdo/SWE-Project-FER-2026/blob/master/docs/PROCES.md) - Način rada tima, projektni alati...
-- [ARHITEKTURA.md](https://github.com/ivrdo/SWE-Project-FER-2026/blob/master/docs/ARHITEKTURA.md) - Softwareska arhitektura
+Sonar je web aplikacija koja na jednom mjestu povezuje slušatelje, izvođače i mjesta održavanja koncerata.
 
-## Instalacija za rad na projektu
+**Pristupi aplikaciji ovdje 👉** <https://sonar-client.onrender.com/>
 
-Općenito je potrebno instalirati sljedeći software:
+Projekt na kolegiju [Programsko inženjerstvo](https://www.fer.unizg.hr/predmet/proinz), FER, Sveučilište u Zagrebu.
 
-- Node.js >= 24.14.1
-- Wasp CLI 0.26: `npm i -g @wasp.sh/wasp-cli@0.26`
-- Docker Desktop / samo Docker uz Compose
-- Git
-- IntelliJ IDEA
+## Opis aplikacije
 
-*__Obavezno pročitati upute koje olakšavaju instalaciju.__*
+Slušatelji ocjenjuju glazbu, prate izvođače i prijavljuju se na koncerte, izvođači predlažu koncerte, a upravitelji mjesta potvrđuju koncerte i evidentiraju dolaske.
 
-## Windows
+- pregled i pretraga koncerata, izvođača i mjesta
+- stranica izvođača s diskografijom
+- prijava putem Googlea i prijava na koncert
 
-- Na Windowsu je potrebno instalirati IntelliJ IDEA, Docker Desktop i Git.
-    - Git: https://git-scm.com/install/windows
-    - IntelliJ IDEA: https://www.jetbrains.com/idea/download/?section=windows, https://www.youtube.com/watch?v=E2QMyGgYLoM
-    - Docker Desktop: https://docs.docker.com/desktop/setup/install/windows-install/
-- Postaviti svoj `user.name` i `user.email` **obavezno** s `git.config --global user.name <ime>` i `git.config --global user.email <ime>`
-- Na otvaranje projektnog direktorija, ignorirati popup-e i pronaći `.devcontainer/devcontainer.json`, otvara se ovakav prozor:
-  ![](./docs/instalacija/devcontainer.png)
-- Odabrati plavu kockicu u gornjem lijevom kutu
-- `Create Dev Container and Copy Sources...`, odabrati branch `docker-wasp`, potvrditi
-- Na kraju instalacije će biti popup, stisnuti default izbor "This window"
-- Pronaći `wasp/schema.prisma`, i stisnuti, ponudit će instalaciju plugina, instalirati
-- Provesti set up naredbe
+Cijela dokumentacija: [docs](docs/Home.md).
 
-## MacOS
+<a id="deployment"></a>
+## Postavljanje (engl. deployment)
 
-- Na MacOS je potrebno instalirati IntelliJ IDEA, Docker Desktop i Git.
-    - Git: https://git-scm.com/install/mac
-    - IntelliJ IDEA: https://www.jetbrains.com/idea/download/?section=mac, https://www.youtube.com/watch?v=E2QMyGgYLoM
-    - Docker Desktop: https://docs.docker.com/desktop/setup/install/mac-install/
-- Postaviti svoj `user.name` i `user.email` **obavezno** s `git.config --global user.name <ime>` i `git.config --global user.email <ime>`
-- Na otvaranje projektnog direktorija, ignorirati popup-e i pronaći `.devcontainer/devcontainer.json`, otvara se ovakav prozor:
-  ![](./docs/instalacija/devcontainer.png)
-- Odabrati plavu kockicu u gornjem lijevom kutu
-- `Create Dev Container and Copy Sources...`, odabrati branch `docker-wasp`, potvrditi
-- Na kraju instalacije će biti popup, stisnuti default izbor "This window"
-- Pronaći `wasp/schema.prisma`, i stisnuti, ponudit će instalaciju plugina, instalirati
-- Provesti set up naredbe
+**Javno dostupna aplikacija:** <https://sonar-client.onrender.com/>
 
-## Linux
+**Isprobajte:** otvoriti koncert s početne stranice, prijaviti se Googleom i prijaviti se na koncert.
 
-- Instalirati Docker binary s compose pluginom i IntelliJ IDEA
-- Provesti set up naredbe
-- Na Linuxu je potrebno instalirati IntelliJ IDEA (package), docker (package, uz compose plugin) i git (package).
-    - Git: https://git-scm.com/install/linux
-    - IntelliJ IDEA: https://www.jetbrains.com/idea/download/?section=linux, https://www.youtube.com/watch?v=E2QMyGgYLoM
-    - Docker Desktop: https://docs.docker.com/desktop/setup/install/linux/
-- Postaviti svoj `user.name` i `user.email` **obavezno** s `git.config --global user.name <ime>` i `git.config --global user.email <ime>`
-- Na otvaranje projektnog direktorija, ignorirati popup-e i pronaći `.devcontainer/devcontainer.json`, otvara se ovakav prozor:
-  ![](./docs/instalacija/devcontainer.png)
-- Odabrati plavu kockicu u gornjem lijevom kutu
-- `Create Dev Container and Copy Sources...`, odabrati branch `docker-wasp`, potvrditi
-- Na kraju instalacije će biti popup, stisnuti default izbor "This window"
-- Pronaći `wasp/schema.prisma`, i stisnuti, ponudit će instalaciju plugina, instalirati
-- Provesti set up naredbe
+**Demonstracija:** pregled ne traži račun. Za prijavu na koncert treba Google račun dodan kao testni korisnik.
 
-## Prvo pokretanje
+**Ograničenja:** poslužitelj se na besplatnom planu uspavljuje, pa prvi zahtjev traje oko minute. Detalji u [poglavlju 6](docs/6-Postavljanje-instalacija-i-konfiguracija.md).
 
-Iz korijena repozitorija:
+<a id="quick-start"></a>
+## Brzi početak / instalacija
 
-```sh
-cd wasp
-cp .env.server.example .env.server
-wasp install
-wasp db migrate-dev
-wasp start
-```
+Upute za instalaciju i pokretanje: [6.2 Lokalna instalacija i konfiguracija](docs/6-Postavljanje-instalacija-i-konfiguracija.md#62-lokalna-instalacija-i-konfiguracija).
 
-- klijent: http://localhost:3000
-- server: http://localhost:3001
+## Tehnologije
 
-## Bitno
+| Tehnologija | Uloga | Razlog ili ograničenje |
+| --- | --- | --- |
+| Wasp | klijent, poslužitelj i autentikacija iz jedne konfiguracije | brže prototipiranje; svi koriste verziju 0.26.1 |
+| React | korisničko sučelje | Wasp generira React klijent |
+| Prisma, PostgreSQL | baza i migracije | relacijski podaci; dio pravila provode okidači |
+| Google OAuth | jedini način prijave | u testnom načinu samo dodani korisnici |
+| MusicBrainz, Last.fm | izvori kataloga | uvoz jednokratno, aplikacija ne ovisi o njima |
+| Render | javno postavljanje | besplatni plan: uspavljivanje, baza istječe za 30 dana |
 
-__*Bitno je ne brisati svoj dev container osim ako niste napravili commit.*__
+<a id="team-members"></a>
+## Članovi tima
 
-__*Na isti dev container se kasnije možete spojiti.*__
+| Član | Glavna uloga ili doprinos |
+| --- | --- |
+| Ivor Vrdoljak ([@ivrdo](https://github.com/ivrdo)) | voditelj tima, okruženje, deploy, dokumentacija |
+| Val Dragašević ([@valdr333](https://github.com/valdr333)) | dokumentacija, katalog i početni podaci, ispitivanje |
+| Josip Rudež ([@jrudez](https://github.com/jrudez)) | model podataka, backend, arhitektura |
+| Lea Mrkonjić ([@lea5665](https://github.com/lea5665)) | frontend: izvođači i koncerti |
+| Filip Juračić ([@GingerCRO](https://github.com/GingerCRO)) | frontend: početna stranica, ljuska, prijava |
+| Samuel Sobočan ([@Samuel-faks](https://github.com/Samuel-faks)) | frontend: mobilni prikaz, karta, pretraga |
 
-```sh
-# U dev containeru
-cd wasp
-# wasp db migrate-dev # (ažuriranje baze ako je netko mijenjao shemu)
-wasp start
-```
+## Doprinos projektu
 
-Kad netko commita nove migracije, prije `wasp start` pokrenuti `wasp db migrate-dev`.
+Zadaci u [GitHub Issues](https://github.com/ivrdo/Sonar/issues); PR prema `master` traži dva odobrenja (`CODEOWNERS`).
 
-## Nakon promjene `schema.prisma`
+<a id="license"></a>
 
-1. Zaustaviti `wasp start`. Wasp ne dopušta dvije naredbe nad istim projektom
-   istovremeno.
-2. `wasp db migrate-dev`
-3. Commitati novu mapu u `migrations/` zajedno s promjenom sheme.
+**Status licence:** sva prava pridržana, vidi [LICENSE.md](LICENSE.md).
 
-## Baza
+Predložak dokumentacije kolegija licenciran je pod CC BY-NC-SA 4.0, što ne određuje licencu aplikacije.
 
-- lozinka je `dev`, osim ako je u `../.env` postavljen `DB_PASSWORD`. Lozinka u
-  `DATABASE_URL` u `.env.server` mora biti ista.
+<a id="ai-usage"></a>
+## Uporaba umjetne inteligencije
+
+Projekt slijedi FER-ova [pravila o uporabi umjetne inteligencije](https://www.fer.unizg.hr/_download/repository/Policy%20on%20the%20appropriate%20use%20of%20artificial%20intelligence%20at%20the%20faculty%20of%20electrical%20engineering%20and%20computing%5B1%5D.pdf).
+
+**Izjava:** [Kratak sažetak.]
+
+Detaljan zapis: [docs](docs/Home.md#izjava-o-uporabi-umjetne-inteligencije).
+
+<a id="code-of-conduct-and-support"></a>
+## Kodeks ponašanja i podrška
+
+Vrijede Kodeks ponašanja studenata FER-a, pravila timskog rada na kolegiju i [Etički kodeks IEEE-a](https://www.ieee.org/about/corporate/governance/p7-8.html).
+
+---
+
+Struktura dokumentacije prema predlošku kolegija autora [Vlade Sruka](https://www.fer.unizg.hr/vlado.sruk), [CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/).

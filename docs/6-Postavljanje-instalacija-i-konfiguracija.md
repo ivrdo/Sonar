@@ -25,16 +25,33 @@
 
 ## 6.2 Lokalna instalacija i konfiguracija
 
-Upute za instalaciju alata po operacijskim sustavima (IntelliJ IDEA, Docker, Git) nalaze se u [README-u](../README.md). Ovdje je cijeli postupak od čiste kopije repozitorija do pokrenute aplikacije.
+Ovdje je cijeli postupak od čiste kopije repozitorija do pokrenute aplikacije.
 
 ### 1. Preduvjeti i preuzimanje izvornog koda
 
 Postoje dva načina rada:
 
-* **Dev container (preporučeno):** potrebni su Docker (s Composeom) i IntelliJ IDEA. Container već sadrži Node.js 24 i pri izradi sam instalira Wasp CLI 0.26.1.
+* **Dev container (preporučeno):** potrebni su Git, Docker (s Composeom) i IntelliJ IDEA. Container već sadrži Node.js 24 i pri izradi sam instalira Wasp CLI 0.26.1.
 * **Bez containera:** Node.js 24.22.1 ili noviji, Wasp CLI 0.26.1, Docker s Composeom (samo za bazu) i Bash. Na Windowsu se radi u WSL2 jer Wasp CLI postoji samo za Linux i macOS.
 
 Svi koriste istu verziju Waspa (0.26.1). Različite verzije stvaraju različit `package-lock.json`.
+
+**Instalacija alata po operacijskim sustavima:**
+
+* **Windows:** [Git](https://git-scm.com/install/windows), [IntelliJ IDEA](https://www.jetbrains.com/idea/download/?section=windows) i [Docker Desktop](https://docs.docker.com/desktop/setup/install/windows-install/).
+* **macOS:** [Git](https://git-scm.com/install/mac), [IntelliJ IDEA](https://www.jetbrains.com/idea/download/?section=mac) i [Docker Desktop](https://docs.docker.com/desktop/setup/install/mac-install/).
+* **Linux:** Git i Docker s Compose pluginom iz paketnog upravitelja distribucije ([Git](https://git-scm.com/install/linux), [Docker](https://docs.docker.com/desktop/setup/install/linux/)) te [IntelliJ IDEA](https://www.jetbrains.com/idea/download/?section=linux).
+
+Postupak instalacije IntelliJ IDEA prikazan je u [videu](https://www.youtube.com/watch?v=E2QMyGgYLoM).
+
+Prije prvog commita obavezno postaviti ime i e-poštu za Git:
+
+```bash
+git config --global user.name "Ime Prezime"
+git config --global user.email "ime@primjer.hr"
+```
+
+Preuzimanje izvornog koda:
 
 ```bash
 git clone https://github.com/ivrdo/Sonar.git
@@ -43,7 +60,16 @@ cd Sonar
 
 Stabilna inačica je na grani `master`, a razvoj se odvija na grani `frontend-prototipiranje`.
 
-**Dev container:** u IntelliJ IDEA otvoriti `.devcontainer/devcontainer.json`, kliknuti ikonu containera uz vrh datoteke i odabrati **Create Dev Container and Mount Sources**. Repozitorij se tada ne kopira, nego se montira u container (`/workspace`), pa su sve promjene odmah i na disku. Uz container se pokreće i baza (servis `db` iz `compose.yaml`, container `baza`).
+**Dev container (isto na svim sustavima):**
+
+1. Otvoriti mapu repozitorija u IntelliJ IDEA i zanemariti ponuđene skočne prozore.
+2. Otvoriti `.devcontainer/devcontainer.json`. Prikazuje se ovakav prozor:
+
+   ![Otvaranje dev containera u IntelliJ IDEA](./instalacija/devcontainer.png)
+
+3. Kliknuti plavu ikonu containera u gornjem lijevom kutu i odabrati **Create Dev Container and Mount Sources**. Repozitorij se tada ne kopira, nego se montira u container (`/workspace`), pa su sve promjene odmah i na disku. Uz container se pokreće i baza (servis `db` iz `compose.yaml`, container `baza`).
+4. Na kraju izrade u skočnom prozoru ostaviti zadani izbor **This window**.
+5. Otvoriti `wasp/schema.prisma` i prihvatiti ponuđenu instalaciju dodatka za Prismu.
 
 **Bez containera:** bazu pokrenuti iz korijena repozitorija naredbom `docker compose up -d db`.
 
